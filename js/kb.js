@@ -24,8 +24,8 @@
       check_hint: "Сначала ответь сам, потом нажми на вопрос.", terms: "Слова для поиска", open_shop: "Открыть в магазине →",
       copy: "Скопировать", copied: "Скопировано", read: "Я прочитал(а)", unread: "Прочитано ✓ (нажми, чтобы снять)",
       prev: "← Назад", next: "Дальше →", pairs: { k1: "1 курс, пара", k2: "2 курс, пара" }, nothing: "Ничего не найдено. Попробуй другое слово или английский термин.",
-      gl_title: "Глоссарий", gl_note: "Все термины базы: английский, русский, казахский. Нажми на тему, чтобы прочитать подробно.",
-      gl_head: ["English", "Русский", "Қазақша", "Тема"], soon: "Тема появится позже.",
+      gl_title: "Глоссарий", gl_note: "Термины по порядку пар: сверху то, что проходим раньше. Английский — русский — казахский. Нажми на тему, чтобы прочитать подробно.",
+      gl_head: ["English", "Русский", "Қазақша", "Тема"], gl_other: "Другие темы курса", soon: "Тема появится позже.",
       welcome_title: "База знаний по тестированию", welcome: "Слева — все темы курса по порядку пар: сверху то, что проходим раньше, снизу — позже. Нажми на тему, чтобы открыть. Не помнишь, где тема? Напиши слово в поиске — на русском, казахском или английском."
     },
     kz: {
@@ -36,8 +36,8 @@
       check_hint: "Алдымен өзің жауап бер, содан кейін сұрақты бас.", terms: "Іздеуге арналған сөздер", open_shop: "Дүкеннен ашу →",
       copy: "Көшіру", copied: "Көшірілді", read: "Оқыдым", unread: "Оқылды ✓ (алып тастау үшін бас)",
       prev: "← Артқа", next: "Әрі қарай →", pairs: { k1: "1 курс, сабақ", k2: "2 курс, сабақ" }, nothing: "Ештеңе табылмады. Басқа сөзді немесе ағылшын терминін жазып көр.",
-      gl_title: "Глоссарий", gl_note: "Қордағы барлық терминдер: ағылшын, орыс, қазақ тілдерінде. Толық оқу үшін тақырыпты бас.",
-      gl_head: ["English", "Орысша", "Қазақша", "Тақырып"], soon: "Тақырып кейін қосылады.",
+      gl_title: "Глоссарий", gl_note: "Терминдер сабақтар ретімен: жоғарыда ертерек өтетініміз. Ағылшынша — орысша — қазақша. Толық оқу үшін тақырыпты бас.",
+      gl_head: ["English", "Орысша", "Қазақша", "Тақырып"], gl_other: "Курстың басқа тақырыптары", soon: "Тақырып кейін қосылады.",
       welcome_title: "Тестілеу бойынша білім қоры", welcome: "Сол жақта — курстың барлық тақырыбы сабақтар ретімен: жоғарыда ертерек өтетініміз, төменде — кейінірек. Ашу үшін тақырыпты бас. Тақырып қайда екенін ұмыттың ба? Іздеуге сөз жаз — орысша, қазақша немесе ағылшынша."
     }
   };
@@ -186,16 +186,45 @@
     });
   }
 
+  // Глоссарий по порядку пар: сначала термины первой пары, потом второй и т. д.
+  const course = () => (load("qc_kb_course", "k1") === "k2" ? "k2" : "k1");
+
+  function glossaryGroup(tp) {
+    if (tp.block === "tools") return { order: 1e6, title: tp[lang()].title };
+    const main = course(), other = main === "k1" ? "k2" : "k1";
+    const p = tp.pairs && tp.pairs[main] && tp.pairs[main][0];
+    const q = tp.pairs && tp.pairs[other] && tp.pairs[other][0];
+    if (p) return { order: p, title: `${u("pairs")[main]} ${p}` };
+    if (q) return { order: 1000, title: u("gl_other") };
+    return { order: 5e5, title: u("blocks").extra };
+  }
+
   function drawGlossary() {
-    const rows = [];
-    topics.forEach(tp => (tp.terms || []).forEach(t => rows.push([t[0], t[1], t[2], tp])));
-    rows.sort((a, b) => (a[0] || a[1]).localeCompare(b[0] || b[1], "en"));
+    const list = topics.filter(tp => tp.terms && tp.terms.length)
+      .map(tp => ({ tp, g: glossaryGroup(tp) }))
+      .sort((a, b) => a.g.order - b.g.order || (a.tp.n == null ? 0 : a.tp.n) - (b.tp.n == null ? 0 : b.tp.n));
+    let html = "", lastGroup = null;
+    list.forEach(({ tp, g }) => {
+      if (g.title !== lastGroup) {
+        html += `<tr class="kb-gl-group"><td colspan="4">${esc(g.title)}</td></tr>`;
+        lastGroup = g.title;
+      }
+      tp.terms.forEach((t, i) => {
+        html += `<tr><td><b>${esc(t[0] || "—")}</b></td><td>${esc(t[1] || "—")}</td><td>${esc(t[2] || "—")}</td>` +
+          `<td>${i === 0 ? `<a href="#${tp.id}">${esc(label(tp))}</a>` : ""}</td></tr>`;
+      });
+    });
     document.getElementById("kb-main").innerHTML = `
       <h1>📖 ${u("gl_title")}</h1>
       <p class="muted">${u("gl_note")}</p>
-      <div class="kb-tablewrap"><table class="kb-table"><thead><tr>${u("gl_head").map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>
-      ${rows.map(([en, ru, kz, tp]) => `<tr><td>${esc(en || "—")}</td><td>${esc(ru || "—")}</td><td>${esc(kz || "—")}</td><td><a href="#${tp.id}">${esc(label(tp))}</a></td></tr>`).join("")}
+      <div class="kb-course">${["k1", "k2"].map(k => `<button type="button" class="btn btn-small ${course() === k ? "" : "btn-ghost"}" data-course="${k}">${u("blocks")[k]}</button>`).join("")}</div>
+      <div class="kb-tablewrap"><table class="kb-table kb-gl"><thead><tr>${u("gl_head").map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>
+      ${html}
       </tbody></table></div>`;
+    document.querySelectorAll(".kb-course button").forEach(b => b.addEventListener("click", () => {
+      save("qc_kb_course", b.dataset.course);
+      drawGlossary();
+    }));
   }
 
   function route() {

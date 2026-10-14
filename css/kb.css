@@ -48,3 +48,5 @@
   .kb-main { padding: 16px; }
   .kb-main h1 { font-size: 23px; }
 }
+.kb-gl-group td { background: #EAF1FB; color: #1A56C4; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.kb-course { display: flex; gap: 8px; margin: 10px 0 6px; }
