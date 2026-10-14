@@ -113,6 +113,9 @@ const I18N = {
     hours_value: "ежедневно 09:00–21:00",
     map_loading: "Карта загружается…",
     write_us: "Напишите нам",
+    stand_back: "← Портал тестировщика",
+    stand_version: "Тестовый стенд · версия {v}",
+    err_pass_short8: "Пароль должен быть не короче 8 символов",
     footer_note: "© 2026 Qala Coffee · учебный проект"
   },
   kz: {
@@ -229,6 +232,9 @@ const I18N = {
     hours_value: "күн сайын 09:00–21:00",
     map_loading: "Карта жүктелуде…",
     write_us: "Бізге жазыңыз",
+    stand_back: "← Тестілеуші порталы",
+    stand_version: "Тест стенді · {v} нұсқа",
+    err_pass_short8: "Құпиясөз кемінде 8 таңбадан тұруы керек",
     footer_note: "© 2026 Qala Coffee · оқу жобасы"
   }
 };

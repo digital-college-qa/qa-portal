@@ -22,6 +22,12 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
   }
 
+  /* ---------- version under test ---------- */
+  const V11 = load("qc_version", "1.0") === "1.1";
+  const IS_EDGE = /Edg\//.test(navigator.userAgent);
+  document.body.classList.add(V11 ? "v11" : "v10");
+  const imgOf = p => (V11 && p.id === 4 ? "img/latte.svg" : p.img);
+
   /* ---------- i18n ---------- */
   function lang() { return load("qc_lang", "ru") === "kz" ? "kz" : "ru"; }
   function t(key, vars) {
@@ -87,12 +93,18 @@
     const logged = !!session();
     const count = getCart().length;
     const nav = [
-      ["index.html", "nav_home", "home"],
+      ["home.html", "nav_home", "home"],
       ["menu.html", "nav_menu", "menu"],
       ["aktsii.html", "nav_promo", "promo"],
       ["contacts.html", "nav_contacts", "contacts"]
     ].map(([href, key, id]) => `<a href="${href}" class="${page === id ? "active" : ""}">${t(key)}</a>`).join("");
     document.getElementById("header").innerHTML = `
+      <div class="standbar">
+        <div class="wrap standbar-in">
+          <a href="index.html">${t("stand_back")}</a>
+          <span>${t("stand_version", { v: V11 ? "1.1" : "1.0" })}</span>
+        </div>
+      </div>
       <div class="topbar">
         <div class="wrap topbar-in">
           <span>${t("hours_short")}</span>
@@ -100,7 +112,7 @@
         </div>
       </div>
       <div class="wrap head-in">
-        <a class="logo" href="index.html"><span class="logo-mark">Q</span> Qala Coffee</a>
+        <a class="logo" href="home.html"><span class="logo-mark">Q</span> Qala Coffee</a>
         <nav class="nav">${nav}</nav>
         <div class="head-tools">
           <div class="lang">
@@ -137,7 +149,7 @@
     if (!p.inStock) badges.push(`<span class="tag tag-out">${t("out_of_stock")}</span>`);
     return `
       <article class="card">
-        <a href="product.html?id=${p.id}" class="card-img"><img src="${p.img}" alt="${esc(p.name[l])}"></a>
+        <a href="product.html?id=${p.id}" class="card-img"><img src="${imgOf(p)}" alt="${esc(p.name[l])}"></a>
         <div class="card-body">
           <div class="tags">${badges.join("")}</div>
           <h3><a href="product.html?id=${p.id}">${esc(p.name[l])}</a></h3>
@@ -203,12 +215,13 @@
     let query = "";
     function draw() {
       let list = PRODUCTS.slice();
-      if (query) list = list.filter(p => p.name[l].includes(query));
+      if (query) list = list.filter(p => V11 ? p.name[l].toLowerCase().includes(query.toLowerCase()) : p.name[l].includes(query));
       const mode = document.getElementById("sort").value;
       if (mode === "pop") list.sort((a, b) => b.pop - a.pop);
-      if (mode === "asc") list.sort((a, b) => b.price - a.price);
+      if (mode === "asc") list.sort((a, b) => V11 ? a.price - b.price : b.price - a.price);
       if (mode === "desc") list.sort((a, b) => b.price - a.price);
-      if (mode === "name") list.sort((a, b) => a.name[l].localeCompare(b.name[l], l === "kz" ? "kk" : "ru"));
+      if (mode === "name" && !V11) list.sort((a, b) => a.name[l].localeCompare(b.name[l], l === "kz" ? "kk" : "ru"));
+      if (mode === "name" && V11) list.sort((a, b) => b.pop - a.pop);
       document.getElementById("list").innerHTML = list.length
         ? list.map(p => productCard(p)).join("")
         : `<p class="muted">${t("nothing_found")}</p>`;
@@ -235,7 +248,7 @@
       <section class="wrap section">
         <a href="menu.html" class="back">${t("back_menu")}</a>
         <div class="product">
-          <div class="product-img"><img src="${p.img}" alt="${esc(p.name[l])}"></div>
+          <div class="product-img"><img src="${imgOf(p)}" alt="${esc(p.name[l])}"></div>
           <div class="product-info">
             <h1>${esc(p.name[l])}</h1>
             <div class="desc">${esc(p.desc[l])}</div>
@@ -248,7 +261,7 @@
               <div class="opt-label">${t("qty")}</div>
               <div class="qty">
                 <button type="button" id="minus">−</button>
-                <input type="number" id="qty" value="1" min="1" max="99">
+                <input type="number" id="qty" value="1" min="1" max="${V11 ? 10 : 99}">
                 <button type="button" id="plus">+</button>
               </div>
             </div>
@@ -267,6 +280,7 @@
     function clampQty(v) {
       v = parseInt(v, 10);
       if (isNaN(v) || v < 1) v = 1;
+      if (V11 && v > 9) v = 9;
       if (v > 99) v = 99;
       return v;
     }
@@ -275,12 +289,13 @@
       document.getElementById("vol").textContent = `${size} · ${p.volumes[size]} мл`;
       qtyInput.value = qty;
       const unit = unitPrice({ id: p.id, size, syrup: document.getElementById("syrup").checked });
-      document.getElementById("sum").textContent = money(unit * qty);
+      const syrupOn = document.getElementById("syrup").checked;
+      document.getElementById("sum").textContent = money(V11 && IS_EDGE && syrupOn ? NaN : unit * qty);
     }
     document.querySelectorAll(".size").forEach(b => b.addEventListener("click", () => { size = b.dataset.size; draw(); }));
     document.getElementById("syrup").addEventListener("change", draw);
     document.getElementById("minus").addEventListener("click", () => { qty = clampQty(qty - 1); draw(); });
-    document.getElementById("plus").addEventListener("click", () => { qty = clampQty(qty + 2); draw(); });
+    document.getElementById("plus").addEventListener("click", () => { qty = clampQty(qty + (V11 ? 1 : 2)); draw(); });
     qtyInput.addEventListener("change", () => { qty = clampQty(qtyInput.value); draw(); });
     document.getElementById("add").addEventListener("click", () => {
       if (!p.inStock) return;
@@ -324,7 +339,7 @@
               const p = product(it.id);
               return `
               <div class="cart-row" data-i="${i}">
-                <img src="${p.img}" alt="${esc(p.name[l])}">
+                <img src="${imgOf(p)}" alt="${esc(p.name[l])}">
                 <div class="cart-name"><strong>${esc(p.name[l])}</strong><div class="muted">${it.size}${it.syrup ? ", " + t("syrup_short") : ""}</div></div>
                 <div class="cart-unit">${money(unitPrice(it))}</div>
                 <input class="cart-qty" type="number" value="${it.qty}" data-i="${i}">
@@ -359,7 +374,8 @@
     document.querySelectorAll(".cart-qty").forEach(inp => inp.addEventListener("change", () => {
       const c = getCart();
       const v = parseInt(inp.value, 10);
-      c[inp.dataset.i].qty = isNaN(v) ? 1 : v;
+      c[inp.dataset.i].qty = isNaN(v) ? 1 : (V11 ? (v < 0 ? 1 : Math.min(v, 10)) : v);
+      if (V11) inp.value = c[inp.dataset.i].qty;
       setCart(c);
       drawTotals();
     }));
@@ -373,10 +389,12 @@
         row.querySelectorAll("[data-i]").forEach(el => { el.dataset.i = idx; });
       });
       if (!c.length) location.reload();
+      if (V11) drawTotals();
     }));
     document.getElementById("promo-form").addEventListener("submit", e => {
       e.preventDefault();
-      const code = document.getElementById("promo").value.trim().toUpperCase();
+      const raw = document.getElementById("promo").value.trim();
+      const code = V11 ? raw : raw.toUpperCase();
       if (code === PROMO_CODE) {
         save("qc_promo", PROMO_CODE);
         toast(t("promo_ok"));
@@ -428,7 +446,7 @@
             <label>${t("f_time")}
               ${slots.length ? `<select id="f-time">${slots.map(s => `<option>${s}</option>`).join("")}</select>` : `<div class="note warn">${t("orders_closed")}</div>`}
             </label>
-            <label>${t("f_comment")}<textarea id="f-comment" rows="3"></textarea></label>
+            <label>${t("f_comment")}<textarea id="f-comment" rows="3"${V11 ? ' maxlength="250"' : ""}></textarea>${V11 ? '<span class="note" id="c-count">0/200</span>' : ""}</label>
             <fieldset><legend>${t("f_pay")}</legend>
               <label class="check"><input type="radio" name="pay" value="cash" checked> ${t("pay_cash")}</label>
               <label class="check"><input type="radio" name="pay" value="card"> ${t("pay_card")}</label>
@@ -439,6 +457,9 @@
         </div>
       </section>`;
     let hideTimer = null;
+    if (V11) document.getElementById("f-comment").addEventListener("input", e => {
+      document.getElementById("c-count").textContent = e.target.value.length + "/200";
+    });
     document.getElementById("order-form").addEventListener("submit", e => {
       e.preventDefault();
       let ok = true;
@@ -506,7 +527,7 @@
           <label>${t("f_name")}<input id="r-name" type="text"><span class="err" data-for="r-name"></span></label>
           <label>${t("f_email")}<input id="r-email" type="email"><span class="err" data-for="r-email"></span></label>
           <label>${t("f_phone_opt")}<input id="r-phone" type="tel"></label>
-          <label>${t("f_password")}<input id="r-pass" type="text"><span class="err" data-for="r-pass"></span></label>
+          <label>${t("f_password")}<input id="r-pass" type="${V11 ? "password" : "text"}"><span class="err" data-for="r-pass"></span></label>
           <label class="check"><input type="checkbox" id="r-agree"> <span>${t("agree_pre")}<a href="rules.html">${t("agree_link")}</a>${t("agree_post")}</span></label>
           <span class="err" data-for="r-agree"></span>
           <button class="btn btn-wide" type="submit">${t("reg_btn")}</button>
@@ -523,7 +544,7 @@
       if (!v("r-email")) { setErr("r-email", t("err_required")); ok = false; }
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("r-email"))) { setErr("r-email", t("err_email")); ok = false; }
       if (!v("r-pass")) { setErr("r-pass", t("err_required")); ok = false; }
-      else if (v("r-pass").length < 4) { setErr("r-pass", t("err_pass_short")); ok = false; }
+      else if (V11 ? v("r-pass").length <= 8 : v("r-pass").length < 4) { setErr("r-pass", t(V11 ? "err_pass_short8" : "err_pass_short")); ok = false; }
       if (!document.getElementById("r-agree").checked) { setErr("r-agree", t("err_agree")); ok = false; }
       if (!ok) return;
       const list = users();

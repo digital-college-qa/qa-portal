@@ -27,6 +27,11 @@ h2 { font-size: 22px; margin: 0 0 12px; }
 .note { color: var(--muted); font-size: 14px; margin: 6px 0; }
 .note.warn { color: var(--brand-dark); }
 
+/* test stand bar (not part of the product) */
+.standbar { background: #E8EAED; color: #3C4043; font-size: 12.5px; }
+.standbar-in { display: flex; justify-content: space-between; gap: 12px; padding-top: 4px; padding-bottom: 4px; flex-wrap: wrap; }
+.standbar a { color: #1A56C4; text-decoration: none; }
+
 /* header */
 .topbar { background: var(--ink); color: #F3E6D8; font-size: 13px; }
 .topbar-in { display: flex; justify-content: space-between; gap: 12px; padding-top: 6px; padding-bottom: 6px; flex-wrap: wrap; }
@@ -174,4 +179,11 @@ h2 { font-size: 22px; margin: 0 0 12px; }
   .cart-unit { grid-column: 2; }
   .cart-qty { width: 70px; }
   .del { grid-column: 3; }
+}
+
+/* version 1.1 */
+@media (max-width: 1024px) { body.v11 .menu-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  body.v11 .menu-grid { grid-template-columns: 1fr; }
+  body.v11 .summary #go-checkout { display: none; }
 }
