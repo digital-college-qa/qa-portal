@@ -1,0 +1,268 @@
+/* Уроки: список пар по этапам (#k1, #k2) и страница пары (#k1-5). Режимы «Просто» / «Подробно» со сдвигом.
+   Данные: js/learn/course.js (структура курсов) и js/learn/<курс>-<пара>.js (содержимое пар). */
+(function () {
+  "use strict";
+
+  function load(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch (e) {
+      return fallback;
+    }
+  }
+  function save(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
+  }
+  const L = load("qc_lang", "ru") === "kz" ? "kz" : "ru";
+  const LI = L === "kz" ? 1 : 0;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const UI = {
+    ru: {
+      title: "Уроки", lead: "Все пары курса по этапам. Любая пара открыта всегда — возвращайся к ней сколько угодно.",
+      pair: "Пара", stage: "Этап", soon: "Готовится", simple: "Просто", detailed: "Подробно",
+      mode_hint: { s: "Объясняем без терминов, на примерах из жизни.", d: "Точные термины и шаблоны, как на работе." },
+      gloss: "Словарь пары", gloss_btn: "📖 Словарь", gloss_note: "Нажми на подчёркнутое слово в тексте — оно подсветится здесь.",
+      remember: "Запомни", quiz: "Проверь себя", right: "Верно!", wrong: "Не совсем.", more: "Подробнее",
+      copy: "Скопировать", copied: "Скопировано", back: "← Все пары", prev: "← Пара", next: "Пара →",
+      empty: "Эта пара ещё готовится. Пока можно открыть тему в", kb: "базе знаний", task: "Задание"
+    },
+    kz: {
+      title: "Сабақтар", lead: "Курстың барлық сабағы кезеңдер бойынша. Кез келген сабақ әрқашан ашық — оған қанша рет болса да орал.",
+      pair: "Сабақ", stage: "Кезең", soon: "Дайындалуда", simple: "Қарапайым", detailed: "Толық",
+      mode_hint: { s: "Терминсіз, өмірден мысалдармен түсіндіреміз.", d: "Нақты терминдер мен үлгілер, жұмыстағыдай." },
+      gloss: "Сабақ сөздігі", gloss_btn: "📖 Сөздік", gloss_note: "Мәтіндегі асты сызылған сөзді бас — ол осында белгіленеді.",
+      remember: "Есте сақта", quiz: "Өзіңді тексер", right: "Дұрыс!", wrong: "Толық емес.", more: "Толығырақ",
+      copy: "Көшіру", copied: "Көшірілді", back: "← Барлық сабақ", prev: "← Сабақ", next: "Сабақ →",
+      empty: "Бұл сабақ әлі дайындалуда. Әзірге тақырыпты мына жерден ашуға болады:", kb: "білім қоры", task: "Тапсырма"
+    }
+  }[L];
+
+  const C = window.LEARN_COURSES, P = window.LEARN_PAIRS || {};
+  const app = document.getElementById("app");
+  let mode = load("qc_learn_mode", "s") === "d" ? "d" : "s";
+
+  /* ---------- текст: абзацы, списки, таблицы, ``` / ```copy, **жирный**, [ссылка](url), [[слово@Term]] ---------- */
+  function inline(s, m) {
+    return esc(s)
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/\[\[([^\]@]+)@([^\]]+)\]\]/g, (x, word, term) => m === "d"
+        ? `<button type="button" class="ln-term" data-term="${term}">${word}</button>` : word)
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (x, txt, href) => `<a href="${href}">${txt}</a>`);
+  }
+  function md(text, m) {
+    const lines = String(text || "").split("\n");
+    let html = "", i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (line.trim().startsWith("```")) {
+        const copy = /```copy/.test(line), buf = [];
+        i++;
+        while (i < lines.length && !lines[i].trim().startsWith("```")) buf.push(lines[i++]);
+        i++;
+        html += `<div class="ln-code"><pre>${esc(buf.join("\n"))}</pre>${copy ? `<button type="button" class="btn btn-ghost ln-copy">${UI.copy}</button>` : ""}</div>`;
+      } else if (/^\s*\|/.test(line)) {
+        const rows = [];
+        while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++]);
+        const cells = r => r.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+        const body = rows.filter(r => !/^\s*\|[\s:|-]+\|\s*$/.test(r));
+        html += `<div class="ln-tablewrap"><table class="ln-table"><thead><tr>${cells(body[0]).map(c => `<th>${inline(c, m)}</th>`).join("")}</tr></thead><tbody>` +
+          body.slice(1).map(r => `<tr>${cells(r).map(c => `<td>${inline(c, m)}</td>`).join("")}</tr>`).join("") + "</tbody></table></div>";
+      } else if (/^\s*-\s+/.test(line)) {
+        const items = [];
+        while (i < lines.length && /^\s*-\s+/.test(lines[i])) items.push(lines[i++].replace(/^\s*-\s+/, ""));
+        html += `<ul>${items.map(x => `<li>${inline(x, m)}</li>`).join("")}</ul>`;
+      } else if (/^\s*\d+\.\s+/.test(line)) {
+        const items = [];
+        while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) items.push(lines[i++].replace(/^\s*\d+\.\s+/, ""));
+        html += `<ol>${items.map(x => `<li>${inline(x, m)}</li>`).join("")}</ol>`;
+      } else if (!line.trim()) {
+        i++;
+      } else {
+        html += `<p>${inline(line, m)}</p>`;
+        i++;
+      }
+    }
+    return html;
+  }
+
+  const title = (k, n) => C[k].titles[n][LI];
+  const stageOf = (k, n) => C[k].stages.find(s => n >= s.pairs[0] && n <= s.pairs[1]);
+  const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+
+  /* ---------- список пар ---------- */
+  function renderCourse(k) {
+    save("qc_learn_course", k);
+    app.innerHTML = `
+      <section class="wrap section ln">
+        <h1>${UI.title}</h1>
+        <p class="p-lead">${UI.lead}</p>
+        <div class="ln-tabs">${Object.keys(C).map(c => `<a href="#${c}" class="${c === k ? "on" : ""}">${C[c].name[LI]}</a>`).join("")}</div>
+        ${C[k].stages.map(s => `
+          <div class="ln-stage">
+            <div class="ln-stage-head"><span class="ln-stage-n">${UI.stage} ${s.n}</span><h2>${s.name[LI]}</h2><span class="muted">${s.sub[LI]}</span></div>
+            <div class="ln-cards">${range(s.pairs[0], s.pairs[1]).map(n => {
+              const d = P[`${k}-${n}`];
+              return `<a class="ln-card ${d ? "" : "soon"}" href="#${k}-${n}">
+                <span class="ln-card-n">${UI.pair} ${n}</span>
+                <strong>${title(k, n)}</strong>
+                <span class="muted">${d ? d.summary[LI] : UI.soon}</span></a>`;
+            }).join("")}</div>
+          </div>`).join("")}
+      </section>`;
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- страница пары ---------- */
+  function bodyHtml(d, m) {
+    const x = d[L];
+    const secs = x.sections.map(s => {
+      const more = s.more && s.more[m];
+      return `<section class="ln-sec">
+        <h2><span aria-hidden="true">${s.icon}</span> ${s.h[m]}</h2>
+        ${md(s[m], m)}
+        ${more ? `<details class="ln-more"><summary>${UI.more}: ${esc(more.t)}</summary>${md(more.body, m)}</details>` : ""}
+      </section>`;
+    }).join("");
+    const quiz = x.quiz[m].map((q, qi) => `
+      <div class="ln-q" data-q="${qi}">
+        <p><b>${qi + 1}. ${esc(q[0])}</b></p>
+        <div class="ln-opts">${q[1].map((o, oi) => `<button type="button" class="ln-opt" data-o="${oi}">${esc(o)}</button>`).join("")}</div>
+        <p class="ln-fb" hidden></p>
+      </div>`).join("");
+    return `${secs}
+      <div class="ln-remember"><b>${UI.remember}:</b> ${esc(x.remember[m])}</div>
+      <section class="ln-sec"><h2><span aria-hidden="true">✅</span> ${UI.quiz}</h2>${quiz}</section>
+      ${x.task ? `<p class="ln-task">📝 ${esc(x.task)}</p>` : ""}`;
+  }
+
+  function renderPair(k, n) {
+    const d = P[`${k}-${n}`];
+    const st = stageOf(k, n);
+    const last = C[k].stages[C[k].stages.length - 1].pairs[1];
+    const nav = `<div class="ln-nav">
+      ${n > 1 ? `<a class="btn btn-ghost" href="#${k}-${n - 1}">${UI.prev} ${n - 1}</a>` : "<span></span>"}
+      <a class="btn btn-ghost" href="#${k}">${UI.back}</a>
+      ${n < last ? `<a class="btn btn-ghost" href="#${k}-${n + 1}">${UI.next} ${n + 1}</a>` : "<span></span>"}</div>`;
+    const head = `<div class="ln-crumbs"><a href="#${k}">${C[k].name[LI]}</a> › ${UI.stage} ${st.n} · ${st.name[LI]}</div>
+      <h1><span class="ln-h-n">${UI.pair} ${n}</span> ${title(k, n)}</h1>`;
+    if (!d) {
+      app.innerHTML = `<section class="wrap section ln">${head}
+        <p class="ln-empty">${UI.empty} <a href="kb.html">${UI.kb}</a>.</p>${nav}</section>`;
+      window.scrollTo(0, 0);
+      return;
+    }
+    app.innerHTML = `
+      <section class="wrap section ln">
+        ${head}
+        <div class="ln-bar">
+          <div class="ln-mode" role="group">
+            <button type="button" data-m="s" class="${mode === "s" ? "on" : ""}">🙂 ${UI.simple}</button>
+            <button type="button" data-m="d" class="${mode === "d" ? "on" : ""}">🎓 ${UI.detailed}</button>
+          </div>
+          <span class="muted ln-mode-hint">${UI.mode_hint[mode]}</span>
+          <button type="button" class="btn btn-ghost ln-gloss-btn">${UI.gloss_btn}</button>
+        </div>
+        <div class="ln-layout">
+          <div class="ln-viewport"><div class="ln-body">${bodyHtml(d, mode)}</div></div>
+          <aside class="ln-gloss">
+            <h2>${UI.gloss}</h2>
+            <p class="muted ln-gloss-note">${UI.gloss_note}</p>
+            ${d.glossary.map(g => `<div class="ln-g" data-term="${esc(g[0])}">
+              <b>${esc(g[0])}</b> <span class="ln-pron">[${esc(g[1])}]</span>
+              <span><i>RU</i> ${esc(g[2])}</span><span><i>KZ</i> ${esc(g[3])}</span></div>`).join("")}
+          </aside>
+        </div>
+        ${nav}
+      </section>`;
+    wirePair(d);
+    window.scrollTo(0, 0);
+  }
+
+  function wireBody(root) {
+    root.querySelectorAll(".ln-copy").forEach(b => b.addEventListener("click", () => {
+      const text = b.parentElement.querySelector("pre").textContent;
+      const done = () => { b.textContent = UI.copied; setTimeout(() => { b.textContent = UI.copy; }, 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+    }));
+    root.querySelectorAll(".ln-q").forEach(q => q.querySelectorAll(".ln-opt").forEach(o => o.addEventListener("click", () => {
+      const data = q.__data;
+      const ok = Number(o.dataset.o) === data[2];
+      q.querySelectorAll(".ln-opt").forEach(x => x.classList.remove("ok", "bad"));
+      o.classList.add(ok ? "ok" : "bad");
+      const fb = q.querySelector(".ln-fb");
+      fb.hidden = false;
+      fb.className = "ln-fb " + (ok ? "ok" : "bad");
+      fb.textContent = (ok ? UI.right + " " : UI.wrong + " ") + data[3];
+    })));
+    root.querySelectorAll(".ln-term").forEach(t => t.addEventListener("click", () => {
+      const g = document.querySelector(`.ln-g[data-term="${CSS.escape(t.dataset.term)}"]`);
+      if (!g) return;
+      const aside = document.querySelector(".ln-gloss");
+      if (getComputedStyle(aside).position !== "sticky") aside.classList.add("open");
+      g.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      g.classList.remove("flash");
+      void g.offsetWidth;
+      g.classList.add("flash");
+    }));
+  }
+
+  function wirePair(d) {
+    const vp = document.querySelector(".ln-viewport");
+    const attachQuiz = () => document.querySelectorAll(".ln-q").forEach(q => { q.__data = d[L].quiz[mode][Number(q.dataset.q)]; });
+    attachQuiz();
+    wireBody(vp);
+    document.querySelector(".ln-gloss-btn").addEventListener("click", () => document.querySelector(".ln-gloss").classList.toggle("open"));
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let busy = false;
+    document.querySelectorAll(".ln-mode button").forEach(b => b.addEventListener("click", () => {
+      const m = b.dataset.m;
+      if (m === mode || busy) return;
+      const dir = m === "d" ? -1 : 1;   // «Подробно» уезжает влево, «Просто» — вправо
+      mode = m;
+      save("qc_learn_mode", m);
+      document.querySelectorAll(".ln-mode button").forEach(x => x.classList.toggle("on", x.dataset.m === m));
+      document.querySelector(".ln-mode-hint").textContent = UI.mode_hint[m];
+      const old = vp.querySelector(".ln-body");
+      const swap = () => {
+        const nb = document.createElement("div");
+        nb.className = "ln-body";
+        nb.innerHTML = bodyHtml(d, m);
+        return nb;
+      };
+      if (reduce) { old.replaceWith(swap()); attachQuiz(); wireBody(vp); return; }
+      busy = true;
+      vp.style.height = old.offsetHeight + "px";
+      old.style.transform = `translateX(${dir * 60}px)`;
+      old.style.opacity = "0";
+      setTimeout(() => {
+        const nb = swap();
+        nb.style.transition = "none";
+        nb.style.transform = `translateX(${-dir * 60}px)`;
+        nb.style.opacity = "0";
+        old.replaceWith(nb);
+        attachQuiz();
+        wireBody(vp);
+        vp.style.height = nb.offsetHeight + "px";
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          nb.style.transition = "";
+          nb.style.transform = "";
+          nb.style.opacity = "";
+        }));
+        setTimeout(() => { vp.style.height = ""; busy = false; }, 320);
+      }, 200);
+    }));
+  }
+
+  /* ---------- маршрут ---------- */
+  function route() {
+    const h = location.hash.slice(1);
+    const m = h.match(/^(k[12])-(\d+)$/);
+    if (m && C[m[1]].titles[m[2]]) return renderPair(m[1], Number(m[2]));
+    const k = C[h] ? h : (C[load("qc_learn_course", "k1")] ? load("qc_learn_course", "k1") : "k1");
+    renderCourse(k);
+  }
+  window.addEventListener("hashchange", route);
+  route();
+})();
