@@ -47,6 +47,7 @@
   function inline(s, m) {
     return esc(s)
       .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
       .replace(/\[\[([^\]@]+)@([^\]]+)\]\]/g, (x, word, term) => m === "d"
         ? `<button type="button" class="ln-term" data-term="${term}">${word}</button>` : word)
       .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (x, txt, href) => `<a href="${href}">${txt}</a>`);

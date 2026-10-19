@@ -37,6 +37,7 @@
 .ln-sec p { margin: 6px 0; }
 .ln-sec ul, .ln-sec ol { margin: 6px 0; padding-left: 22px; }
 .ln-sec li { margin-bottom: 4px; }
+.ln-sec code { background: #F3F4F6; border-radius: 4px; padding: 0 4px; font-size: .95em; }
 .ln-term { font: inherit; color: #1A56C4; background: none; border: 0; padding: 0; border-bottom: 2px dotted #1A56C4; cursor: pointer; }
 .ln-term:hover { background: #EAF1FB; }
 .ln-tablewrap { overflow-x: auto; }
