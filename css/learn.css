@@ -65,9 +65,14 @@
 .ln-gloss { position: sticky; top: 70px; background: #fff; border: 1px solid #D8DEE4; border-radius: 14px; padding: 14px 16px;
   max-height: calc(100vh - 90px); overflow: auto; }
 .ln-gloss h2 { font-size: 17px; margin: 0 0 4px; }
+.ln-gloss-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.ln-gloss-head h2 { margin: 0; }
+.ln-gloss-languages { min-width: 108px; max-width: 100%; padding: 4px 6px; border: 1px solid #D8DEE4; border-radius: 6px; background: #fff; color: #1F2328; font: inherit; font-size: 13px; cursor: pointer; }
+.ln-gloss-languages:focus-visible { outline: 2px solid #1A56C4; outline-offset: 2px; }
 .ln-gloss-note { font-size: 13px; margin: 0 0 8px; }
 .ln-g { border-top: 1px solid #EEF0F2; padding: 8px 6px; border-radius: 8px; display: flex; flex-wrap: wrap; column-gap: 6px; }
 .ln-g span:not(.ln-pron) { display: block; width: 100%; font-size: 14px; color: #3D444D; }
+.ln-g [data-gloss-lang][hidden] { display: none; }
 .ln-g i { font-style: normal; font-size: 11px; font-weight: 700; color: #8C959F; margin-right: 4px; }
 .ln-pron { color: #8C959F; font-size: 13px; }
 .ln-g.flash { animation: ln-flash 1.4s ease; }

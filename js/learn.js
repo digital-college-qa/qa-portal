@@ -24,6 +24,7 @@
       pair: "Пара", stage: "Этап", soon: "Готовится", simple: "Просто", detailed: "Подробно",
       mode_hint: { s: "Объясняем без терминов, на примерах из жизни.", d: "Точные термины и шаблоны, как на работе." },
       gloss: "Словарь пары", gloss_btn: "📖 Словарь", gloss_note: "Нажми на подчёркнутое слово в тексте — оно подсветится здесь.",
+      gloss_languages: "Языки перевода", gloss_ru: "Только RU", gloss_kz: "Только KZ", gloss_both: "RU + KZ",
       remember: "Запомни", quiz: "Проверь себя", right: "Верно!", wrong: "Не совсем.", more: "Подробнее",
       copy: "Скопировать", copied: "Скопировано", back: "← Все пары", prev: "← Пара", next: "Пара →",
       empty: "Эта пара ещё готовится. Пока можно открыть тему в", kb: "базе знаний", task: "Задание"
@@ -33,6 +34,7 @@
       pair: "Сабақ", stage: "Кезең", soon: "Дайындалуда", simple: "Қарапайым", detailed: "Толық",
       mode_hint: { s: "Терминсіз, өмірден мысалдармен түсіндіреміз.", d: "Нақты терминдер мен үлгілер, жұмыстағыдай." },
       gloss: "Сабақ сөздігі", gloss_btn: "📖 Сөздік", gloss_note: "Мәтіндегі асты сызылған сөзді бас — ол осында белгіленеді.",
+      gloss_languages: "Аударма тілдері", gloss_ru: "Тек RU", gloss_kz: "Тек KZ", gloss_both: "RU + KZ",
       remember: "Есте сақта", quiz: "Өзіңді тексер", right: "Дұрыс!", wrong: "Толық емес.", more: "Толығырақ",
       copy: "Көшіру", copied: "Көшірілді", back: "← Барлық сабақ", prev: "← Сабақ", next: "Сабақ →",
       empty: "Бұл сабақ әлі дайындалуда. Әзірге тақырыпты мына жерден ашуға болады:", kb: "білім қоры", task: "Тапсырма"
@@ -42,6 +44,8 @@
   const C = window.LEARN_COURSES, P = window.LEARN_PAIRS || {};
   const app = document.getElementById("app");
   let mode = load("qc_learn_mode", "s") === "d" ? "d" : "s";
+  const savedGlossLanguages = load("qc_learn_gloss_languages", "both");
+  let glossLanguages = ["ru", "kz", "both"].includes(savedGlossLanguages) ? savedGlossLanguages : "both";
 
   /* ---------- текст: абзацы, списки, таблицы, ``` / ```copy, **жирный**, [ссылка](url), [[слово@Term]] ---------- */
   function inline(s, m) {
@@ -168,11 +172,16 @@
         <div class="ln-layout">
           <div class="ln-viewport"><div class="ln-body">${bodyHtml(d, mode)}</div></div>
           <aside class="ln-gloss">
-            <h2>${UI.gloss}</h2>
+            <div class="ln-gloss-head">
+              <h2>${UI.gloss}</h2>
+              <select class="ln-gloss-languages" aria-label="${UI.gloss_languages}">
+                ${[["ru", UI.gloss_ru], ["kz", UI.gloss_kz], ["both", UI.gloss_both]].map(([value, label]) => `<option value="${value}"${glossLanguages === value ? " selected" : ""}>${label}</option>`).join("")}
+              </select>
+            </div>
             <p class="muted ln-gloss-note">${UI.gloss_note}</p>
             ${d.glossary.map(g => `<div class="ln-g" data-term="${esc(g[0])}">
               <b>${esc(g[0])}</b> <span class="ln-pron">[${esc(g[1])}]</span>
-              <span><i>RU</i> ${esc(g[2])}</span><span><i>KZ</i> ${esc(g[3])}</span></div>`).join("")}
+              <span data-gloss-lang="ru"${glossLanguages === "kz" ? " hidden" : ""}><i>RU</i> ${esc(g[2])}</span><span data-gloss-lang="kz"${glossLanguages === "ru" ? " hidden" : ""}><i>KZ</i> ${esc(g[3])}</span></div>`).join("")}
           </aside>
         </div>
         ${nav}
@@ -211,6 +220,13 @@
 
   function wirePair(d) {
     const vp = document.querySelector(".ln-viewport");
+    document.querySelector(".ln-gloss-languages").addEventListener("change", e => {
+      glossLanguages = e.target.value;
+      save("qc_learn_gloss_languages", glossLanguages);
+      document.querySelectorAll("[data-gloss-lang]").forEach(row => {
+        row.hidden = glossLanguages !== "both" && row.dataset.glossLang !== glossLanguages;
+      });
+    });
     const attachQuiz = () => document.querySelectorAll(".ln-q").forEach(q => { q.__data = d[L].quiz[mode][Number(q.dataset.q)]; });
     attachQuiz();
     wireBody(vp);
