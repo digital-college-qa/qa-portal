@@ -20,6 +20,7 @@
   }
   function save(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
+    if (window.parent !== window) window.parent.postMessage({ type: "qa-shop-change", key }, location.origin);
   }
 
   /* ---------- version under test ---------- */
@@ -102,7 +103,7 @@
       <div class="standbar">
         <div class="wrap standbar-in">
           <a href="index.html">${t("stand_back")}</a>
-          <span>${t("stand_version", { v: V11 ? "1.1" : "1.0" })}</span>
+          <span>${t("stand_version", { v: V11 ? "1.1" : "1.0" })} · <a href="labs.html?shop=${encodeURIComponent(location.pathname.split('/').pop() + location.search)}&tool=api">${lang() === "kz" ? "API мен тесттерді ашу ↗" : "Открыть API и тесты ↗"}</a></span>
         </div>
       </div>
       <div class="topbar">
@@ -605,5 +606,6 @@
   renderFooter();
   const app = document.getElementById("app");
   const page = document.body.dataset.page;
+  window.QAShop = { refresh() { renderHeader(); renderFooter(); if (pages[page]) pages[page](app); } };
   if (pages[page]) pages[page](app);
 })();

@@ -1,0 +1,17 @@
+{$LAB_DOMAIN} {
+    encode zstd gzip
+    request_body {
+        max_size 40KB
+    }
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        -Server
+    }
+    # Public clients never need the worker-only API or the shop snapshot assets.
+    @private path /api/training/* /shop/*
+    respond @private 404
+    reverse_proxy runner:3000 {
+        header_up X-Forwarded-For {remote_host}
+    }
+}

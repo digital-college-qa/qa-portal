@@ -31,6 +31,12 @@ h2 { font-size: 22px; margin: 0 0 12px; }
 .standbar { background: #E8EAED; color: #3C4043; font-size: 12.5px; }
 .standbar-in { display: flex; justify-content: space-between; gap: 12px; padding-top: 4px; padding-bottom: 4px; flex-wrap: wrap; }
 .standbar a { color: #1A56C4; text-decoration: none; }
+.shop-embedded .standbar, .shop-embedded .topbar { display: none; }
+.shop-embedded #header { position: sticky; }
+.shop-embedded .section { padding-top: 18px; padding-bottom: 24px; }
+.shop-embedded .section > h1 { font-size: 25px; margin-bottom: 12px; }
+.shop-embedded .toolbar { margin-bottom: 12px; }
+.shop-embedded .card-img { aspect-ratio: 2 / 1; }
 
 /* header */
 .topbar { background: var(--ink); color: #F3E6D8; font-size: 13px; }

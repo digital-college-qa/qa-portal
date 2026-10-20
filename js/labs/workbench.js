@@ -1,65 +1,133 @@
-(function () {
+(async function () {
   'use strict';
-  const kz = (() => { try { return JSON.parse(localStorage.getItem('qc_lang')) === 'kz'; } catch (_) { return false; } })();
-  const tr = (ru, kk) => kz ? kk : ru;
-  const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const api = window.QATraining;
-  const sampleTest = `import { test, expect } from '@playwright/test';\n\ntest('Открывается меню / Мәзір ашылады', async ({ page }) => {\n  await page.goto('menu.html');\n  await expect(page.getByRole('heading', { name: /^(Меню|Мәзір)$/, exact: true })).toBeVisible();\n});`;
-  document.getElementById('app').innerHTML = `<section class="wrap lab">
-    <h1>${tr('Практикум API и автотестов','API және автотесттер практикумы')}</h1>
-    <p class="lab-note">${tr('Составляй учебные запросы без аккаунта во внешнем сервисе. Отправка запросов и запуск тестов станут доступны после подключения учебных стендов 1.5 и 2.0.','Сыртқы сервиске тіркелмей оқу сұраныстарын құрастыр. Сұраныс жіберу және тест іске қосу 1.5 пен 2.0 оқу стендтері қосылғанда қолжетімді болады.')}</p>
-    <div class="lab-top"><label>${tr('Учебная версия','Оқу нұсқасы')} <select id="lab-version"><option>1.5</option><option>2.0</option></select></label>
-    <a href="kb.html#api-client">${tr('Как заполнить поля API-клиента','API клиент өрістерін толтыру')}</a> · <a href="kb.html#playwright-basics">${tr('Первые тесты Playwright','Алғашқы Playwright тесттері')}</a></div>
-    <div class="lab-grid">
-      <section class="lab-panel"><h2>${tr('Конструктор запроса','Сұраныс құрастыру')}</h2>
-        <div class="lab-method"><label>Method<select id="lab-method">${['GET','POST','PUT','PATCH','DELETE'].map(m=>`<option>${m}</option>`).join('')}</select></label>
-        <label>URL<input id="lab-url" value="/products" spellcheck="false"></label></div>
-        <label>Params (JSON)<textarea id="lab-params" spellcheck="false">{"category":"coffee"}</textarea></label>
-        <label>Headers (JSON)<textarea id="lab-headers" spellcheck="false">{"Accept":"application/json"}</textarea></label>
-        <label>Authorization · Bearer Token<input id="lab-token" type="password" autocomplete="off" placeholder="${tr('Только учебный токен; не сохраняется','Тек оқу токені; сақталмайды')}"></label>
-        <label>Body · JSON<textarea id="lab-body" spellcheck="false"></textarea></label>
-        <div class="lab-actions"><button class="btn" id="lab-preview" type="button">${tr('Собрать запрос','Сұранысты құрастыру')}</button><button class="btn btn-ghost" id="lab-send" disabled type="button">Send</button><button class="btn btn-ghost" id="lab-stop" disabled type="button">${tr('Остановить','Тоқтату')}</button></div>
-        <p role="status" id="lab-message"></p>
-      </section>
-      <section class="lab-panel"><h2>${tr('Запрос и ответ','Сұраныс пен жауап')}</h2>
-        <p class="lab-note">${tr('Проверь Method, URL и JSON перед отправкой. Токен скрыт в предпросмотре.','Жібермес бұрын Method, URL және JSON тексер. Алдын ала қарауда токен жасырылған.')}</p>
-        <h3>${tr('Предпросмотр запроса','Сұранысты алдын ала қарау')}</h3><pre id="lab-request">${tr('Нажми «Собрать запрос».','«Сұранысты құрастыру» батырмасын бас.')}</pre>
-        <h3>Response · Status / Time / Headers / Body</h3><pre id="lab-response">${tr('API-стенд пока не подключён. Ответов от сервера ещё нет.','API стенді әлі қосылмаған. Сервер жауабы әзірге жоқ.')}</pre>
-      </section>
-    </div>
-    <section class="lab-panel" style="margin-top:20px"><h2>Playwright · ${tr('версия 2.0','2.0 нұсқа')}</h2>
-      <p id="lab-runner-note" class="lab-note"></p>
-      <label>${tr('Код теста (JavaScript)','Тест коды (JavaScript)')}<textarea id="lab-test" class="lab-code" spellcheck="false">${esc(sampleTest)}</textarea></label>
-      <div class="lab-actions"><button id="lab-run" class="btn" disabled type="button">${tr('Запустить тест','Тестті іске қосу')}</button></div>
-      <pre id="lab-test-result">${tr('Запуск ещё не выполнялся.','Тест әлі іске қосылмаған.')}</pre>
-    </section></section>`;
-  const el = id => document.getElementById(id);
-  let controller = null;
-  function request() { return api.buildRequest({ method:el('lab-method').value,path:el('lab-url').value,params:el('lab-params').value,headers:el('lab-headers').value,token:el('lab-token').value,body:el('lab-body').value }); }
-  function preview() {
-    const req = request(), display = { ...req, headers:{...req.headers} };
-    Object.keys(display.headers).forEach(k => { if (/authorization|cookie|token|api.?key/i.test(k)) display.headers[k] = '[hidden]'; });
-    el('lab-request').textContent = JSON.stringify(display,null,2);
-    return req;
+  const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback;}catch(_){return fallback;}};
+  const write=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+  const kz=read('qc_lang','ru')==='kz',tr=(ru,kk)=>kz?kk:ru;
+  const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const svg=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${{
+    api:'<path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/>',tests:'<path d="M9 3h6m-5 0v7L4 20h16l-6-10V3M8 15h8"/>',docs:'<path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/>',logs:'<path d="M4 5h16M4 12h16M4 19h16m-12-8v2m6-9v2m1 12v2"/>'}[name]}</svg>`;
+  const presets=[
+    {method:'GET',path:'/products',title:tr('Каталог','Каталог'),body:''},
+    {method:'PATCH',path:'/products/3',title:tr('Цена капучино','Капучино бағасы'),body:'{\n  "price": 1800\n}'},
+    {method:'POST',path:'/cart/items',title:tr('Добавить в корзину','Себетке қосу'),body:'{\n  "productId": 3,\n  "quantity": 1,\n  "size": "M"\n}'},
+    {method:'GET',path:'/cart',title:tr('Моя корзина','Менің себетім'),body:''},
+    {method:'DELETE',path:'/cart',title:tr('Очистить корзину','Себетті тазарту'),body:''}
+  ];
+  const examples=[
+    {title:tr('Меню открывается','Мәзір ашылады'),code:`import { test, expect } from '@playwright/test';\n\ntest('Меню открывается', async ({ page }) => {\n  await page.goto('menu.html');\n  await expect(page.getByRole('heading', {\n    name: /^(Меню|Мәзір)$/\n  })).toBeVisible();\n});`},
+    {title:tr('Добавить капучино','Капучино қосу'),code:`import { test, expect } from '@playwright/test';\n\ntest('Капучино в корзине', async ({ page }) => {\n  await page.goto('product.html?id=3');\n  await page.getByRole('button', { name: 'M', exact: true }).click();\n  await page.getByRole('button', { name: /В корзину|Себетке/ }).click();\n  await page.goto('cart.html');\n  await expect(page.getByText('Капучино', { exact: true })).toBeVisible();\n});`}
+  ];
+  const names={api:tr('API-клиент','API клиент'),tests:tr('Автотесты','Автотесттер'),docs:tr('Документация','Құжаттама'),logs:tr('Журнал','Журнал')};
+  const win=(id,content,caption)=>`<section class="ide-window" data-window="${id}" role="dialog" aria-modal="false" aria-label="${names[id]}" hidden tabindex="-1"><div class="ide-titlebar">${svg(id)}<strong>${names[id]}</strong><span class="ide-caption">${caption}</span><div class="ide-controls"><button data-minimize aria-label="${tr('Свернуть','Жию')}">−</button><button data-maximize aria-label="${tr('Развернуть','Үлкейту')}">□</button><button data-close aria-label="${tr('Закрыть','Жабу')}">×</button></div></div><div class="ide-body">${content}</div><div class="ide-status"><span>QA Portal · ${names[id]}</span><span data-win-status>UTF-8</span></div></section>`;
+  const apiContent=`<div class="api-layout"><aside class="api-collection"><h3>${tr('Мои запросы','Сұраныстарым')}</h3>${presets.map((p,i)=>`<button data-preset="${i}" class="${i===0?'on':''}"><span class="method-tag ${p.method.toLowerCase()}">${p.method}</span>${p.title}</button>`).join('')}</aside><div class="api-main">
+    <div class="api-bar"><select id="api-method" aria-label="Method">${['GET','POST','PUT','PATCH','DELETE'].map(m=>`<option>${m}</option>`).join('')}</select><input id="api-url" aria-label="URL" value="/products" spellcheck="false"><button class="send" id="api-send" disabled>Send ↗</button></div>
+    <div class="ide-tabs" role="tablist" aria-label="${tr('Поля запроса','Сұраныс өрістері')}">${['Params','Headers','Body'].map((t,i)=>`<button role="tab" aria-selected="${i===0}" aria-controls="api-${t.toLowerCase()}-panel" data-api-tab="${t.toLowerCase()}">${t}</button>`).join('')}</div>
+    <div class="api-editor"><div id="api-params-panel" role="tabpanel"><label for="api-params">Query params · JSON</label><textarea id="api-params" spellcheck="false">{}</textarea></div><div id="api-headers-panel" role="tabpanel" hidden><label for="api-headers">Headers · JSON</label><textarea id="api-headers" spellcheck="false">{"Accept":"application/json"}</textarea></div><div id="api-body-panel" role="tabpanel" hidden><label for="api-body">Body · JSON</label><textarea id="api-body" spellcheck="false" placeholder='{"price":1800}'></textarea></div></div>
+    <p id="api-message" class="api-message" role="status"></p><div class="api-response"><div class="api-response-head"><strong>Response</strong><span id="api-http"></span><span id="api-time"></span></div><pre id="api-response" class="api-json">${tr('Выбери запрос слева и нажми Send. Изменения появятся в кофейне на фоне.','Сол жақтан сұраныс таңдап, Send бас. Өзгерістер арттағы кофеханада көрінеді.')}</pre></div>
+    <p class="studio-hint">${tr('Локальный учебный API: данные хранятся только в твоём браузере. Запрос виден в DevTools → Network.','Жергілікті оқу API: деректер тек өз браузеріңде сақталады. Сұраныс DevTools → Network ішінде көрінеді.')}</p></div></div>`;
+  const testContent=`<details class="runner-login" id="runner-login"><summary>${tr('Подключение сервера · вход по логину и паролю','Серверді қосу · логин және пароль')}</summary><label for="runner-url">${tr('Адрес сервера','Сервер мекенжайы')}</label><input id="runner-url" type="url" placeholder="https://tests.example.com" autocomplete="url"><label for="runner-user">${tr('Логин','Логин')}</label><input id="runner-user" autocomplete="username"><label for="runner-password">${tr('Пароль','Пароль')}</label><input id="runner-password" type="password" autocomplete="current-password"><button id="runner-connect">${tr('Войти','Кіру')}</button><button id="runner-logout" hidden>${tr('Выйти','Шығу')}</button><p class="runner-message" id="runner-message">${tr('Нужен развёрнутый сервер Playwright. SSH-доступ студентам не нужен.','Іске қосылған Playwright сервері қажет. Студенттерге SSH керек емес.')}</p></details>
+    <div class="test-toolbar"><select id="test-example" aria-label="${tr('Пример теста','Тест мысалы')}">${examples.map((p,i)=>`<option value="${i}">${p.title}</option>`).join('')}</select><button class="run-test" id="test-run" disabled>▶ ${tr('Запустить','Іске қосу')}</button><button class="stop-test" id="test-stop" disabled>■</button></div>
+    <div class="test-editor"><p class="test-file">coffee.spec.js · JavaScript</p><textarea class="test-code" id="test-code" aria-label="${tr('Код теста Playwright','Playwright тест коды')}" spellcheck="false">${esc(examples[0].code)}</textarea></div>
+    <div class="test-results"><h3>${tr('Результаты выполнения','Орындау нәтижелері')}</h3><div id="test-results" aria-live="polite"><p class="studio-notice">${tr('Тест ещё не запускался. Войди на сервер, чтобы выполнить его в настоящем Playwright.','Тест әлі іске қосылмады. Нақты Playwright-та орындау үшін серверге кір.')}</p></div><img id="run-preview" class="run-preview" alt="${tr('Снимок браузера Playwright','Playwright браузерінің суреті')}" hidden></div>`;
+  const docContent=`<article class="studio-docs"><h3>${tr('Сайт и инструменты — вместе','Сайт пен құралдар бірге')}</h3><p>${tr('Перетаскивай окна за тёмный заголовок. Размер меняется за нижний правый угол. Кнопка «−» сворачивает окно в панель внизу.','Терезені қара тақырыптан сүйре. Төменгі оң жақ бұрыштан өлшемін өзгерт. «−» батырмасы терезені төменгі панельге жияды.')}</p><h3>${tr('Попробуй изменить цену','Бағаны өзгертіп көр')}</h3><p>${tr('Выбери «Цена капучино» в API-клиенте. В Body укажи новую цену и нажми Send. Карточка товара обновится без перезагрузки страницы.','API клиенттен «Капучино бағасы» таңда. Body ішіне жаңа баға жазып, Send бас. Тауар карточкасы бет жаңартусыз өзгереді.')}</p><code class="endpoint">PATCH /products/3</code><code class="endpoint">{"price":1800}</code><h3>${tr('Контракт учебного API','Оқу API келісімі')}</h3><code class="endpoint">GET /products · GET /products/:id</code><code class="endpoint">PATCH /products/:id</code><p>${tr('Изменяемые поля: price — целое число 0–100000; inStock — true/false.','Өзгеретін өрістер: price — 0–100000 бүтін саны; inStock — true/false.')}</p><code class="endpoint">GET /cart · DELETE /cart</code><code class="endpoint">POST /cart/items</code><p>${tr('productId — существующий товар; quantity — целое 1–10; size — S, M или L; syrup — true/false (необязательно).','productId — бар тауар; quantity — 1–10 бүтін саны; size — S, M не L; syrup — true/false (міндетті емес).')}</p><code class="endpoint">PATCH /cart/items/:id · DELETE /cart/items/:id</code><p>${tr('ID строки берётся из GET /cart. PATCH принимает quantity.','Жол ID-і GET /cart жауабынан алынады. PATCH quantity қабылдайды.')}</p><code class="endpoint">GET /orders</code><code class="endpoint">POST /session/reset</code><p>${tr('Сброс возвращает исходные цены и очищает корзину. Учебные запросы не меняют чужие данные.','Тазарту бастапқы бағаларды қайтарады және себетті босатады. Оқу сұраныстары өзгенің дерегін өзгертпейді.')}</p><h3>${tr('Первые автотесты','Алғашқы автотесттер')}</h3><p>${tr('Playwright выполняет тест на сервере. После каждого шага ты видишь снимок браузера, а изменения корзины и цен синхронизируются с кофейней на фоне. Поддерживается учебный набор команд; произвольные программы сервер не запускает.','Playwright тестті серверде орындайды. Әр қадамнан кейін браузер суреті көрінеді, себет пен баға өзгерісі арттағы кофеханамен синхрондалады. Оқу командалары қолданылады; сервер кез келген бағдарламаны іске қоспайды.')}</p><a href="kb.html#api-client" target="_blank" rel="noopener">${tr('Инструкция API →','API нұсқаулығы →')}</a><br><a href="kb.html#playwright-basics" target="_blank" rel="noopener">${tr('Инструкция Playwright →','Playwright нұсқаулығы →')}</a></article>`;
+  const logsContent=`<div class="log-toolbar"><input id="log-query" aria-label="${tr('Поиск в журнале','Журналдан іздеу')}" placeholder="${tr('Событие, requestId…','Оқиға, requestId…')}"><select id="log-level" aria-label="Level"><option value="">All levels</option><option>INFO</option><option>ERROR</option></select><button id="log-export">JSONL ↓</button></div><div class="log-rows" id="log-rows" aria-live="off"></div>`;
+  const allowedPages=['home.html','menu.html','cart.html','product.html','checkout.html','account.html','login.html','register.html','contacts.html'];
+  const requested=new URLSearchParams(location.search).get('shop')||'menu.html';
+  const shopURL=new URL(requested,location.href);
+  const initial=shopURL.origin===location.origin&&allowedPages.includes(shopURL.pathname.split('/').pop())?shopURL.pathname.split('/').pop()+shopURL.search:'menu.html';
+  document.getElementById('app').innerHTML=`<section class="studio" id="studio"><div class="studio-top"><h1>${tr('Твоя QA-лаборатория','Сенің QA зертханаң')}</h1><span class="studio-pill"><i class="studio-dot"></i><span id="studio-api-state">${tr('Подключаем API…','API қосылуда…')}</span></span><span class="studio-pill">qala coffe · <span id="studio-cart">0</span> ${tr('в корзине','себетте')}</span><span class="studio-pill">${tr('Учись. Пробуй. Находи.','Үйрен. Сына. Тап.')}</span></div>
+    <div class="studio-browser" id="studio-browser"><div class="studio-address"><span class="dots"><i></i><i></i><i></i></span><button id="shop-back" aria-label="${tr('Назад в магазине','Дүкенде артқа')}">‹</button><select id="shop-page" aria-label="${tr('Страница магазина','Дүкен беті')}"><option value="menu.html">qala coffe / ${tr('Меню','Мәзір')}</option><option value="product.html?id=3">qala coffe / ${tr('Капучино','Капучино')}</option><option value="cart.html">qala coffe / ${tr('Корзина','Себет')}</option><option value="home.html">qala coffe / ${tr('Главная','Басты бет')}</option></select><button id="shop-reload" aria-label="${tr('Обновить магазин','Дүкенді жаңарту')}">↻</button></div><img id="studio-live-preview" class="studio-live-preview" alt="Playwright · live" hidden><iframe id="shop-frame" title="${tr('Учебная кофейня qala coffe','qala coffe оқу кофеханасы')}"></iframe></div>
+    ${win('api',apiContent,'REST · JSON')}${win('tests',testContent,'Playwright')}${win('docs',docContent,'README.md')}${win('logs',logsContent,'events.jsonl')}
+    <nav class="studio-dock" aria-label="${tr('Инструменты лаборатории','Зертхана құралдары')}">${Object.keys(names).map(id=>`<button data-open="${id}" aria-expanded="false">${svg(id)}${names[id]}</button>`).join('')}</nav><div id="studio-toast" class="studio-toast" role="status" hidden></div></section>`;
+  const $=id=>document.getElementById(id),studio=$('studio'),frame=$('shop-frame');
+  let z=30,toastTimer,apiReady=false,token='',activeRun=null,runController=null,runnerURL=read('qa_runner_url',''),lastSnapshot='';
+  const logs=[];
+  function log(event,details={},level='INFO'){logs.push({timestamp:new Date().toISOString(),level,event,...details});if(logs.length>300)logs.shift();drawLogs();}
+  function drawLogs(){const q=$('log-query').value.toLowerCase(),level=$('log-level').value;$('log-rows').innerHTML=logs.filter(l=>(!level||l.level===level)&&(!q||JSON.stringify(l).toLowerCase().includes(q))).slice().reverse().map(l=>`<div class="log-row ${l.level==='ERROR'?'error':''}"><span>${esc(l.timestamp.slice(11,19))}</span><span>${l.level}</span><span>${esc(l.event)}</span><span class="log-details">${esc(JSON.stringify(Object.fromEntries(Object.entries(l).filter(([k])=>!['timestamp','event','level'].includes(k)))))}</span></div>`).join('');}
+  function toast(message){clearTimeout(toastTimer);$('studio-toast').textContent=message;$('studio-toast').hidden=false;toastTimer=setTimeout(()=>$('studio-toast').hidden=true,3200);}
+  function refreshShop(detail={}){frame.contentWindow?.postMessage({type:'qa-refresh'},location.origin);$('studio-cart').textContent=read('qc_cart',[]).reduce((n,i)=>n+i.qty,0);if(detail.event){log(detail.event,{key:detail.key,entityId:detail.entityId,changes:detail.changes});$('studio-browser').classList.remove('changed');void $('studio-browser').offsetWidth;$('studio-browser').classList.add('changed');}}
+  const store=QAStore.createStore({read,write,seed:PRODUCTS,onChange:refreshShop});
+  function goShop(path){const url=new URL(path,location.href);if(url.origin!==location.origin||!allowedPages.includes(url.pathname.split('/').pop()))return;url.searchParams.set('embedded','1');frame.src=url.href;}
+  goShop(initial);
+  $('shop-page').addEventListener('change',()=>goShop($('shop-page').value));
+  $('shop-reload').addEventListener('click',()=>frame.contentWindow.location.reload());
+  $('shop-back').addEventListener('click',()=>{try{frame.contentWindow.history.back();}catch(_){goShop('menu.html');}});
+  frame.addEventListener('load',()=>{try{const url=new URL(frame.contentWindow.location.href),value=url.pathname.split('/').pop()+(url.pathname.endsWith('product.html')?'?id='+url.searchParams.get('id'):'');if([...$('shop-page').options].some(o=>o.value===value))$('shop-page').value=value;log('page.loaded',{route:value});}catch(_){}refreshShop();});
+  window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data?.type==='qa-shop-change'){refreshShop();log('shop.state.changed',{key:e.data.key});}});
+  window.addEventListener('storage',e=>{if(e.key?.startsWith('qc_'))refreshShop();});
+  function saveGeometry(w){if(w.classList.contains('maximized')||innerWidth<700)return;write('qa_window_'+w.dataset.window,{left:w.offsetLeft,top:w.offsetTop,width:w.offsetWidth,height:w.offsetHeight});}
+  function clampWindow(w){if(innerWidth<700)return;const width=Math.min(w.offsetWidth,studio.clientWidth-20),height=Math.min(w.offsetHeight,studio.clientHeight-90);w.style.width=Math.max(340,width)+'px';w.style.height=Math.max(260,height)+'px';w.style.left=Math.max(10,Math.min(w.offsetLeft,studio.clientWidth-width-10))+'px';w.style.top=Math.max(10,Math.min(w.offsetTop,studio.clientHeight-height-75))+'px';w.style.right='auto';}
+  function openWindow(id,focus=true){const w=studio.querySelector(`[data-window="${id}"]`);if(!w)return;w.hidden=false;w.style.zIndex=++z;studio.querySelector(`[data-open="${id}"]`).setAttribute('aria-expanded','true');clampWindow(w);if(focus)w.focus({preventScroll:true});log('window.opened',{window:id});}
+  function closeWindow(w){saveGeometry(w);w.hidden=true;const button=studio.querySelector(`[data-open="${w.dataset.window}"]`);button.setAttribute('aria-expanded','false');button.focus({preventScroll:true});}
+  studio.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{const w=studio.querySelector(`[data-window="${b.dataset.open}"]`);if(w.hidden)openWindow(b.dataset.open);else closeWindow(w);}));
+  studio.querySelectorAll('.ide-window').forEach(w=>{
+    const saved=read('qa_window_'+w.dataset.window,null);if(saved&&[saved.left,saved.top,saved.width,saved.height].every(Number.isFinite))Object.entries(saved).forEach(([k,v])=>w.style[k]=v+'px');
+    w.addEventListener('pointerdown',()=>w.style.zIndex=++z);
+    w.querySelectorAll('[data-minimize],[data-close]').forEach(b=>b.addEventListener('click',()=>closeWindow(w)));
+    w.querySelector('[data-maximize]').addEventListener('click',()=>{w.classList.toggle('maximized');if(!w.classList.contains('maximized'))clampWindow(w);});
+    const bar=w.querySelector('.ide-titlebar');let drag=null;
+    bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||innerWidth<700||w.classList.contains('maximized'))return;drag={x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop};bar.setPointerCapture(e.pointerId);studio.classList.add('studio-dragging');});
+    bar.addEventListener('pointermove',e=>{if(!drag)return;w.style.left=Math.max(0,Math.min(studio.clientWidth-w.offsetWidth,drag.left+e.clientX-drag.x))+'px';w.style.top=Math.max(0,Math.min(studio.clientHeight-112,drag.top+e.clientY-drag.y))+'px';w.style.right='auto';});
+    const end=()=>{if(drag){drag=null;studio.classList.remove('studio-dragging');saveGeometry(w);}};bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+    w.addEventListener('keydown',e=>{if(e.key==='Escape'){closeWindow(w);studio.querySelector(`[data-open="${w.dataset.window}"]`).focus();}});
+    if('ResizeObserver'in window)new ResizeObserver(()=>{if(!w.hidden&&!drag)saveGeometry(w);}).observe(w);
+  });
+  window.addEventListener('resize',()=>studio.querySelectorAll('.ide-window:not([hidden])').forEach(clampWindow));
+  function tab(name){studio.querySelectorAll('[data-api-tab]').forEach(b=>{const selected=b.dataset.apiTab===name;b.setAttribute('aria-selected',selected);$('api-'+b.dataset.apiTab+'-panel').hidden=!selected;});}
+  studio.querySelectorAll('[data-api-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.apiTab)));
+  studio.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const p=presets[Number(b.dataset.preset)];$('api-method').value=p.method;$('api-url').value=p.path;$('api-body').value=p.body;$('api-params').value='{}';studio.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('on',x===b));tab(p.body?'body':'params');}));
+  function highlighted(value){const text=esc(JSON.stringify(value,null,2));return text.replace(/(&quot;.*?&quot;)(\s*:)?|\b(true|false|null|\d+(?:\.\d+)?)\b/g,(all,str,key,num)=>str?`<span class="${key?'json-key':'json-string'}">${str}</span>${key||''}`:`<span class="json-num">${num}</span>`);}
+  $('api-send').addEventListener('click',async()=>{
+    if(!apiReady)return;$('api-send').disabled=true;$('api-message').textContent='';
+    try{
+      const req=QATraining.buildRequest({method:$('api-method').value,path:$('api-url').value,params:$('api-params').value,headers:$('api-headers').value,body:$('api-body').value});
+      const before=store.products().find(p=>req.path.split('?')[0]==='/products/'+p.id);
+      const started=performance.now();log('api.request',{method:req.method,path:req.path});
+      const response=await fetch(new URL('training-api'+req.path,location.href),{method:req.method,headers:req.headers,body:req.body});
+      const result=response.status===204?null:await response.json();
+      $('api-http').textContent=response.status+' '+response.statusText;$('api-http').className='api-http'+(response.ok?'':' error');$('api-time').textContent=Math.round(performance.now()-started)+' ms';$('api-response').innerHTML=highlighted(result);
+      log('api.response',{requestId:response.headers.get('X-Request-Id'),status:response.status,path:req.path},response.ok?'INFO':'ERROR');
+      if(response.ok&&req.method!=='GET'){const message=before&&result?.price!==undefined?`${before.name[kz?'kz':'ru']} · ${before.price} → ${result.price} ₸`:tr('Данные обновлены — посмотри на сайт','Деректер жаңарды — сайтты қара');toast(message);$('api-message').textContent=message;}
+    }catch(e){$('api-message').textContent=e.message;log('api.client.error',{message:e.message},'ERROR');}finally{$('api-send').disabled=!apiReady;}
+  });
+  navigator.serviceWorker?.addEventListener('message',event=>{
+    if(event.data?.type!=='qa-api-request'||!event.ports[0])return;
+    const requestId=crypto.randomUUID();try{event.ports[0].postMessage(store.handle({...event.data.payload,requestId}));}catch(e){event.ports[0].postMessage({status:500,headers:{'Content-Type':'application/json'},body:{error:{code:'INTERNAL_ERROR',message:'Teaching API error'},requestId}});log('api.error',{requestId,message:e.message},'ERROR');}
+  });
+  async function prepareAPI(){
+    if(!('serviceWorker'in navigator))throw Error(tr('Браузер не поддерживает учебный API. Открой сайт в Chrome или Edge.','Браузер оқу API қолдамайды. Chrome не Edge қолдан.'));
+    await navigator.serviceWorker.register('api-worker.js');await navigator.serviceWorker.ready;
+    if(!navigator.serviceWorker.controller)await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error(tr('Обнови страницу для подключения API','API қосу үшін бетті жаңарт'))),10000);navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timer);resolve();},{once:true});});
+    apiReady=true;$('api-send').disabled=false;$('studio-api-state').textContent=tr('Учебный API работает','Оқу API жұмыс істейді');log('api.ready');
   }
-  function refresh() {
-    const auto = el('lab-version').value === '2.0';
-    el('lab-send').disabled = !api.connected('api') || Boolean(controller);
-    el('lab-run').disabled = !auto || !api.connected('playwright') || Boolean(controller);
-    el('lab-runner-note').textContent = auto
-      ? tr('Редактор готов. Для реального запуска нужен подключённый учебный runner Playwright.','Редактор дайын. Нақты іске қосу үшін оқу Playwright runner қосылуы керек.')
-      : tr('В версии 1.5 доступен API-клиент. Автотесты предназначены для версии 2.0.','1.5 нұсқада API клиент бар. Автотесттер 2.0 нұсқаға арналған.');
+  $('log-query').addEventListener('input',drawLogs);$('log-level').addEventListener('change',drawLogs);
+  $('log-export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([logs.map(l=>JSON.stringify(l)).join('\n')],{type:'application/x-ndjson'}));const a=document.createElement('a');a.href=url;a.download='qa-session.jsonl';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+  $('test-example').addEventListener('change',()=>$('test-code').value=examples[Number($('test-example').value)].code);
+  $('runner-url').value=runnerURL;
+  async function server(path,options={}){const response=await fetch(runnerURL+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers}});const data=await response.json();if(!response.ok){if(response.status===401){token='';$('test-run').disabled=true;$('runner-login').open=true;}throw Error(data.error||'Server error '+response.status);}return data;}
+  $('runner-connect').addEventListener('click',async()=>{
+    try{
+      const url=new URL($('runner-url').value.trim());if(url.protocol!=='https:'&&!['127.0.0.1','localhost'].includes(url.hostname))throw Error(tr('Сервер должен использовать HTTPS','Сервер HTTPS қолдануы керек'));if(url.username||url.password||url.search||url.hash)throw Error('Invalid server URL');runnerURL=url.origin;
+      const result=await server('/auth/login',{method:'POST',body:JSON.stringify({username:$('runner-user').value,password:$('runner-password').value})});token=result.token;$('runner-password').value='';write('qa_runner_url',runnerURL);$('runner-message').textContent=tr('Подключено. Можно запускать тесты.','Қосылды. Тесттерді іске қосуға болады.');$('runner-login').open=false;$('runner-logout').hidden=false;$('test-run').disabled=false;$("test-results").innerHTML='<p class="studio-notice">'+tr('Выбери пример и нажми «Запустить». Изменения вернутся в кофейню.','Мысал таңдап, «Іске қосу» бас. Өзгерістер кофеханаға қайтады.')+'</p>';toast(tr('Playwright подключён','Playwright қосылды'));log('runner.connected');
+    }catch(e){$('runner-message').textContent=e.message;}
+  });
+  $('runner-logout').addEventListener('click',async()=>{try{await server('/auth/logout',{method:'POST',body:'{}'});}catch(_){}token='';$('test-run').disabled=true;$('runner-logout').hidden=true;$('runner-message').textContent=tr('Ты вышел. Войди снова для запуска.','Шықтың. Іске қосу үшін қайта кір.');});
+  function snapshot(){return {qc_cart:read('qc_cart',[]),qc_product_overrides:read('qc_product_overrides',{}),qc_lang:read('qc_lang','ru'),qc_version:read('qc_version','1.0')};}
+  function applySnapshot(state){if(!state)return;const serialized=JSON.stringify(state);if(serialized===lastSnapshot)return;lastSnapshot=serialized;for(const key of ['qc_cart','qc_product_overrides'])if(key in state)write(key,state[key]);refreshShop({event:'test.state.synced'});}
+  function showRun(run){
+    $('test-results').innerHTML=(run.steps||[]).map(step=>`<div class="test-step ${step.status==='passed'?'pass':step.status==='failed'?'fail':'running'}"><span class="test-check">${step.status==='passed'?'✓':step.status==='failed'?'×':'◌'}</span><span>${esc(step.title)}</span><span class="test-duration">${step.durationMs||0} ms</span></div>`).join('')+(run.error?`<pre class="test-error">${esc(run.error)}</pre>`:'');
+    if(run.image){$('run-preview').src='data:image/jpeg;base64,'+run.image;$('run-preview').hidden=false;$('studio-live-preview').src='data:image/jpeg;base64,'+run.image;$('studio-live-preview').hidden=false;}
+    applySnapshot(run.storage);
+    studio.querySelector('[data-window="tests"] [data-win-status]').textContent=run.status;
   }
-  el('lab-preview').addEventListener('click', () => { try {preview();el('lab-message').textContent=tr('Запрос собран. Отправка не выполнялась.','Сұраныс құрастырылды. Жіберілген жоқ.');} catch(e){el('lab-message').textContent=e.message;} });
-  el('lab-version').addEventListener('change',refresh);
-  el('lab-stop').addEventListener('click',()=>controller?.abort());
-  async function run(kind, payload, output) {
-    controller = new AbortController(); refresh(); el('lab-stop').disabled=false;
-    try { const result=await api.execute(kind,el('lab-version').value,payload,controller.signal);el(output).textContent=JSON.stringify(result,null,2); }
-    catch(e){el(output).textContent=e.name==='AbortError'?tr('Остановлено.','Тоқтатылды.'):e.message;}
-    finally{controller=null;el('lab-stop').disabled=true;refresh();}
-  }
-  el('lab-send').addEventListener('click',()=>{try{run('api',preview(),'lab-response');}catch(e){el('lab-message').textContent=e.message;}});
-  el('lab-run').addEventListener('click',()=>run('playwright',{code:el('lab-test').value},'lab-test-result'));
-  refresh();
+  $('test-run').addEventListener('click',async()=>{
+    if(!token)return;$('test-run').disabled=true;$('test-stop').disabled=false;runController=new AbortController();lastSnapshot='';$('test-results').innerHTML=`<p class="studio-notice">${tr('Запускаем настоящий браузер Playwright…','Нақты Playwright браузері іске қосылуда…')}</p>`;
+    try{
+      const job=await server('/runs',{method:'POST',body:JSON.stringify({code:$('test-code').value,storage:snapshot()})});activeRun=job.id;if(runController.signal.aborted){await server('/runs/'+activeRun,{method:'DELETE'});return;}log('test.started',{runId:job.id});
+      while(!runController.signal.aborted){const run=await server('/runs/'+activeRun,{signal:runController.signal});showRun(run);if(['passed','failed','cancelled'].includes(run.status)){if(run.route)goShop(run.route);log('test.'+run.status,{runId:activeRun},run.status==='failed'?'ERROR':'INFO');if(run.status==='passed')toast(tr('Тест пройден. Результат — на сайте.','Тест өтті. Нәтиже сайтта көрінеді.'));break;}await new Promise(r=>setTimeout(r,650));}
+    }catch(e){if(e.name!=='AbortError')$('test-results').innerHTML=`<pre class="test-error">${esc(e.message)}</pre>`;}finally{$('studio-live-preview').hidden=true;activeRun=null;runController=null;$('test-run').disabled=!token;$('test-stop').disabled=true;}
+  });
+  $('test-stop').addEventListener('click',async()=>{runController?.abort();if(activeRun)try{await server('/runs/'+activeRun,{method:'DELETE'});}catch(_){}$('test-results').insertAdjacentHTML('beforeend',`<p class="studio-notice">${tr('Запуск остановлен.','Іске қосу тоқтатылды.')}</p>`);});
+  openWindow(new URLSearchParams(location.search).get('tool')==='tests'?'tests':'api',false);refreshShop();
+  try{await prepareAPI();}catch(e){$('studio-api-state').textContent=tr('API не подключён','API қосылмаған');$('api-message').textContent=e.message;}
 })();

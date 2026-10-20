@@ -1,0 +1,55 @@
+services:
+  runner:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+      - seccomp=./seccomp_profile.json
+    tmpfs:
+      - /tmp:size=768m,mode=1777
+    shm_size: 512m
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 256
+    environment:
+      LAB_USERNAME: ${LAB_USERNAME:?Set LAB_USERNAME in .env}
+      LAB_PASSWORD_FILE: /run/secrets/lab_password
+      ALLOWED_ORIGINS: https://digital-college-qa.github.io
+      TRUST_PROXY: "1"
+    secrets: [lab_password]
+    networks: [isolated]
+    expose: ["3000"]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      LAB_DOMAIN: ${LAB_DOMAIN:?Set LAB_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [isolated, public]
+    mem_limit: 256m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+secrets:
+  lab_password:
+    file: ./secrets/lab_password.txt
+networks:
+  isolated:
+    internal: true
+  public: {}
+volumes:
+  caddy_data: {}
+  caddy_config: {}

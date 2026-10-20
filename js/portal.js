@@ -31,7 +31,7 @@
         ["docs.html", "📄", "Требования", "ТЗ заказчика и макеты экранов от дизайнера."],
         ["testdata.html", "🧪", "Тестовые данные", "Email, пароли, телефоны, промокод и длинные тексты для проверок."],
         ["releases.html", "🔁", "Релизы", "Версии сайта: что исправили и что добавили. Здесь выбирается версия."],
-        ["labs.html", "🔌", "API и автотесты", "Конструктор запросов, редактор тестов и инструкции. Учебные стенды готовятся."]
+        ["labs.html", "🔌", "API и автотесты", "Окна инструментов поверх кофейни. Отправь запрос — увидишь результат на сайте."]
       ],
       reset_title: "Начать с чистого листа",
       reset_text: "Удалить мои аккаунты, корзину и заказы на этом компьютере. Язык и выбранная версия сохранятся.",
@@ -72,7 +72,7 @@
         ["docs.html", "📄", "Талаптар", "Тапсырыс берушінің ТТ-сы және дизайнердің экран макеттері."],
         ["testdata.html", "🧪", "Тест деректері", "Тексеруге арналған email, құпиясөздер, телефондар, промокод және ұзын мәтіндер."],
         ["releases.html", "🔁", "Релиздер", "Сайт нұсқалары: не түзетілді, не қосылды. Нұсқа осында таңдалады."],
-        ["labs.html", "🔌", "API және автотесттер", "Сұраныс құрастыру, тест редакторы және нұсқаулықтар. Оқу стендтері дайындалуда."]
+        ["labs.html", "🔌", "API және автотесттер", "Құралдар кофехананың үстінде. Сұраныс жібер — нәтижесін сайттан көр."]
       ],
       reset_title: "Таза парақтан бастау",
       reset_text: "Осы компьютердегі аккаунттарымды, себетімді және тапсырыстарымды өшіру. Тіл мен таңдалған нұсқа сақталады.",
@@ -326,24 +326,43 @@
   const pages = {};
 
   pages.hub = function (app) {
+    const kk = lang() === "kz";
+    const tr = (ru, kz) => kk ? kz : ru;
     app.innerHTML = `
-      <section class="wrap section">
-        <h1>${t("hub_title")}</h1>
-        <p class="p-lead">${t("hub_sub")}</p>
-        <p class="p-version">${t("hub_version", { v: version() })}</p>
-        <div class="p-tiles">${t("tiles").map(([href, icon, title, text]) => href
-          ? `<a class="p-tile" href="${href}"><span class="p-icon">${icon}</span><strong>${title}</strong><span>${text}</span></a>`
+      <section class="wrap hub">
+        <div class="hub-hero">
+          <div class="hub-hero-copy"><span class="hub-eyebrow"><i></i> ${tr("ТВОЯ ТЕРРИТОРИЯ ПРАКТИКИ", "СЕНІҢ ПРАКТИКА АЛАҢЫҢ")}</span>
+          <h1>${tr("Любопытство.<br>Практика.<br><em>Твой первый баг.</em>", "Қызығушылық.<br>Практика.<br><em>Алғашқы багың.</em>")}</h1>
+          <p>${tr("Здесь учатся замечать то, что другие пропустили. Исследуй кофейню, отправляй запросы и запускай тесты — всё в одной лаборатории.", "Басқалар байқамағанды көруді үйрен. Кофехананы зертте, сұраныс жібер, тест іске қос — бәрі бір зертханада.")}</p>
+          <div class="hub-cta"><a class="btn hub-primary" href="labs.html">${tr("Открыть лабораторию", "Зертхананы ашу")} <span>↗</span></a><a class="hub-secondary" href="learn.html#k1">${tr("Начать с уроков", "Сабақтардан бастау")} <span>→</span></a></div>
+          <div class="hub-details"><span><i class="mint-dot"></i> ${tr("Без внешних аккаунтов для API", "API үшін сыртқы аккаунтсыз")}</span><span>RU + KZ</span></div>
+          </div>
+          <div class="hub-playground" aria-label="${tr("Схема: запрос меняет цену товара", "Сызба: сұраныс тауар бағасын өзгертеді")}">
+            <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div><div class="hero-spark spark-one">✳</div><div class="hero-spark spark-two">+</div>
+            <div class="hero-float float-request"><div class="mini-title"><span class="mini-dots">● ● ●</span> request.http</div><div class="mini-request"><b>PATCH</b> /products/3</div><code>{ "price": <span>1800</span> }</code><div class="mini-send">Send <span>↗</span></div></div>
+            <div class="hero-flow"><i></i><i></i><i></i><span>→</span></div>
+            <div class="hero-float float-coffee"><div class="coffee-symbol"><svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M26 40h45v22a21 21 0 0 1-42 0z" fill="#FEF5E9" stroke="#3B3054" stroke-width="3"/><path d="M71 44h5c16 0 16 24-5 24M22 86h55M43 17c-12 10 10 10 0 20M56 12c-12 10 10 10 0 20" stroke="#3B3054" stroke-width="3" stroke-linecap="round"/></svg></div><strong>${tr("Капучино", "Капучино")}</strong><span class="mini-coffee-sub">qala coffe</span><div class="mini-price"><del>1 200 ₸</del><b>1 800 ₸</b></div><div class="mini-updated"><i></i> ${tr("Обновлено через API", "API арқылы жаңарды")}</div></div>
+            <div class="hero-float float-passed"><span class="passed-icon">✓</span><div><strong>Test passed</strong><small>coffee.spec.js · 1.2 s</small></div></div>
+            <div class="hero-small-note">${tr("Пример: запрос → ответ → изменение сайта", "Мысал: сұраныс → жауап → сайт өзгерісі")}</div>
+          </div>
+        </div>
+        <div class="hub-route" data-reveal><span class="hub-route-label">${tr("ТВОЙ МАРШРУТ", "СЕНІҢ БАҒЫТЫҢ")}</span><a href="learn.html#k1"><b>01</b><span>${tr("Разберись в теме", "Тақырыпты түсін")}</span></a><i>→</i><a href="labs.html"><b>02</b><span>${tr("Попробуй на сайте", "Сайтта сына")}</span></a><i>→</i><a href="kb.html#bug-report"><b>03</b><span>${tr("Объясни результат", "Нәтижені түсіндір")}</span></a></div>
+        <div class="hub-section-heading" data-reveal><div><span class="hub-eyebrow">${tr("ВСЁ ПОД РУКОЙ", "БӘРІ ҚОЛАСТЫНДА")}</span><h2>${tr("Куда отправимся сегодня?", "Бүгін қайда барамыз?")}</h2></div><p>${tr("От первого вопроса до уверенной проверки.", "Алғашқы сұрақтан сенімді тексеруге дейін.")}</p></div>
+        <div class="p-tiles">${t("tiles").map(([href, icon, title, text], i) => href
+          ? `<a class="p-tile tile-${i}" href="${href}" data-reveal><span class="tile-number">0${i + 1}</span><span class="p-icon">${icon}</span><strong>${title}</strong><span>${text}</span><span class="tile-arrow">↗</span></a>`
           : `<div class="p-tile off"><span class="p-icon">${icon}</span><strong>${title}</strong><span>${text}</span></div>`).join("")}
         </div>
-        <div class="p-reset">
+        <div class="hub-lab-banner" data-reveal><span class="hub-banner-icon">⌘</span><div><strong>${tr("Инструменты поверх сайта. Результат перед глазами.", "Құралдар сайттың үстінде. Нәтиже көз алдыңда.")}</strong><p>${tr("Открывай API, тесты и документацию в отдельных окнах. Перемещай их так, как удобно тебе.", "API, тесттер және құжаттаманы бөлек терезелерде аш. Өзіңе ыңғайлы орналастыр.")}</p></div><a href="labs.html">${tr("Попробовать", "Сынап көру")} ↗</a></div>
+        <div class="p-reset" data-reveal>
           <div><strong>${t("reset_title")}</strong><br><span class="muted">${t("reset_text")}</span></div>
           <button class="btn btn-ghost" id="reset" type="button">${t("reset_btn")}</button>
         </div>
         <p class="muted" id="reset-msg"></p>
+        <footer class="hub-footer"><span>QA Portal <i>×</i> Digital college</span><span>${tr("Учиться интереснее, когда можно попробовать.", "Істеп көрсең, үйрену қызығырақ.")}</span></footer>
       </section>`;
     document.getElementById("reset").addEventListener("click", () => {
       if (!confirm(t("reset_confirm"))) return;
-      ["qc_users", "qc_session", "qc_cart", "qc_orders", "qc_promo", "qc_next_order"].forEach(k => {
+      ["qc_users", "qc_session", "qc_cart", "qc_orders", "qc_promo", "qc_next_order", "qc_product_overrides"].forEach(k => {
         try { localStorage.removeItem(k); } catch (e) { /* storage unavailable */ }
       });
       document.getElementById("reset-msg").textContent = t("reset_done");
