@@ -116,7 +116,7 @@ const I18N = {
     stand_back: "← QA Portal",
     stand_version: "Тестовый стенд · версия {v}",
     err_pass_short8: "Пароль должен быть не короче 8 символов",
-    footer_note: "© 2026 QA Portal · учебный проект"
+    footer_note: "© 2026 qala coffe · учебный проект"
   },
   kz: {
     nav_home: "Басты бет",
@@ -235,6 +235,6 @@ const I18N = {
     stand_back: "← QA Portal",
     stand_version: "Тест стенді · {v} нұсқа",
     err_pass_short8: "Құпиясөз кемінде 8 таңбадан тұруы керек",
-    footer_note: "© 2026 QA Portal · оқу жобасы"
+    footer_note: "© 2026 qala coffe · оқу жобасы"
   }
 };
