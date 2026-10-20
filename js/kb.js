@@ -239,7 +239,7 @@
       ${sec('sources', tp.sources?.length ? `<ul class="kb-sources">${tp.sources.map(([title, href]) => `<li><a href="${href}" target="_blank" rel="noopener">${esc(title)} ↗</a></li>`).join('')}</ul>` : '')}`;
     document.getElementById('kb-layout').className = 'kb kb-layout is-reading';
     document.getElementById("kb-main").innerHTML = `
-      <div class="kb-breadcrumb"><a href="#home">${u('title')}</a><span>/</span><a href="#catalog-${tp.block === 'toolkit' ? 'toolkit' : tp.block === 'practice' ? 'practice' : 'theory'}">${esc(u('blocks')[tp.block])}</a></div>
+      <div class="kb-breadcrumb"><a href="#home">${u('title')}</a><span>/</span><a href="#catalog-${tp.block === 'toolkit' ? 'toolkit' : tp.block === 'practice' ? 'practice' : tp.block === 'tools' ? 'templates' : 'theory'}">${esc(u('blocks')[tp.block])}</a></div>
       <header class="kb-topic-head"><span class="kb-topic-badge">${icon(topicIcon(tp))}${tp.block === 'toolkit' ? tr('Инструмент · инструкция', 'Құрал · нұсқаулық') : esc(pairsText(tp)) || u('blocks')[tp.block]}${tp.minutes ? ' · ~' + tp.minutes + ' ' + tr('мин', 'мин') : ''}</span><h1>${esc(c.title)}</h1><p>${tr('Разберись → попробуй → проверь себя', 'Түсін → орында → өзіңді тексер')}</p></header>
       <div class="kb-reading-grid"><div class="kb-reading-content">${content}
       ${tp.terms && tp.terms.length ? `<p class="kb-terms"><b>${u("terms")}:</b> ${tp.terms.map(t => esc(t.filter(Boolean).join(" / "))).join(" · ")}</p>` : ""}
