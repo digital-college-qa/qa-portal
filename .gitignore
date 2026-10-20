@@ -3,3 +3,4 @@ node_modules/
 server/.env
 server/secrets/
 server/artifacts/
+server/tools/

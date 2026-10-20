@@ -13,7 +13,7 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
   }
   const lang = () => (load("qc_lang", "ru") === "kz" ? "kz" : "ru");
-  const version = () => (load("qc_version", "1.0") === "1.1" ? "1.1" : "1.0");
+  const version = () => QAVersions.current;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   const T = {
@@ -412,24 +412,14 @@
     document.getElementById("reset").addEventListener("click", () => {
       if (!confirm(t("reset_confirm"))) return;
       ["qc_users", "qc_session", "qc_cart", "qc_orders", "qc_promo", "qc_next_order", "qc_product_overrides"].forEach(k => {
-        try { localStorage.removeItem(k); } catch (e) { /* storage unavailable */ }
+        try { localStorage.removeItem(k); Object.keys(QAVersions.releases).forEach(v=>localStorage.removeItem("qc_v"+v+"_"+k.slice(3))); } catch (e) { /* storage unavailable */ }
       });
       document.getElementById("reset-msg").textContent = t("reset_done");
     });
   };
 
   pages.docs = function (app) {
-    const l = lang();
-    app.innerHTML = `
-      <section class="wrap section p-doc">
-        <h1>${t("docs_title")}</h1>
-        <p class="muted">${t("docs_meta")}</p>
-        <p class="p-callout">${t("docs_note")}</p>
-        ${TZ[l].map(([h, items]) => `<h2>${h}</h2><ul>${items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>`).join("")}
-        <h2 class="p-sep">${t("mock_title")}</h2>
-        <p class="muted">${t("mock_note")}</p>
-        <div class="mk-grid">${MOCKS[l].map(([title, html]) => `<figure class="mk"><figcaption>${title}</figcaption><div class="mk-screen">${html}</div></figure>`).join("")}</div>
-      </section>`;
+    app.innerHTML = `<section class="wrap section p-doc"><h1>${t("docs_title")} · qala coffe ${version()}</h1><p class="p-callout">${t("docs_note")}</p>${QARequirements.html(version(),lang()==="kz")}</section>`;
   };
 
   function filler(n) {
@@ -464,32 +454,10 @@
   };
 
   pages.releases = function (app) {
-    const l = lang();
-    const cur = version();
-    app.innerHTML = `
-      <section class="wrap section p-doc">
-        <h1>${t("rel_title")}</h1>
-        <div class="p-switch">
-          <strong>${t("rel_switch")}:</strong>
-          ${["1.0", "1.1"].map(v => `<label class="check"><input type="radio" name="ver" value="${v}" ${v === cur ? "checked" : ""}> ${v}</label>`).join("")}
-          <button class="btn btn-small" id="apply" type="button">${t("rel_apply")}</button>
-        </div>
-        <p class="muted" id="sw-msg"></p>
-        ${RELEASES[l].map(r => `
-          <div class="p-rel">
-            <h2>${l === "kz" ? r.v + " нұсқа" : "Версия " + r.v} <span class="muted">· ${r.date}${r.v === cur ? " · " + t("rel_current") : ""}</span></h2>
-            ${r.fixed ? `<h3>${t("fixed")}</h3><ul>${r.fixed.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}
-            ${r.added ? `<h3>${t("added")}</h3><ul>${r.added.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}
-            ${r.planned ? `<h3>${t("planned")}</h3><ul>${r.planned.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}
-          </div>`).join("")}
-      </section>`;
-    document.getElementById("apply").addEventListener("click", () => {
-      const v = document.querySelector('input[name="ver"]:checked').value;
-      save("qc_version", v);
-      document.querySelectorAll("[data-project-version]").forEach(el => { el.textContent = el.closest(".p-context-label") ? "v" + v : v; });
-      document.getElementById("sw-msg").textContent = t("rel_switched", { v });
-      document.querySelectorAll(".p-rel h2 .muted").forEach(el => { el.textContent = el.textContent.replace(" · " + t("rel_current"), ""); });
-    });
+    const kk=lang()==="kz",tr=(r,k)=>kk?k:r;
+    const descriptions={"1.0":tr("6 напитков, один объём, корзина и учебный заказ. Документация: 14 из 20 правил. Вопросы — ментору в Discord.","6 сусын, бір көлем, себет пен оқу тапсырысы. Құжаттама: 20 ережеден 14. Сұрақтар — Discord-та менторға."),"1.5":tr("12 напитков, категории, избранное, молоко и сиропы, самовывоз, кабинет, повтор заказа и API-клиент. Точные требования.","12 сусын, санаттар, таңдаулы, сүт пен сироп, алып кету, кабинет, тапсырысты қайталау мен API клиент. Нақты талаптар."),"2.0":tr("Предварительная версия: 40 позиций, сэндвичи, завтраки, закуски и выпечка; комбо, акции, баллы, профиль, сетевые сценарии и журнал. Playwright требует подключённого сервера. Полный набор сложных сценариев ещё в разработке.","Алдын ала нұсқа: 40 тауар, сэндвич, таңғы ас, тіскебасар мен пісірме; комбо, акция, ұпай, профиль, желі сценарийлері мен журнал. Playwright серверді қажет етеді. Күрделі сценарийлердің толық жинағы әзірленуде.")};
+    app.innerHTML=`<section class="wrap section p-doc"><h1>${t("rel_title")}</h1><p class="p-callout">${tr("Выбери стенд. Корзина, аккаунты, цены и заказы каждой версии хранятся отдельно в твоём браузере.","Стендті таңда. Әр нұсқаның себеті, аккаунты, бағасы мен тапсырысы браузерде бөлек сақталады.")}</p><div class="release-cards">${Object.entries(QAVersions.releases).map(([v,p])=>`<article class="p-rel"><span class="p-project-badge">${p.stage==='preview'?tr('В РАЗРАБОТКЕ','ӘЗІРЛЕНУДЕ'):tr('УЧЕБНЫЙ СТЕНД','ОҚУ СТЕНДІ')}</span><h2>qala coffe ${v}</h2><h3>${p.title[kk?1:0]}</h3><p>${descriptions[v]}</p><button class="btn" data-version="${v}">${v===version()?tr('Выбрана ✓','Таңдалды ✓'):tr('Выбрать','Таңдау')}</button> <a class="btn btn-ghost" href="menu.html?version=${v}">${tr('Открыть кофейню','Кофехананы ашу')} ↗</a></article>`).join('')}</div><p id="sw-msg" role="status"></p></section>`;
+    document.querySelectorAll('[data-version]').forEach(b=>b.onclick=()=>{QAVersions.select(b.dataset.version);location.reload();});
   };
 
   document.documentElement.lang = lang() === "kz" ? "kk" : "ru";
@@ -499,7 +467,7 @@
 
   // GitHub Pages caches HTML as well as assets. Version cross-page links so a
   // previously visited page cannot bring back an older navigation shell.
-  const shellRevision = "20261020-tools4";
+  const shellRevision = "20261020-releases22";
   const portalPages = new Set(["index.html", "learn.html", "kb.html", "docs.html", "testdata.html", "releases.html", "labs.html"]);
   function refreshPortalLinks() {
     document.querySelectorAll('a[href]').forEach(link => {

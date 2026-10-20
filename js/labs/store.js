@@ -5,13 +5,13 @@
   const copy = value => JSON.parse(JSON.stringify(value));
   function createStore({ read, write, seed, onChange = () => {} }) {
     const products = () => seed.map(p => ({ ...copy(p), ...read('qc_product_overrides', {})[p.id] }));
-    const lineId = item => `${item.id}-${item.size}-${item.syrup ? 1 : 0}`;
-    const price = (p, item) => p.price + ({S:-200,M:0,L:300}[item.size] || 0) + (item.syrup ? 200 : 0);
+    const lineId = item => `${item.id}-${item.size}-${item.syrup ? 1 : 0}`+(item.syrupType?'-'+item.syrupType:'')+(item.milk==='oat'?'-oat':'')+(item.combo?'-combo':'');
+    const price = (p, item) => p.price + (p.id>14?0:({S:-200,M:0,L:300}[item.size] || 0)) + (item.syrup ? 200 : 0)+(item.milk==='oat'&&read('qc_version','2.0')!=='1.5'?300:0)+(item.combo?1500:0);
     function cartBody() {
       const catalog = products();
       const items = read('qc_cart', []).map(item => {
         const p = catalog.find(p => p.id === item.id);
-        return { id:lineId(item), productId:item.id, name:p?.name, size:item.size, syrup:Boolean(item.syrup), quantity:item.qty, unitPrice:p ? price(p,item) : 0 };
+        return { id:lineId(item), productId:item.id, name:p?.name, size:item.size, syrup:Boolean(item.syrup), ...(item.syrupType?{syrupType:item.syrupType}:{}), ...(item.milk?{milk:item.milk}:{}), ...(item.combo?{combo:true}:{}), quantity:item.qty, unitPrice:p ? price(p,item) : 0 };
       });
       return { items, quantity:items.reduce((n,i)=>n+i.quantity,0), subtotal:items.reduce((n,i)=>n+i.unitPrice*i.quantity,0) };
     }
@@ -29,7 +29,7 @@
         const list=products(), id=Number(parts[1]), p=list.find(p=>p.id===id);
         if (method==='GET' && parts.length===1) {
           const q=(url.searchParams.get('q')||'').toLowerCase(), category=url.searchParams.get('category');
-          return reply(200,{items:list.filter(p=>(!q||Object.values(p.name).some(n=>n.toLowerCase().includes(q)))&&(!category||category==='coffee'))});
+          return reply(200,{items:list.filter(p=>(!q||Object.values(p.name).some(n=>n.toLowerCase().includes(q)))&&(!category||(p.category||'coffee')===category))});
         }
         if (parts.length!==2) return fail(404,'NOT_FOUND','Unknown resource');
         if (!p) return fail(404,'PRODUCT_NOT_FOUND','Product not found');

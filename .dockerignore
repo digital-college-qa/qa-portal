@@ -3,5 +3,6 @@
 **/node_modules
 server/.env
 server/secrets
+server/tools
 server/artifacts
 tests

@@ -17,11 +17,11 @@ services:
     cpus: 2
     pids_limit: 256
     environment:
-      LAB_USERNAME: ${LAB_USERNAME:?Set LAB_USERNAME in .env}
-      LAB_PASSWORD_FILE: /run/secrets/lab_password
+      LAB_USERS_FILE: /run/qa-accounts/users.json
       ALLOWED_ORIGINS: https://digital-college-qa.github.io
       TRUST_PROXY: "1"
-    secrets: [lab_password]
+    volumes:
+      - ./secrets:/run/qa-accounts:ro
     networks: [isolated]
     expose: ["3000"]
     logging:
@@ -43,9 +43,24 @@ services:
     logging:
       driver: json-file
       options: {max-size: "10m", max-file: "3"}
-secrets:
-  lab_password:
-    file: ./secrets/lab_password.txt
+  accounts:
+    profiles: [tools]
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    network_mode: none
+    environment:
+      LAB_USERS_FILE: /accounts/users.json
+    volumes:
+      - ./secrets:/accounts
+    entrypoint: [node, server/manage-users.mjs]
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 32
 networks:
   isolated:
     internal: true

@@ -13,11 +13,11 @@ process.once('message',async job=>{
       const context=await browser.newContext({viewport:{width:1100,height:760},serviceWorkers:'block',acceptDownloads:false});
       context.setDefaultTimeout(4500);context.setDefaultNavigationTimeout(8000);
       await context.route('**/*',route=>{const url=new URL(route.request().url());return url.origin===new URL(job.baseURL).origin&&url.pathname.startsWith('/shop/')&&!url.pathname.startsWith('/shop/server/')?route.continue():route.abort();});
-      await context.addInitScript(({storage,marker})=>{if(sessionStorage.getItem('__qa_seed')===marker)return;for(const[k,v]of Object.entries(storage))localStorage.setItem(k,JSON.stringify(v));sessionStorage.setItem('__qa_seed',marker);},{storage:job.storage,marker:job.key});
+      await context.addInitScript(({storage,marker})=>{window.__QA_RUNNER=true;if(sessionStorage.getItem('__qa_seed')===marker)return;for(const[k,v]of Object.entries(storage)){const key=['qc_cart','qc_product_overrides'].includes(k)?'qc_v'+storage.qc_version+'_'+k.slice(3):k;localStorage.setItem(key,JSON.stringify(v));}sessionStorage.setItem('__qa_seed',marker);},{storage:job.storage,marker:job.key});
       const page=await context.newPage();
       await page.goto(job.baseURL+'menu.html');
       const snapshot=async()=>{
-        const storage=await page.evaluate(()=>Object.fromEntries(['qc_cart','qc_product_overrides','qc_lang','qc_version'].map(k=>[k,JSON.parse(localStorage.getItem(k)||'null')])));
+        const storage=await page.evaluate(()=>Object.fromEntries(['qc_cart','qc_product_overrides','qc_lang','qc_version'].map(k=>[k,window.QAVersions.read(k,k==='qc_cart'?[]:k==='qc_product_overrides'?{}:null)])));
         const image=(await page.screenshot({type:'jpeg',quality:45,timeout:4000})).toString('base64');
         const current=new URL(page.url());
         return {storage,image,route:current.pathname.split('/').pop()+current.search};
@@ -32,7 +32,7 @@ process.once('message',async job=>{
         const response=await context.request[method](url.href,{data:options.data,headers:{'X-QA-Run':job.key},timeout:5000});
         const state=await context.request.get(job.apiURL+'/state',{headers:{'X-QA-Run':job.key},timeout:5000});
         const storage=await state.json();
-        await page.evaluate(storage=>{for(const[k,v]of Object.entries(storage))localStorage.setItem(k,JSON.stringify(v));window.QAShop?.refresh();},storage);
+        await page.evaluate(storage=>{for(const[k,v]of Object.entries(storage))window.QAVersions.write(k,v);window.QAApplyOverrides?.();window.QAShop?.refresh();},storage);
         return response;
       };
       await executeStatements(testcase.body,{page,request,expect,baseURL:job.baseURL,step:async(node,status,durationMs,error)=>{

@@ -1,9 +1,19 @@
 /* Only teaching API calls are intercepted. Assets and normal navigation are
    never cached or rewritten. State stays with the requesting browser client. */
+importScripts('js/labs/scenario-model.js?v=22');
 self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url),prefix=new URL('training-api/',self.registration.scope).pathname;
+  const scenarioPrefix=new URL('scenario-api/',self.registration.scope).pathname;
+  if(url.origin===self.location.origin&&url.pathname.startsWith(scenarioPrefix)){
+    event.respondWith((async()=>{
+      const body=await event.request.json().catch(()=>({})),mode=url.searchParams.get('mode'),path=url.pathname.slice(scenarioPrefix.length);
+      const traceId=event.request.headers.get('X-Trace-Id')||crypto.randomUUID();
+      const result=await QAScenarios.respond(path,body,mode);
+      return Response.json(result.body,{status:result.status,headers:{'Cache-Control':'no-store','X-Trace-Id':traceId,'X-Training-Simulation':'true'}});
+    })());return;
+  }
   if(url.origin!==self.location.origin||!url.pathname.startsWith(prefix))return;
   event.respondWith((async()=>{
     const client=await self.clients.get(event.clientId);

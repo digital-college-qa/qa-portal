@@ -6,7 +6,7 @@ const SIZES = [
 
 const STD_VOLUMES = { S: 250, M: 350, L: 450 };
 
-const PRODUCTS = [
+const BASE_PRODUCTS = [
   {
     id: 1, img: "img/espresso.svg", price: 700, pop: 9, hit: true, inStock: true,
     name: { ru: "Эспрессо", kz: "Эспрессо" },
@@ -83,6 +83,27 @@ const PRODUCTS = [
     volumes: STD_VOLUMES, catalogVolume: 350
   }
 ];
+
+const FOOD_GROUPS = [
+  ['sandwich', 'Сэндвич', 'Сэндвич', ['с курицей|тауықпен', 'с индейкой|күркетауықпен', 'с сыром|ірімшікпен', 'с тунцом|тунецпен', 'овощной|көкөністі', 'с яйцом|жұмыртқамен'], 1800],
+  ['breakfast', 'Завтрак', 'Таңғы ас', ['омлет|омлет', 'сырники|сүзбе құймақ', 'овсянка|сұлы ботқасы', 'гранола|гранола', 'тост с авокадо|авокадо тосты', 'яйца и тост|жұмыртқа мен тост'], 1600],
+  ['snack', 'Закуска', 'Тіскебасар', ['орехи|жаңғақ', 'фрукты|жеміс', 'йогурт|йогурт', 'хумус|хумус', 'сыр|ірімшік', 'крекеры|крекер', 'овощи|көкөніс', 'батончик|батончик'], 800],
+  ['bakery', 'Выпечка', 'Пісірме', ['круассан|круассан', 'маффин|маффин', 'печенье|печенье', 'булочка|тоқаш', 'брауни|брауни', 'чизкейк|чизкейк'], 900]
+];
+const ALL_PRODUCTS = BASE_PRODUCTS.map(p => ({ ...p, img: p.id === 4 ? 'img/latte.svg' : p.img, category: [8,9,12].includes(p.id) ? 'decaf' : 'coffee', diet: p.id <= 2 ? 'vegan' : 'regular', allergens: p.id <= 2 ? [] : ['молоко / сүт'], nutrition: { calories: p.id * 18 }, ingredients: {ru:p.id<=2?'Кофе, вода':'Кофе или чай, молоко',kz:p.id<=2?'Кофе, су':'Кофе не шай, сүт'} }));
+ALL_PRODUCTS.push(...[
+  {id:13,name:{ru:'Айс латте',kz:'Айс латте'},price:1500,category:'coffee'},
+  {id:14,name:{ru:'Лимонад',kz:'Лимонад'},price:1000,category:'decaf'}
+].map(p=>({...ALL_PRODUCTS[3],...p,hit:false,img:p.id===13?'img/latte.svg':'img/masala.svg',desc:p.id===13?{ru:'Эспрессо, молоко и лёд.',kz:'Эспрессо, сүт және мұз.'}:{ru:'Лимон, вода и лёгкая сладость.',kz:'Лимон, су және аздап тәттілік.'},ingredients:p.id===13?{ru:'Кофе, молоко, лёд',kz:'Кофе, сүт, мұз'}:{ru:'Лимон, вода, сахар',kz:'Лимон, су, қант'},allergens:p.id===13?['молоко / сүт']:[],diet:p.id===13?'regular':'vegan'})));
+let foodId=15;
+FOOD_GROUPS.forEach(([category,ru,kz,variants,start])=>variants.forEach((variant,i)=>{
+  const [r,k]=variant.split('|');
+  ALL_PRODUCTS.push({id:foodId++,name:{ru:`${ru}: ${r}`,kz:`${kz}: ${k}`},desc:{ru:`Свежий ${r}. Готовим для учебного заказа.`,kz:`Жаңа ${k}. Оқу тапсырысы үшін дайындаймыз.`},price:start+i*100,category,img:`img/${category}.svg`,pop:6+i%3,hit:i===0,inStock:true,diet:i===4||category==='snack'?'vegan':'regular',allergens:category==='bakery'?['глютен / глютен','молоко / сүт']:category==='snack'?['орехи / жаңғақ']:['глютен / глютен'],nutrition:{calories:180+i*35},ingredients:{ru:r+', свежие ингредиенты',kz:k+', жаңа өнімдер'},volumes:{M:1},catalogVolume:1});
+}));
+const PRODUCTS = ALL_PRODUCTS.filter(p => {
+  const version=typeof QAVersions==='undefined'?'2.0':QAVersions.current;
+  return version==='1.0'?[1,2,3,4,5,8].includes(p.id):version==='1.5'?p.id<=12:true;
+});
 
 const REVIEWS = [
   { author: "Айгерим", stars: 5, text: { ru: "Очень вкусный капучино, привезли горячим!", kz: "Капучино өте дәмді, ыстық күйінде әкелді!" } },

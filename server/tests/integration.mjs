@@ -16,7 +16,8 @@ try{
   const denied=await fetch(base+'/health',{headers:{Origin:'https://evil.example'}});assert.equal(denied.status,403);
   assert.equal((await request('/runs','POST',{code:"import fs from 'node:fs';"},token)).status,400);
   const code=`import {test,expect} from '@playwright/test';test('live cart',async({page,request})=>{await request.delete('cart');await page.goto('product.html?id=3');await page.getByRole('button',{name:'M',exact:true}).click();await page.getByRole('button',{name:/В корзину|Себетке/}).click();await page.goto('cart.html');await expect(page.getByText('Капучино',{exact:true})).toBeVisible();});`;
-  const created=await request('/runs','POST',{code,storage:{qc_lang:'ru',qc_version:'1.1',qc_cart:[],qc_product_overrides:{}}},token);assert.equal(created.status,201);
+  assert.equal((await request('/runs','POST',{code,storage:{qc_version:'1.5'}},token)).status,403);
+  const created=await request('/runs','POST',{code,storage:{qc_lang:'ru',qc_version:'2.0',qc_cart:[],qc_product_overrides:{}}},token);assert.equal(created.status,201);
   let result;for(let i=0;i<160;i++){result=await request('/runs/'+created.body.id,'GET',undefined,token);if(result.body.status!=='running')break;await new Promise(r=>setTimeout(r,250));}
   assert.equal(result.body.status,'passed',JSON.stringify({error:result.body.error,steps:result.body.steps},null,2));assert.equal(result.body.storage.qc_cart[0].id,3);assert.ok(result.body.image?.length>1000);assert.ok(result.body.steps.length>=6);
   const other=await request('/auth/login','POST',{username:'tester',password});assert.equal((await request('/runs/'+created.body.id,'GET',undefined,other.body.token)).status,404);
