@@ -112,7 +112,7 @@
         </div>
       </div>
       <div class="wrap head-in">
-        <a class="logo" href="home.html"><span class="logo-mark">Q</span> Qala Coffee</a>
+        <a class="logo" href="home.html"><span class="logo-mark">Q</span> QA Portal</a>
         <nav class="nav">${nav}</nav>
         <div class="head-tools">
           <div class="lang">
@@ -137,7 +137,7 @@
   function renderFooter() {
     document.getElementById("footer").innerHTML = `
       <div class="wrap foot-in">
-        <div><strong>Qala Coffee</strong><br>${t("footer_address")}<br>${PHONE}</div>
+        <div><strong>QA Portal</strong><br>${t("footer_address")}<br>${PHONE}</div>
         <div class="foot-note">${t("footer_note")}</div>
       </div>`;
   }
@@ -591,7 +591,7 @@
             <p><span class="muted">${t("address_label")}</span><br>${t("contacts_address")}</p>
             <p><span class="muted">${t("phone_label")}</span><br>${PHONE}</p>
             <p><span class="muted">${t("hours_label")}</span><br>${t("hours_value")}</p>
-            <p><span class="muted">${t("write_us")}</span><br>hello@qalacoffee.kz</p>
+            <p><span class="muted">${t("write_us")}</span><br>hello@qa-portal.example</p>
           </div>
           <div class="map" id="map">${t("map_loading")}</div>
         </div>
