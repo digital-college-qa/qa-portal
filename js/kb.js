@@ -115,7 +115,7 @@
   const app = document.getElementById("app");
   app.innerHTML = `
     <div class="kb wrap">
-      <button class="btn btn-small kb-toggle" type="button" id="kb-toggle">${u("topics")}</button>
+      <button class="btn btn-small kb-toggle" type="button" id="kb-toggle" aria-expanded="false" aria-controls="kb-side">${u("topics")}</button>
       <aside class="kb-side" id="kb-side">
         <input id="kb-q" class="kb-search" type="search" placeholder="${esc(u("search"))}">
         <p class="kb-hint">${u("ctrlf")}</p>
@@ -235,11 +235,15 @@
     else document.getElementById("kb-main").innerHTML = `<h1>${u("welcome_title")}</h1><p class="kb-short">${u("welcome")}</p>`;
     drawNav(document.getElementById("kb-q").value);
     document.getElementById("kb-side").classList.remove("open");
+    document.getElementById("kb-toggle").setAttribute("aria-expanded", "false");
     window.scrollTo(0, 0);
   }
 
   document.getElementById("kb-q").addEventListener("input", e => drawNav(e.target.value));
-  document.getElementById("kb-toggle").addEventListener("click", () => document.getElementById("kb-side").classList.toggle("open"));
+  document.getElementById("kb-toggle").addEventListener("click", e => {
+    const open = document.getElementById("kb-side").classList.toggle("open");
+    e.currentTarget.setAttribute("aria-expanded", String(open));
+  });
   document.getElementById("kb-main").addEventListener("click", e => {
     const b = e.target.closest(".kb-copy");
     if (!b) return;
