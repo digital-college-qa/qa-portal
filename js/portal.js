@@ -496,4 +496,23 @@
   const page = document.body.dataset.page;
   header(page);
   if (pages[page]) pages[page](document.getElementById("app"));
+
+  // GitHub Pages caches HTML as well as assets. Version cross-page links so a
+  // previously visited page cannot bring back an older navigation shell.
+  const shellRevision = "20261020-nav2";
+  const portalPages = new Set(["index.html", "learn.html", "kb.html", "docs.html", "testdata.html", "releases.html", "labs.html"]);
+  function refreshPortalLinks() {
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin || !portalPages.has(url.pathname.split("/").pop())) return;
+      if (url.searchParams.get("ui") === shellRevision) return;
+      url.searchParams.set("ui", shellRevision);
+      link.setAttribute("href", url.pathname + url.search + url.hash);
+    });
+  }
+  refreshPortalLinks();
+  // Lessons and the knowledge base render their links after this shared shell.
+  new MutationObserver(refreshPortalLinks).observe(document.getElementById("app"), { childList: true, subtree: true });
 })();
