@@ -499,7 +499,7 @@
 
   // GitHub Pages caches HTML as well as assets. Version cross-page links so a
   // previously visited page cannot bring back an older navigation shell.
-  const shellRevision = "20261020-kb3";
+  const shellRevision = "20261020-tools4";
   const portalPages = new Set(["index.html", "learn.html", "kb.html", "docs.html", "testdata.html", "releases.html", "labs.html"]);
   function refreshPortalLinks() {
     document.querySelectorAll('a[href]').forEach(link => {

@@ -51,7 +51,7 @@
     ORDER.indexOf(a.block) - ORDER.indexOf(b.block) || (a.n == null ? -1 : a.n) - (b.n == null ? -1 : b.n));
   const byId = id => topics.find(x => x.id === id);
   const readSet = () => new Set(load("qc_kb_read", []));
-  const toolIds = ['tool-elements', 'tool-network', 'tool-console', 'tool-storage', 'tool-responsive', 'tool-evidence', 'api-client', 'playwright-basics', 'tool-logs', 'tool-bugtracker'];
+  const toolIds = ['tool-postman', 'tool-jira', 'tool-youtrack', 'tool-zephyr', 'tool-sheets', 'tool-figma', 'tool-swagger', 'tool-trello', 'tool-elements', 'tool-network', 'tool-console', 'tool-storage', 'tool-responsive', 'tool-evidence', 'api-client', 'playwright-basics', 'tool-logs', 'tool-bugtracker'];
   const paths = {
     inspect: '<path d="M4 4h16v16H4zM9 2v20M2 9h20m-7 4 6 3-4 1-1 4z"/>',
     network: '<circle cx="5" cy="12" r="3"/><circle cx="19" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><path d="m8 11 8-5M8 13l8 5"/>',
@@ -189,7 +189,7 @@
   const plain = text => String(text || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[*`#]/g, '').replace(/\s+/g, ' ').trim();
   function card(tp) {
     const done = readSet().has(tp.id), text = plain(tp[lang()].short);
-    return `<a class="kb-topic-card tone-${topicIcon(tp)}" href="#${tp.id}"><span class="kb-card-top"><span class="kb-card-icon">${icon(topicIcon(tp))}</span><small>${done ? tr('Прочитано ✓', 'Оқылды ✓') : tp[lang()].steps ? tr('Пошаговая инструкция', 'Қадамдық нұсқаулық') : tr('Тема и примеры', 'Тақырып пен мысалдар')}</small></span><h3>${esc(tp[lang()].title)}</h3><p>${esc(text.length > 130 ? text.slice(0, 127) + '…' : text)}</p><span class="kb-card-bottom">${tp.minutes ? '~' + tp.minutes + ' ' + tr('мин', 'мин') : tr('Открыть разбор', 'Талдауды ашу')} ${icon('arrow')}</span></a>`;
+    return `<a class="kb-topic-card tone-${topicIcon(tp)}" href="#${tp.id}"><span class="kb-card-top"><span class="kb-card-icon">${icon(topicIcon(tp))}</span><small>${done ? tr('Прочитано ✓', 'Оқылды ✓') : tp.service ? tr('Первое знакомство', 'Алғашқы танысу') : tp[lang()].steps ? tr('Пошаговая инструкция', 'Қадамдық нұсқаулық') : tr('Тема и примеры', 'Тақырып пен мысалдар')}</small></span><h3>${esc(tp[lang()].title)}</h3><p>${esc(text.length > 130 ? text.slice(0, 127) + '…' : text)}</p><span class="kb-card-bottom">${tp.minutes ? '~' + tp.minutes + ' ' + tr('мин', 'мин') : tr('Открыть разбор', 'Талдауды ашу')} ${icon('arrow')}</span></a>`;
   }
   function pills(selected) {
     return `<nav class="kb-filter-pills" aria-label="${tr('Разделы базы знаний', 'Білім қорының бөлімдері')}"><a href="#catalog-all" ${selected === 'all' ? 'aria-current="page"' : ''}>${tr('Все темы', 'Барлық тақырып')}</a>${categories.map(c => `<a href="#catalog-${c.id}" ${selected === c.id ? 'aria-current="page"' : ''}>${c.title}</a>`).join('')}<a href="#glossary">${tr('Словарь EN · RU · KZ', 'EN · RU · KZ сөздігі')}</a></nav>`;
@@ -213,6 +213,12 @@
     if (category === 'toolkit') list.sort((a,b) => toolIds.indexOf(a.id) - toolIds.indexOf(b.id));
     if (q) list = list.filter(strong).concat(list.filter(tp => !strong(tp)));
     main.innerHTML = `<a href="#home" class="kb-back-link">← ${tr('На главную базы знаний', 'Білім қорының басты бетіне')}</a><header class="kb-catalog-title"><span class="hub-eyebrow">${q ? tr('ПОИСК ПО ВСЕЙ БАЗЕ', 'БҮКІЛ ҚОРДАН ІЗДЕУ') : tr('ВЫБЕРИ И ПОПРОБУЙ', 'ТАҢДА ЖӘНЕ ОРЫНДА')} </span><h1>${q ? tr('Нашлось по запросу', 'Сұраныс бойынша табылды') + ' «' + esc(query) + '»' : group ? group.title : tr('Все темы', 'Барлық тақырып')}</h1><p>${q ? list.length + ' ' + tr('материалов. Поиск понимает русский, казахский и английские термины.', 'материал. Іздеу орысша, қазақша және ағылшынша терминдерді түсінеді.') : group ? group.note : tr('Теория, инструменты и примеры для практики.', 'Теория, құралдар және тәжірибе мысалдары.')}</p></header>${pills(q ? '' : category)}${category === 'templates' ? `<a class="kb-glossary-card" href="#glossary">${icon('book')}<span><strong>${tr('Открыть словарь терминов', 'Терминдер сөздігін ашу')}</strong><small>English · Русский · Қазақша</small></span>${icon('arrow')}</a>` : ''}<div class="kb-topic-grid">${list.map(card).join('')}</div>${!list.length ? `<div class="kb-empty">${icon('search')}<h2>${tr('Пока ничего не нашли', 'Әзірге ештеңе табылмады')}</h2><p>${u('nothing')}</p><button type="button" class="btn btn-ghost" data-clear-search>${tr('Сбросить поиск', 'Іздеуді тазарту')}</button></div>` : ''}`;
+  }
+
+  function addToolChooser() {
+    if (location.hash !== '#catalog-toolkit') return;
+    const grid = document.querySelector('#kb-main .kb-topic-grid');
+    if (grid) grid.insertAdjacentHTML('beforebegin', `<a class="kb-glossary-card" href="#tool-software-map">${icon('book')}<span><strong>${tr('Какой инструмент для чего?', 'Қай құрал не үшін?')}</strong><small>${tr('Простая таблица: баги, тест-кейсы, API и макеты. Выбери один инструмент под задачу.', 'Қарапайым кесте: баг, тест-кейс, API және макет. Міндетке сай бір құрал таңда.')}</small></span>${icon('arrow')}</a>`);
   }
 
   function drawTopic(tp) {
@@ -310,6 +316,7 @@
       drawCatalog(id.startsWith('catalog-') ? id.slice(8) : 'home');
     }
     drawNav(document.getElementById("kb-q").value);
+    addToolChooser();
     document.getElementById("kb-side").classList.remove("open");
     document.getElementById("kb-toggle").setAttribute("aria-expanded", "false");
     window.scrollTo(0, 0);

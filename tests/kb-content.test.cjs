@@ -38,3 +38,12 @@ test('practical tool guides have usable steps and working internal destinations'
     for (const [, source] of guide.sources || []) assert.equal(new URL(source).protocol, 'https:');
   }
 });
+test('beginner software comparison links to existing knowledge topics', () => {
+  const overview = topics.find(t => t.id === 'tool-software-map');
+  assert.ok(overview);
+  for (const language of ['ru', 'kz']) {
+    const links = [...overview[language].body.matchAll(/\]\(#([^)]+)\)/g)];
+    assert.ok(links.length > 0);
+    for (const [, target] of links) assert.ok(ids.has(target), 'Missing destination: ' + target);
+  }
+});
