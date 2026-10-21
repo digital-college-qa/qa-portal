@@ -52,12 +52,12 @@ small { font-size: var(--text-small); }
 .coffee-release .card h3 { font-size: var(--text-lead); }
 .coffee-release .nav a, .coffee-release .user-link, .coffee-release .cart-link { font-size: var(--text-control); }
 @media (min-width:701px) and (max-width:1050px) {
-  body.portal .p-head { flex-wrap: wrap; gap: 12px; }
-  body.portal .p-head>.lang { margin-left: auto; }
-  body.portal .p-nav { order: 3; flex-basis: 100%; justify-content: space-between; }
+  :is(body.portal, .portal-shell) .p-head { flex-wrap: wrap; gap: 12px; }
+  :is(body.portal, .portal-shell) .p-head>.lang { margin-left: auto; }
+  :is(body.portal, .portal-shell) .p-nav { order: 3; flex-basis: 100%; justify-content: space-between; }
 }
 @media (max-width:700px) {
-  body.portal .p-nav .p-nav-link, body.portal .p-project-toggle { font-size: var(--text-small); white-space: normal; text-align: center; overflow-wrap: anywhere; }
+  :is(body.portal, .portal-shell) .p-nav .p-nav-link, :is(body.portal, .portal-shell) .p-project-toggle { font-size: var(--text-small); white-space: normal; text-align: center; overflow-wrap: anywhere; }
   .hub-hero-copy>p { max-width: none; }
   .hub-cta { align-items: stretch; gap: 16px; }
   .hub-primary { display: inline-flex; align-items: center; justify-content: center; }

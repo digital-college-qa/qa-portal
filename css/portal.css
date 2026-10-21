@@ -1,13 +1,13 @@
 /* Tester portal — deliberately neutral, so it does not look like part of the coffee shop */
-body.portal { background: #F6F7F9; color: #1F2328; }
-body.portal #header { background: #fff; border-bottom: 1px solid #D8DEE4; position: static; }
+:is(body.portal, .portal-shell) { background: #F6F7F9; color: #1F2328; }
+:is(body.portal, .portal-shell) :is(#header, #portal-header) { background: #fff; border-bottom: 1px solid #D8DEE4; position: static; }
 .p-head { display: flex; align-items: center; gap: 20px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
 .p-logo { font-weight: 700; font-size: var(--text-lead); color: #1F2328; text-decoration: none; display: flex; align-items: center; gap: 8px; }
 .p-logo .logo-mark { background: #1F2328; }
 .p-nav { display: flex; gap: 16px; flex-wrap: wrap; flex: 1; }
 .p-nav a { color: #1F2328; text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
 .p-nav a.active, .p-nav a:hover { border-bottom-color: #1A56C4; }
-body.portal .lang button.on { background: #1F2328; }
+:is(body.portal, .portal-shell) .lang button.on { background: #1F2328; }
 
 .p-lead { font-size: var(--text-lead); max-width: 760px; }
 .p-version { background: #EAF1FB; border: 1px solid #B8CFF0; border-radius: 10px; padding: 10px 14px; display: inline-block; }
