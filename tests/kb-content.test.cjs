@@ -101,3 +101,9 @@ test('published Playwright examples compile in the actual teaching runner', asyn
   }
   assert.ok(checked >= 4);
 });
+
+test('API reset instructions distinguish cart reset from account deletion in both languages', () => {
+  const article = topics.find(t => t.id === 'api-client');
+  assert.match(article.ru.body, /reset сбрасывает[\s\S]*не удаляет аккаунты/i);
+  assert.match(article.kz.body, /reset[\s\S]*Аккаунт[\s\S]*жоймайды/);
+});
