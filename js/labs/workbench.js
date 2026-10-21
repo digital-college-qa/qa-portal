@@ -8,6 +8,7 @@
     api:'<path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/>',tests:'<path d="M9 3h6m-5 0v7L4 20h16l-6-10V3M8 15h8"/>',docs:'<path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h6"/>',logs:'<path d="M4 5h16M4 12h16M4 19h16m-12-8v2m6-9v2m1 12v2"/>'}[name]}</svg>`;
   const presets=[
     {method:'GET',path:'/products',title:tr('Каталог','Каталог'),body:''},
+    {method:'GET',path:'/products/3',title:tr('Капучино · один товар','Капучино · бір тауар'),body:''},
     {method:'PATCH',path:'/products/3',title:tr('Цена капучино','Капучино бағасы'),body:'{\n  "price": 1800\n}'},
     {method:'POST',path:'/cart/items',title:tr('Добавить в корзину','Себетке қосу'),body:'{\n  "productId": 3,\n  "quantity": 1,\n  "size": "M"\n}'},
     {method:'GET',path:'/cart',title:tr('Моя корзина','Менің себетім'),body:''},

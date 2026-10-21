@@ -103,6 +103,7 @@
       <section class="wrap section ln">
         <h1>${UI.title}</h1>
         <p class="p-lead">${UI.lead}</p>
+        <p class="ln-empty"><a href="kb.html#start-here">${L === 'kz' ? 'Алғаш рет пе? Қойынды, көшіру және жұмысты сақтау →' : 'Впервые за компьютером? Вкладки, копирование и сохранение работы →'}</a></p>
         <div class="ln-tabs">${Object.keys(C).map(c => `<a href="#${c}" class="${c === k ? "on" : ""}">${C[c].name[LI]}</a>`).join("")}</div>
         ${C[k].stages.map(s => `
           <div class="ln-stage">
@@ -124,6 +125,7 @@
     const x = d[L];
     const secs = x.sections.map(s => {
       const more = s.more && s.more[m];
+      if (s.optional && m === 's') return `<details class="ln-sec ln-more"><summary>${esc(s.h[m])}</summary>${md(s[m], m)}</details>`;
       return `<section class="ln-sec">
         <h2><span aria-hidden="true">${s.icon}</span> ${s.h[m]}</h2>
         ${md(s[m], m)}
@@ -180,7 +182,7 @@
             </div>
             <p class="muted ln-gloss-note">${UI.gloss_note}</p>
             ${d.glossary.map(g => `<div class="ln-g" data-term="${esc(g[0])}">
-              <b>${esc(g[0])}</b> <span class="ln-pron">[${esc(g[1])}]</span>
+              <b>${esc(g[0])}</b> ${g[1] ? `<span class="ln-pron">[${esc(g[1])}]</span>` : ''}
               <span data-gloss-lang="ru"${glossLanguages === "kz" ? " hidden" : ""}><i>RU</i> ${esc(g[2])}</span><span data-gloss-lang="kz"${glossLanguages === "ru" ? " hidden" : ""}><i>KZ</i> ${esc(g[3])}</span></div>`).join("")}
           </aside>
         </div>
