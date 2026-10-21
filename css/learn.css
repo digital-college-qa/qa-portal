@@ -7,18 +7,18 @@
 .ln-stage { margin-top: 26px; }
 .ln-stage-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 .ln-stage-head h2 { margin: 0; font-size: 21px; }
-.ln-stage-n { background: #EAF1FB; color: #1A56C4; border-radius: 6px; padding: 2px 8px; font-size: 13px; font-weight: 600; }
+.ln-stage-n { background: #EAF1FB; color: #1A56C4; border-radius: 6px; padding: 2px 8px; font-size: var(--text-small); font-weight: 600; }
 .ln-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
 .ln-card { background: #fff; border: 1px solid #D8DEE4; border-radius: 14px; padding: 14px 16px; text-decoration: none; color: #1F2328;
   display: flex; flex-direction: column; gap: 4px; transition: border-color .15s, box-shadow .15s, transform .15s; }
 .ln-card:hover { border-color: #1A56C4; box-shadow: 0 2px 10px rgba(26, 86, 196, .12); transform: translateY(-1px); }
-.ln-card-n { font-size: 13px; font-weight: 700; color: #1A56C4; text-transform: uppercase; letter-spacing: .04em; }
-.ln-card strong { font-size: 17px; }
-.ln-card .muted { font-size: 14px; }
+.ln-card-n { font-size: var(--text-small); font-weight: 700; color: #1A56C4; text-transform: uppercase; letter-spacing: .04em; }
+.ln-card strong { font-size: var(--text-lead); }
+.ln-card .muted { font-size: var(--text-body); }
 .ln-card.soon { background: #FAFBFC; }
 .ln-card.soon .ln-card-n { color: #8C959F; }
 
-.ln-crumbs { font-size: 14px; color: #57606A; margin-bottom: 6px; }
+.ln-crumbs { font-size: var(--text-body); color: #57606A; margin-bottom: 6px; }
 .ln-crumbs a { color: #1A56C4; }
 .ln-h-n { color: #1A56C4; }
 .ln-bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -26,14 +26,14 @@
 .ln-mode { display: inline-flex; background: #fff; border: 1px solid #D8DEE4; border-radius: 999px; padding: 3px; }
 .ln-mode button { border: 0; background: transparent; padding: 7px 16px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; color: #57606A; }
 .ln-mode button.on { background: #1F2328; color: #fff; }
-.ln-mode-hint { font-size: 14px; flex: 1; min-width: 180px; }
+.ln-mode-hint { font-size: var(--text-body); flex: 1; min-width: 180px; }
 .ln-gloss-btn { display: none; }
 
 .ln-layout { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 18px; align-items: start; }
 .ln-viewport { overflow: hidden; transition: height .3s ease; }
 .ln-body { transition: transform .2s ease, opacity .2s ease; }
 .ln-sec { background: #fff; border: 1px solid #D8DEE4; border-radius: 14px; padding: 16px 20px; margin-bottom: 14px; }
-.ln-sec h2 { font-size: 19px; margin: 0 0 8px; }
+.ln-sec h2 { font-size: var(--text-lead); margin: 0 0 8px; }
 .ln-sec p { margin: 6px 0; }
 .ln-sec ul, .ln-sec ol { margin: 6px 0; padding-left: 22px; }
 .ln-sec li { margin-bottom: 4px; }
@@ -41,12 +41,12 @@
 .ln-term { font: inherit; color: #1A56C4; background: none; border: 0; padding: 0; border-bottom: 2px dotted #1A56C4; cursor: pointer; }
 .ln-term:hover { background: #EAF1FB; }
 .ln-tablewrap { overflow-x: auto; }
-.ln-table { border-collapse: collapse; width: 100%; font-size: 15px; }
+.ln-table { border-collapse: collapse; width: 100%; font-size: var(--text-body); }
 .ln-table th, .ln-table td { border: 1px solid #E1E4E8; padding: 6px 10px; text-align: left; vertical-align: top; }
 .ln-table th { background: #F6F7F9; }
 .ln-code { position: relative; margin: 8px 0; }
-.ln-code pre { background: #F6F8FA; border: 1px solid #E1E4E8; border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; font-size: 14px; margin: 0; }
-.ln-copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: 13px; }
+.ln-code pre { background: #F6F8FA; border: 1px solid #E1E4E8; border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; font-size: var(--text-body); margin: 0; }
+.ln-copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: var(--text-small); }
 .ln-more { margin-top: 10px; border: 1px solid #B8CFF0; background: #F5F9FF; border-radius: 10px; padding: 8px 12px; }
 .ln-more summary { cursor: pointer; font-weight: 600; color: #1A56C4; }
 .ln-remember { background: #FFF8E1; border: 1px solid #F0D68A; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; }
@@ -64,17 +64,17 @@
 
 .ln-gloss { position: sticky; top: 70px; background: #fff; border: 1px solid #D8DEE4; border-radius: 14px; padding: 14px 16px;
   max-height: calc(100vh - 90px); overflow: auto; }
-.ln-gloss h2 { font-size: 17px; margin: 0 0 4px; }
+.ln-gloss h2 { font-size: var(--text-lead); margin: 0 0 4px; }
 .ln-gloss-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
 .ln-gloss-head h2 { margin: 0; }
-.ln-gloss-languages { min-width: 108px; max-width: 100%; padding: 4px 6px; border: 1px solid #D8DEE4; border-radius: 6px; background: #fff; color: #1F2328; font: inherit; font-size: 13px; cursor: pointer; }
+.ln-gloss-languages { min-width: 108px; max-width: 100%; padding: 4px 6px; border: 1px solid #D8DEE4; border-radius: 6px; background: #fff; color: #1F2328; font: inherit; font-size: var(--text-small); cursor: pointer; }
 .ln-gloss-languages:focus-visible { outline: 2px solid #1A56C4; outline-offset: 2px; }
-.ln-gloss-note { font-size: 13px; margin: 0 0 8px; }
+.ln-gloss-note { font-size: var(--text-small); margin: 0 0 8px; }
 .ln-g { border-top: 1px solid #EEF0F2; padding: 8px 6px; border-radius: 8px; display: flex; flex-wrap: wrap; column-gap: 6px; }
-.ln-g span:not(.ln-pron) { display: block; width: 100%; font-size: 14px; color: #3D444D; }
+.ln-g span:not(.ln-pron) { display: block; width: 100%; font-size: var(--text-body); color: #3D444D; }
 .ln-g [data-gloss-lang][hidden] { display: none; }
-.ln-g i { font-style: normal; font-size: 11px; font-weight: 700; color: #8C959F; margin-right: 4px; }
-.ln-pron { color: #8C959F; font-size: 13px; }
+.ln-g i { font-style: normal; font-size: var(--text-small); font-weight: 700; color: #8C959F; margin-right: 4px; }
+.ln-pron { color: #8C959F; font-size: var(--text-small); }
 .ln-g.flash { animation: ln-flash 1.4s ease; }
 @keyframes ln-flash { 0%, 40% { background: #FFE58F; } 100% { background: transparent; } }
 

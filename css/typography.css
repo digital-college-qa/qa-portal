@@ -1,0 +1,89 @@
+/* One readable scale for the portal, lessons, lab windows and every shop release.
+   rem keeps browser text preferences/zoom effective; viewport growth is bounded. */
+:root {
+  --text-small: clamp(.875rem, .85rem + .1vw, .9375rem);
+  --text-body: clamp(1rem, .96rem + .18vw, 1.125rem);
+  --text-control: clamp(1rem, .98rem + .1vw, 1.0625rem);
+  --text-lead: clamp(1.125rem, 1.06rem + .24vw, 1.25rem);
+}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { font-size: var(--text-body); }
+button, input, select, textarea { font-family: inherit; font-size: var(--text-control); }
+small { font-size: var(--text-small); }
+.btn { line-height: 1.45; white-space: normal; overflow-wrap: anywhere; max-width: 100%; }
+.hub-cta, .hub-route, .hub-details, .hub-hero-facts, .kb-hero-actions, .kb-hero-facts { flex-wrap: wrap; }
+.hub-secondary, .hub-lab-banner a, .kb-start-route>a { white-space: normal; }
+.hub-hero-copy>p { max-width: 48ch; }
+.hub-details, .hub-footer, .hub-section-heading>p, .hub .p-tile>span:not(.p-icon):not(.tile-number):not(.tile-arrow) { color: #756b82; }
+.hub-lab-banner p { color: #626e57; }
+.hub .p-tile strong { font-size: var(--text-lead); }
+.hub .p-tile>span:not(.p-icon):not(.tile-number):not(.tile-arrow) { max-width: none; }
+.hub-route a { min-height: 44px; }
+.hub-route b { flex: none; min-width: 32px; min-height: 32px; }
+.hub-playground { height: 450px; overflow: clip; }
+.hero-small-note { font-size: var(--text-small); }
+.float-passed { left: 24px; bottom: 50px; }
+.mini-title { flex-wrap: wrap; gap: 6px; }
+.mini-request, .float-request code { overflow-wrap: anywhere; }
+.kb-hero-facts, .kb-hero-actions, .kb-section-heading { gap: 14px; }
+.kb-sec, .kb-guide-steps p, .kb-reading-content .kb-remember { font-size: var(--text-body); }
+.kb-sec h2 { font-size: var(--text-lead)!important; }
+.kb-nav-group summary, .kb-on-page button { overflow-wrap: anywhere; white-space: normal; }
+.kb-on-page button { min-width: 100px; }
+.kb-kit-title, .kb-kit-code { overflow-wrap: anywhere; }
+.studio-dock { max-width: calc(100% - 16px); }
+.studio-dock button { white-space: normal; }
+.ide-titlebar strong { min-width: 0; overflow-wrap: anywhere; }
+.ide-titlebar { height: auto; padding-block: 6px; }
+.ide-controls { flex: none; margin-left: auto; }
+.ide-status, .api-response-head, .test-toolbar, .log-toolbar { flex-wrap: wrap; }
+.api-layout { grid-template-columns: 175px minmax(0,1fr); }
+.api-collection button { flex-wrap: wrap; }
+.api-bar { flex-wrap: wrap; }
+.api-bar select { width: 96px; }
+.api-bar input { flex: 1 1 130px; }
+.method-tag { min-width: 45px; }
+.ide-tabs { flex-wrap: wrap; }
+.log-row { grid-template-columns: 78px 54px minmax(0,1fr); }
+.test-step { overflow-wrap: anywhere; }
+.coffee-docs summary { flex-wrap: wrap; }
+.coffee-docs, .food-facts, .coffee-filters label, .network-settings { font-size: var(--text-body); }
+.coffee-release .card-foot { flex-wrap: wrap; }
+.coffee-release .card h3 { font-size: var(--text-lead); }
+.coffee-release .nav a, .coffee-release .user-link, .coffee-release .cart-link { font-size: var(--text-control); }
+@media (min-width:701px) and (max-width:1050px) {
+  body.portal .p-head { flex-wrap: wrap; gap: 12px; }
+  body.portal .p-head>.lang { margin-left: auto; }
+  body.portal .p-nav { order: 3; flex-basis: 100%; justify-content: space-between; }
+}
+@media (max-width:700px) {
+  body.portal .p-nav .p-nav-link, body.portal .p-project-toggle { font-size: var(--text-small); white-space: normal; text-align: center; overflow-wrap: anywhere; }
+  .hub-hero-copy>p { max-width: none; }
+  .hub-cta { align-items: stretch; gap: 16px; }
+  .hub-primary { display: inline-flex; align-items: center; justify-content: center; }
+  .hub-route { align-items: flex-start; gap: 8px; }
+  .hub-route a { flex: 1 1 100%; }
+  .hub-route>i { display: none; }
+  .hub-playground { height: 440px; }
+  .float-passed { left: 5%; bottom: 45px; }
+  .hero-small-note { bottom: 0; }
+  .hub-lab-banner>div { min-width: 180px; }
+  .hub-lab-banner a { margin-left: 0; min-height: 44px; display: flex; align-items: center; }
+  .kb-category-grid { grid-template-columns: minmax(0,1fr); }
+  .kb-section-heading>a { max-width: none; }
+  .kb-hero-actions { flex-wrap: wrap; }
+  .studio-dock button { font-size: var(--text-small)!important; overflow-wrap: anywhere; }
+  .studio-top h1 { white-space: normal; }
+  .ide-window:not(.maximized) { height: calc(100% - 142px)!important; }
+  .api-collection { max-height: 106px; }
+  .api-collection button { min-width: 155px; }
+  .api-bar select { width: 96px; }
+  .api-bar .send { margin-left: auto; }
+  .test-toolbar select { flex: 1 1 100%; max-width: none; width: 100%; }
+  .log-toolbar input { flex-basis: 100%; }
+}
+@media (max-width:380px) {
+  .hub .p-tiles { grid-template-columns: minmax(0,1fr); }
+  .hub .tile-6 { grid-column: auto; }
+  .coffee-release .menu-grid { grid-template-columns: minmax(0,1fr); }
+}
