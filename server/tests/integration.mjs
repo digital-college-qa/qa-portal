@@ -3,6 +3,8 @@ import {randomBytes} from 'node:crypto';
 import net from 'node:net';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 const listener=net.createServer();await new Promise(r=>listener.listen(0,'127.0.0.1',r));const port=listener.address().port;await new Promise(r=>listener.close(r));
 const password=randomBytes(24).toString('hex'),base=`http://127.0.0.1:${port}`;
 const child=spawn(process.execPath,[fileURLToPath(new URL('../index.mjs',import.meta.url))],{env:{...process.env,LAB_USERNAME:'tester',LAB_PASSWORD:password,LAB_PASSWORD_FILE:'',PORT:String(port),HOST:'127.0.0.1'},stdio:['ignore','pipe','pipe']});
@@ -15,7 +17,10 @@ try{
   const session=await request('/auth/login','POST',{username:'tester',password});assert.equal(session.status,200);const token=session.body.token;
   const denied=await fetch(base+'/health',{headers:{Origin:'https://evil.example'}});assert.equal(denied.status,403);
   assert.equal((await request('/runs','POST',{code:"import fs from 'node:fs';"},token)).status,400);
-  const code=`import {test,expect} from '@playwright/test';test('live cart',async({page,request})=>{await request.delete('cart');await page.goto('product.html?id=3');await page.getByRole('button',{name:'M',exact:true}).click();await page.getByRole('button',{name:/В корзину|Себетке/}).click();await page.goto('cart.html');await expect(page.getByText('Капучино',{exact:true})).toBeVisible();});`;
+  const curriculum=vm.createContext({window:{KB:[]}});
+  vm.runInContext(readFileSync(new URL('../../js/kb/e-api-autotests.js',import.meta.url),'utf8'),curriculum);
+  const sample=id=>curriculum.window.KB.find(t=>t.id===id).ru[id==='playwright-basics'?'example':'body'].match(/```\n([\s\S]*?)```/)[1];
+  const code=sample('automation-diagnostics')+'\n'+sample('playwright-basics').replace(/import[^\n]+\n/,'');
   assert.equal((await request('/runs','POST',{code,storage:{qc_version:'1.5'}},token)).status,403);
   const created=await request('/runs','POST',{code,storage:{qc_lang:'ru',qc_version:'2.0',qc_cart:[],qc_product_overrides:{}}},token);assert.equal(created.status,201);
   let result;for(let i=0;i<160;i++){result=await request('/runs/'+created.body.id,'GET',undefined,token);if(result.body.status!=='running')break;await new Promise(r=>setTimeout(r,250));}

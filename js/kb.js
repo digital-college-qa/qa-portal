@@ -223,6 +223,8 @@
 
   function drawTopic(tp) {
     const c = tp[lang()];
+    const testsTopic = ['playwright-basics', 'automation-diagnostics'].includes(tp.id);
+    const practiceHref = c.exampleLink?.href || (testsTopic ? 'labs.html?version=2.0&tool=tests' : tp.block === 'practice' ? 'labs.html?version=1.5&tool=api' : 'labs.html');
     const idx = topics.indexOf(tp);
     const prev = topics[idx - 1], next = topics[idx + 1];
     const done = readSet().has(tp.id);
@@ -252,7 +254,7 @@
       <div class="kb-foot">
         <button class="btn ${done ? "btn-ghost" : ""}" id="kb-read" type="button">${done ? u("unread") : u("read")}</button>
         <span>${prev ? `<a href="#${prev.id}">${u("prev")}</a>` : ""} ${next ? `<a href="#${next.id}">${u("next")}</a>` : ""}</span>
-      </div></div><aside class="kb-on-page" aria-label="${tr('Оглавление темы', 'Тақырып мазмұны')}"><strong>${tr('В этой теме', 'Осы тақырыпта')}</strong>${sections.map(([key, title]) => `<button type="button" data-jump="kb-section-${key}">${title}</button>`).join('')}<a class="kb-toc-practice" href="labs.html">${tr('Попробовать на сайте', 'Сайтта орындау')} ↗</a></aside></div>`;
+      </div></div><aside class="kb-on-page" aria-label="${tr('Оглавление темы', 'Тақырып мазмұны')}"><strong>${tr('В этой теме', 'Осы тақырыпта')}</strong>${sections.map(([key, title]) => `<button type="button" data-jump="kb-section-${key}">${title}</button>`).join('')}<a class="kb-toc-practice" href="${esc(practiceHref)}">${tr('Попробовать на сайте', 'Сайтта орындау')} ↗</a></aside></div>`;
     save('qc_kb_last', tp.id);
     document.getElementById("kb-read").addEventListener("click", () => {
       const s = readSet();

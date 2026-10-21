@@ -194,7 +194,8 @@
     root.querySelectorAll(".ln-copy").forEach(b => b.addEventListener("click", () => {
       const text = b.parentElement.querySelector("pre").textContent;
       const done = () => { b.textContent = UI.copied; setTimeout(() => { b.textContent = UI.copy; }, 1500); };
-      if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+      const manual = () => prompt(L === "kz" ? "Мәтінді қолмен көшір: Ctrl+C" : "Скопируй текст вручную: Ctrl+C", text);
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, manual); else manual();
     }));
     root.querySelectorAll(".ln-q").forEach(q => q.querySelectorAll(".ln-opt").forEach(o => o.addEventListener("click", () => {
       const data = q.__data;
