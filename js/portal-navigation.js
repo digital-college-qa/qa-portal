@@ -1,7 +1,7 @@
 /* One navigation renderer shared by portal pages and standalone coffee pages. */
 (function () {
   "use strict";
-  const revision = "20261021-mentor28";
+  const revision = "20261021-mentor29";
   const lang = () => QAVersions.read("qc_lang", "ru") === "kz" ? "kz" : "ru";
   const version = () => QAVersions.current;
   const save = (key, value) => QAVersions.write(key, value);
