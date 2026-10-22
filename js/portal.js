@@ -175,7 +175,7 @@
   };
 
   pages.docs = function (app) {
-    app.innerHTML = `<section class="wrap section p-doc"><h1>${t("docs_title")} · qala coffe ${version()}</h1><p class="p-callout">${t("docs_note")}</p>${QARequirements.html(version(),lang()==="kz")}</section>`;
+    QARequirementsPage.render(app, version(), lang() === "kz");
   };
 
   function filler(n) {
