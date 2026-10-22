@@ -190,6 +190,52 @@
     wireBody(app);
   }
 
+  function renderIllustratedLesson(d, head, nav) {
+    const data = window.QALecture, x = d[L], kz = L === "kz";
+    const tr = (ru, kk) => kz ? kk : ru;
+    const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
+    const figure = (src, label) => `<figure class="ln-figure"><a href="${esc(src)}" target="_blank" rel="noopener" aria-label="${esc(tr('Увеличить схему: ', 'Сызбаны үлкейту: ') + label)}"><img src="${esc(src)}" width="1040" height="650" alt="${esc(tr('Учебная схема: ', 'Оқу сызбасы: ') + label)}" loading="lazy"></a><figcaption>${tr('Учебная иллюстрация. ', 'Оқу иллюстрациясы. ')}<a href="${esc(src)}" target="_blank" rel="noopener">${tr('Открыть крупнее', 'Үлкейтіп ашу')} ↗</a></figcaption></figure>`;
+    app.innerHTML = `<div class="wrap section ln ln-first ln-illustrated">
+      ${head}
+      <section class="ln-sec" aria-labelledby="lecture-learn"><h2 id="lecture-learn">${tr('Что сегодня выучим', 'Бүгін не үйренеміз')}</h2>
+        <p>${esc(x.intro)}</p>
+        <div class="ln-topic-choices" role="group" aria-label="${tr('Темы этой пары', 'Осы сабақ тақырыптары')}">${d.topics.map((id, i) => `<button type="button" data-lecture-topic="${esc(id)}" aria-pressed="${i === 0}">${esc(data.topics[id].title[LI])}</button>`).join('')}</div>
+        <div class="ln-topic-content"></div>
+        <div class="ln-example">
+          <div class="ln-example-bar"><span class="ln-example-count"></span><button type="button" class="ln-example-next">${tr('Новый пример', 'Жаңа мысал')} <span aria-hidden="true">↻</span></button></div>
+          <div class="ln-illustrated-example"></div>
+          <p class="ln-example-announcement" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+      <section class="ln-sec ln-first-tasks" aria-labelledby="lecture-tasks"><h2 id="lecture-tasks">${tr('Задачи', 'Тапсырмалар')}</h2>
+        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, 's'))}${i === x.copyAfter ? `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${tr('Скопировать шаблон', 'Үлгіні көшіру')}</button></div>${x.template.includes('ID:') ? `<p class="ln-template-hint">${tr('ID: TC — тест-кейс, BUG — баг-репорт, CL — чек-лист. Раздел: CRT — корзина, MNU — меню, ORD — заказ. 001 — первая запись этого типа в разделе; следующая — 002. При исправлении записи ID сохраняется.', 'ID: TC — тест-кейс, BUG — баг-репорт, CL — чек-лист. Бөлім: CRT — себет, MNU — мәзір, ORD — тапсырыс. 001 — осы түрдің бөлімдегі бірінші жазбасы; келесісі — 002. Жазбаны түзеткенде ID сақталады.')}</p>` : ''}` : ''}</li>`).join('')}</ol>
+      </section>${nav}</div>`;
+    let topicId = d.topics[0], index = 0;
+    const showExample = (announce = false) => {
+      const bank = data.banks[data.topics[topicId].bank], example = bank[index], text = example[L];
+      const counter = `${tr('Пример', 'Мысал')} ${index + 1} ${tr('из', '/')} ${bank.length}`;
+      app.querySelector('.ln-example-count').textContent = counter;
+      app.querySelector('.ln-illustrated-example').innerHTML = `<h3>${esc(text[0])}</h3><p>${inline(text[1], 's')}</p>${figure(example.images[LI], text[0])}<p class="ln-example-explanation">${inline(text[2], 's')}</p>`;
+      app.querySelector('.ln-example-announcement').textContent = announce ? counter + ': ' + text[0] : '';
+    };
+    const showTopic = () => {
+      const topic = data.topics[topicId];
+      app.querySelector('.ln-topic-content').innerHTML = `<h3>${esc(topic.title[LI])}</h3><p class="ln-topic-en">${esc(topic.en)}</p>${md(topic.body[LI], 's')}${figure(topic.images[LI], topic.title[LI])}<p><a class="ln-kb-link" href="kb.html#${esc(topic.kb)}" target="_blank" rel="noopener">${tr('Прочитать объяснение в базе знаний', 'Білім қорындағы түсіндіруді оқу')} ↗</a></p>`;
+      app.querySelectorAll('[data-lecture-topic]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lectureTopic === topicId)));
+      showExample();
+      wireBody(app.querySelector('.ln-topic-content'));
+    };
+    showTopic();
+    app.querySelectorAll('[data-lecture-topic]').forEach(button => button.addEventListener('click', () => {
+      topicId = button.dataset.lectureTopic; index = 0; showTopic();
+    }));
+    app.querySelector('.ln-example-next').addEventListener('click', () => {
+      index = (index + 1) % data.banks[data.topics[topicId].bank].length;
+      showExample(true);
+    });
+    wireBody(app.querySelector('.ln-first-tasks'));
+  }
+
   function renderPair(k, n) {
     const d = P[`${k}-${n}`];
     const st = stageOf(k, n);
@@ -203,6 +249,11 @@
     if (!d) {
       app.innerHTML = `<section class="wrap section ln">${head}
         <p class="ln-empty">${UI.empty} <a href="kb.html">${UI.kb}</a>.</p>${nav}</section>`;
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (d.format === "illustrated-curriculum") {
+      renderIllustratedLesson(d, head, nav);
       window.scrollTo(0, 0);
       return;
     }
