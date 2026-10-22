@@ -30,7 +30,7 @@ body.portal #app > .requirements-page { max-width: 1120px; padding-block: clamp(
 .requirements-rule:target { border-color: #9773cf; background: #faf7ff; box-shadow: 0 0 0 3px #e8def8; }
 .requirements-page .requirements-rule-id { justify-self: start; padding: 4px 8px; border: 1px solid #ded3f1; border-radius: 7px; background: #f5f0fd; color: #6b45a7; font: 700 .88em ui-monospace, Consolas, monospace; text-decoration: none; white-space: nowrap; }
 .requirements-rule-id:hover { text-decoration: underline; }
-.requirements-page .requirements-rule p { max-width: 72ch; margin: 0; line-height: 1.7; overflow-wrap: anywhere; white-space: pre-line; }
+.requirements-page .requirements-rule p { max-width: 72ch; margin: 0; line-height: 1.7; overflow-wrap: anywhere; }
 .requirements-empty { padding: 28px; background: #fff; border: 1px dashed #c7b9dc; border-radius: 14px; color: #585168; }
 .requirements-empty p { margin: 0; }
 .requirements-access { margin-top: 28px; padding: 22px; background: #eef6f2; border: 1px solid #c4ded0; border-radius: 14px; }

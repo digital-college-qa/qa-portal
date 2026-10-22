@@ -73,7 +73,7 @@
     { id: 'theory', icon: 'book', title: tr('Основы тестирования', 'Тестілеу негіздері'), note: tr('От первого бага до тест-дизайна', 'Алғашқы багтан тест-дизайнға дейін'), match: tp => ['k1', 'k2', 'extra'].includes(tp.block) },
     { id: 'toolkit', icon: 'inspect', title: tr('Инструменты QA', 'QA құралдары'), note: tr('Открой инструмент и попробуй по шагам', 'Құралды ашып, қадаммен орында'), match: tp => toolIds.includes(tp.id) },
     { id: 'practice', icon: 'api', title: tr('API и автотесты', 'API және автотесттер'), note: tr('Запросы, ответы и первый Playwright', 'Сұраныс, жауап және алғашқы Playwright'), match: tp => tp.block === 'practice' },
-    { id: 'templates', icon: 'report', title: tr('Шпаргалки и шаблоны', 'Анықтамалар мен үлгілер'), note: tr('Тест-кейсы, чек-листы и баг-репорты', 'Тест-кейс, чек-лист және баг-репорт'), match: tp => tp.block === 'tools' || ['work-templates', 'qa-report'].includes(tp.id) }
+    { id: 'templates', icon: 'report', title: tr('Шпаргалки и шаблоны', 'Анықтамалар мен үлгілер'), note: tr('Тест-кейсы, чек-листы и баг-репорты', 'Тест-кейс, чек-лист және баг-репорт'), match: tp => tp.block === 'tools' || ['test-case', 'checklist', 'bug-report', 'qa-report'].includes(tp.id) }
   ];
 
   /* ---------- tiny markdown: paragraphs, lists, tables, ``` blocks, **b**, `code`, [link](url), ### h ---------- */
@@ -234,12 +234,7 @@
       sections.push([key, u(key)]);
       return `<section class="kb-sec ${cls || ""}" id="kb-section-${key}"><h2>${u(key)}</h2>${html}</section>`;
     };
-    const lecture = window.QALecture;
-    const visual = lecture && Object.values(lecture.topics).find(topic => topic.kb === tp.id);
-    const visualImage = visual ? visual.images[lang() === 'kz' ? 1 : 0] : null;
-    const relatedLesson = lecture && Object.entries(lecture.lessons).find(([, lesson]) => lesson.topics.some(key => lecture.topics[key].kb === tp.id));
-    const illustration = visual ? `<figure class="ln-figure"><a href="${esc(visualImage)}" target="_blank" rel="noopener"><img src="${esc(visualImage)}" alt="${esc(tr('Учебная схема: ', 'Оқу сызбасы: ') + c.title)}" width="1040" height="650" loading="lazy"></a><figcaption>${tr('Учебная иллюстрация. ', 'Оқу иллюстрациясы. ')}<a href="${esc(visualImage)}" target="_blank" rel="noopener">${tr('Открыть крупнее', 'Үлкейтіп ашу')} ↗</a>${relatedLesson ? ` · <a href="learn.html#${relatedLesson[0]}">${tr('Разобрать ситуации в уроке', 'Сабақтағы жағдайларды талдау')}</a>` : ''}</figcaption></figure>` : '';
-    const content = `${sec("short", md(c.short), "kb-short")}${illustration}
+    const content = `${sec("short", md(c.short), "kb-short")}
       ${sec("when", md(c.when))}
       ${sec("steps", c.steps ? `<ol class="kb-guide-steps">${c.steps.map(([title, text], i) => `<li><span class="kb-step-number">${i + 1}</span><div><h3>${esc(title)}</h3>${md(text)}</div></li>`).join('')}</ol>` : '')}
       ${sec("analogy", md(c.analogy), "kb-analogy")}
