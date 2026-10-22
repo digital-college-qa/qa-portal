@@ -1,0 +1,37 @@
+/* Compact explanations shared by lessons and knowledge guides. */
+.ln-simple-course .ln-sec { padding: clamp(16px, 2vw, 24px); }
+.ln-simple-course .ln-topic-hint { color: #60596c; font-size: .94em; margin-bottom: 10px; }
+.ln-topic-choices { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+.ln-topic-choices button { min-height: 44px; max-width: 100%; padding: 7px 12px; font: inherit; text-align: left; color: #594870; background: #fff; border: 1px solid #d8cde8; border-radius: 10px; cursor: pointer; overflow-wrap: anywhere; }
+.ln-topic-choices button[aria-pressed="true"] { color: #fff; background: #7450b6; border-color: #7450b6; }
+.ln-topic-choices button:hover { border-color: #7450b6; }
+.ln-simple-course .ln-topic-en { color: #686076; font-size: .9em; margin-bottom: 4px; }
+.ln-simple-course .ln-kb-link { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 10px; overflow-wrap: anywhere; }
+.ln-simple-course .ln-example-content p { margin: 0 0 6px; }
+.ln-simple-course .ln-example-content .ln-example-meaning { border-top: 1px solid #d3dff5; padding-top: 6px; margin-bottom: 0; }
+.ln-simple-course .ln-first-tasks li { margin-bottom: 10px; }
+.ln-simple-course .ln-format-link { margin-top: 12px; margin-bottom: 0; }
+.is-simple-guide .kb-reading-grid { grid-template-columns: minmax(0, 1fr); }
+.is-simple-guide .kb-on-page { display: none; }
+.is-simple-guide .kb-sec { padding: 16px 20px; margin-top: 12px; line-height: 1.6; color: #433c50; }
+.is-simple-guide .kb-sec h2 { color: #5a4273; margin-bottom: 8px!important; }
+.is-simple-guide .kb-sec p { margin: 6px 0; }
+.is-simple-guide .kb-sec a { color: #155ac7; text-decoration: underline; text-underline-offset: 3px; }
+.kb-comparison { border-left: 3px solid; padding: 8px 12px; border-radius: 0 8px 8px 0; margin-bottom: 10px; }
+.kb-comparison:last-child { margin-bottom: 0; }
+.kb-correct { background: #f1f8f2; border-color: #3e8860; }
+.kb-incorrect { background: #fff5ed; border-color: #c77735; }
+.is-simple-guide .kb-comparison h3 { margin: 0 0 4px; color: #34333f; font-size: 1em; }
+.kb-simple-steps { padding-left: 23px; margin: 10px 0; }
+.kb-simple-more { margin-top: 12px; border-top: 1px solid #ddd4e9; padding-top: 6px; }
+.kb-simple-more summary { cursor: pointer; min-height: 44px; padding-block: 8px; color: #155ac7; font-weight: 600; }
+.kb-simple-more .kb-pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.kb-template-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.kb-template-links a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 12px; border: 1px solid #b4cdf6; border-radius: 10px; background: #f0f6ff; }
+.is-simple-guide .kb-tpl .kb-copy { position: static; min-height: 44px; }
+@media (max-width:600px) {
+  .is-simple-guide .kb-sec { padding: 14px; }
+  .kb-template-links { flex-direction: column; }
+  .ln-simple-course .ln-sec { padding: 16px 14px; }
+  .ln-topic-choices button { padding: 7px 10px; }
+}

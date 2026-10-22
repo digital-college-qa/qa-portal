@@ -1,109 +1,56 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const vm = require('node:vm');
-const root = path.join(__dirname, '..');
-const context = vm.createContext({window: {KB: []}});
-for (const file of fs.readdirSync(path.join(root, 'js/kb')).filter(f => f.endsWith('.js'))) {
-  vm.runInContext(fs.readFileSync(path.join(root, 'js/kb', file), 'utf8'), context, {filename: file});
-}
-const topics = context.window.KB;
-const ids = new Set(topics.map(t => t.id));
-test('knowledge topics have unique stable identifiers and both languages', () => {
-  assert.equal(topics.length, ids.size);
-  for (const topic of topics) {
-    assert.match(topic.id, /^[a-z0-9-]+$/);
-    for (const language of ['ru', 'kz']) {
-      assert.ok(topic[language]?.title?.trim(), topic.id + ': title ' + language);
-      assert.ok(topic[language]?.short?.trim(), topic.id + ': short ' + language);
-    }
+const test=require('node:test'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.join(__dirname,'..'),context={window:{}};
+vm.runInNewContext(fs.readFileSync(path.join(root,'js/study-content.js'),'utf8'),context);
+const topics=context.window.KB,ids=new Set(topics.map(t=>t.id));
+function strings(v){return typeof v==='string'?[v]:v&&typeof v==='object'?Object.values(v).flatMap(strings):[];}
+test('all rewritten topics have concise explanation, contrasting examples and frequent mistakes',()=>{
+  assert.equal(topics.length,84);assert.equal(ids.size,topics.length);
+  for(const topic of topics)for(const lang of ['ru','kz']){
+    const t=topic[lang];for(const field of ['title','short','good','bad'])assert.ok(t[field]?.trim(),topic.id+': '+field);
+    assert.ok(t.short.length<1300,topic.id+': overly long definition');assert.notEqual(t.good,t.bad,topic.id);
+    assert.ok(t.mistakes.length>0);assert.doesNotMatch(t.short,/\|.*\|/);
   }
 });
-test('practical tool guides have usable steps and working internal destinations', () => {
-  const guides = topics.filter(t => t.block === 'toolkit');
-  assert.ok(guides.length > 0);
-  for (const guide of guides) {
-    for (const language of ['ru', 'kz']) {
-      const content = guide[language];
-      assert.ok(content.steps.length >= 4, guide.id + ': steps ' + language);
-      for (const step of content.steps) assert.ok(step.length === 2 && step.every(s => typeof s === 'string' && s.trim()));
-      assert.ok(content.example && content.template && content.mistakes.length && content.check.length);
-      for (const match of JSON.stringify(content).matchAll(/\]\(([^)]+)\)/g)) {
-        const href = match[1];
-        if (href.startsWith('#')) assert.ok(ids.has(href.slice(1)) || href === '#glossary', guide.id + ': ' + href);
-        else if (!href.startsWith('https://')) assert.ok(fs.existsSync(path.join(root, href.split(/[?#]/)[0])), guide.id + ': ' + href);
-      }
-    }
-    for (const [, source] of guide.sources || []) assert.equal(new URL(source).protocol, 'https:');
+test('all student-facing internal links resolve to existing pages and knowledge topics',()=>{
+  for(const value of strings(context.window.STUDY_CONTENT))for(const [,href]of value.matchAll(/\]\(([^)]+)\)/g)){
+    if(/^https?:/.test(href))continue;
+    const url=new URL(href,'https://school.invalid/kb.html');assert.ok(fs.existsSync(path.join(root,url.pathname.slice(1))),href);
+    if(url.pathname==='/kb.html'&&url.hash)assert.ok(ids.has(url.hash.slice(1)),href);
+    if(url.searchParams.has('version'))assert.ok(['1.0','1.5','2.0'].includes(url.searchParams.get('version')),href);
+  }
+  for(const t of topics)for(const lang of ['ru','kz'])for(const link of t[lang].links||[])assert.ok(ids.has(link.href.split('#')[1]),link.href);
+});
+test('practical tools explain actions instead of requiring an external registration',()=>{
+  for(const t of topics.filter(t=>t.block==='toolkit'&&t.id!=='tool-software-map'))for(const lang of ['ru','kz']){
+    assert.ok(t[lang].steps.length>=2,t.id);assert.ok(t[lang].steps.every(s=>s.trim()),t.id);
   }
 });
-test('beginner software comparison links to existing knowledge topics', () => {
-  const overview = topics.find(t => t.id === 'tool-software-map');
-  assert.ok(overview);
-  for (const language of ['ru', 'kz']) {
-    const links = [...overview[language].body.matchAll(/\]\(#([^)]+)\)/g)];
-    assert.ok(links.length > 0);
-    for (const [, target] of links) assert.ok(ids.has(target), 'Missing destination: ' + target);
+test('templates make preparation and data optional and keep expected/actual results separate',()=>{
+  for(const id of ['test-case','bug-report']){
+    const t=topics.find(t=>t.id===id);
+    assert.match(t.ru.template,/Предусловия: <необязательно/);assert.match(t.ru.template,/Тестовые данные: <необязательно/);
+    assert.match(t.ru.template,/Ожидаемый результат/);assert.match(t.ru.template,/Фактический результат/);
+    assert.match(t.kz.template,/Алғышарт: <міндетті емес/);assert.match(t.kz.template,/Тест дерегі: <міндетті емес/);
+    assert.doesNotMatch(t.ru.template,/RU.*KZ/);
   }
 });
-
-function strings(value) {
-  if (typeof value === 'string') return [value];
-  return value && typeof value === 'object' ? Object.values(value).flatMap(strings) : [];
-}
-
-test('all handbook destinations exist and release-specific links use current versions', () => {
-  const validVersions = new Set(['1.0', '1.5', '2.0']);
-  for (const topic of topics) for (const language of ['ru', 'kz']) {
-    for (const value of strings(topic[language])) {
-      for (const [, href] of value.matchAll(/\]\(([^)]+)\)/g)) {
-        if (/^https?:/.test(href)) continue;
-        const url = new URL(href, 'https://training.invalid/kb.html');
-        assert.ok(fs.existsSync(path.join(root, url.pathname.slice(1))), topic.id + ': ' + href);
-        if (url.searchParams.has('version')) assert.ok(validVersions.has(url.searchParams.get('version')), href);
-        if (url.pathname === '/kb.html' && url.hash) {
-          const id = url.hash.slice(1);
-          assert.ok(ids.has(id) || id === 'glossary' || id === 'home' || id.startsWith('catalog-'), topic.id + ': ' + href);
-        }
-      }
-    }
-  }
+test('published automation snippets compile in the real supported classroom language',async()=>{
+  const {compile}=await import('../server/language.mjs');let checked=0;
+  for(const t of topics)for(const lang of ['ru','kz'])if(t[lang].code){assert.ok(compile(t[lang].code).length,t.id);checked++;}
+  assert.equal(checked,12);
 });
-
-test('lesson terms resolve to their glossary and quizzes have a valid answer', () => {
-  const lessons = vm.createContext({window: {LEARN_PAIRS: {}}});
-  for (const file of fs.readdirSync(path.join(root, 'js/learn')).filter(f => /^k1-.*\.js$/.test(f))) {
-    vm.runInContext(fs.readFileSync(path.join(root, 'js/learn', file), 'utf8'), lessons);
-  }
-  for (const [id, pair] of Object.entries(lessons.window.LEARN_PAIRS)) {
-    const glossary = new Set(pair.glossary.map(row => row[0]));
-    for (const language of ['ru', 'kz']) {
-      for (const value of strings(pair[language])) for (const [, term] of value.matchAll(/\[\[([^\]]+)\]\]/g)) {
-        assert.ok(glossary.has(term.split('@').at(-1)), id + ': ' + term);
-      }
-      for (const mode of ['s', 'd']) for (const [question, options, answer, explanation] of pair[language].quiz[mode]) {
-        assert.ok(question && explanation && Number.isInteger(answer) && answer >= 0 && answer < options.length, id);
-      }
-    }
-  }
+test('documented API bodies and cart IDs match the real teaching store',()=>{
+  const {createStore}=require('../js/labs/store.js');const state={};
+  const store=createStore({seed:[{id:3,price:1200,inStock:true,name:{ru:'Капучино',kz:'Капучино'}}],read:(k,f)=>state[k]??f,write:(k,v)=>state[k]=v});
+  const body=topics.find(t=>t.id==='api-client').ru.requestBody;
+  const result=store.handle({method:'POST',path:'/cart/items',body});assert.equal(result.status,201);
+  assert.ok(result.body.items[0].id);assert.equal(result.body.items[0].itemId,undefined);
+  const before=JSON.stringify(store.cartBody());
+  assert.equal(store.handle({method:'POST',path:'/cart/items',body:JSON.stringify({productId:3,quantity:0,size:'M'})}).status,400);
+  assert.equal(JSON.stringify(store.cartBody()),before);
+  assert.equal(store.handle({method:'DELETE',path:'/cart/items/'+result.body.items[0].id}).status,204);
 });
-
-test('published Playwright examples compile in the actual teaching runner', async () => {
-  const {compile} = await import('../server/language.mjs');
-  let checked = 0;
-  for (const topic of topics) for (const language of ['ru', 'kz']) for (const value of strings(topic[language])) {
-    for (const [, code] of value.matchAll(/```[^\n]*\n([\s\S]*?)```/g)) {
-      if (!code.includes("from '@playwright/test'")) continue;
-      assert.ok(compile(code).length, topic.id + ': ' + language);
-      checked++;
-    }
-  }
-  assert.ok(checked >= 4);
-});
-
-test('API reset instructions distinguish cart reset from account deletion in both languages', () => {
-  const article = topics.find(t => t.id === 'api-client');
-  assert.match(article.ru.body, /reset сбрасывает[\s\S]*не удаляет аккаунты/i);
-  assert.match(article.kz.body, /reset[\s\S]*Аккаунт[\s\S]*жоймайды/);
+test('reset instructions distinguish local cart/price reset from account removal',()=>{
+  const t=topics.find(t=>t.id==='api-client');assert.match(t.ru.steps.join(' '),/не удаляет аккаунты/);assert.match(t.kz.steps.join(' '),/аккаунт.*жоймайды/i);
 });

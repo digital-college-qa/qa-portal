@@ -20,8 +20,8 @@
       title: "База знаний", search: "Поиск: чек-лист, bug, қате…", found: "Найдено", ctrlf: "<b>Ctrl+F</b> — найти слово на открытой странице. Поиск выше — найти тему по всей базе.",
       topics: "☰ Все темы", blocks: { toolkit: "Инструменты QA", tools: "Шпаргалки", k1: "Основы · 1 курс", k2: "2 курс", practice: "API и автотесты", extra: "Дополнительно" },
       steps: "Сделай пошагово", sources: "Официальные инструкции",
-      short: "Коротко", when: "Когда и зачем", analogy: "Пример из жизни", body: "Подробнее", template: "Шаблон",
-      example: "Пример на qala coffe", mistakes: "Частые ошибки", remember: "Запомни", check: "Проверь себя",
+      short: "Объяснение", when: "Когда и зачем", analogy: "Пример из жизни", body: "Подробнее", template: "Шаблон",
+      example: "Примеры", mistakes: "Частые ошибки", remember: "Запомни", check: "Проверь себя",
       check_hint: "Сначала ответь сам, потом нажми на вопрос.", terms: "Слова для поиска", open_shop: "Открыть в магазине →",
       copy: "Скопировать", copied: "Скопировано", read: "Я прочитал(а)", unread: "Прочитано ✓ (нажми, чтобы снять)",
       prev: "← Назад", next: "Дальше →", pairs: { k1: "1 курс, пара", k2: "2 курс, пара" }, nothing: "Ничего не найдено. Попробуй другое слово или английский термин.",
@@ -33,8 +33,8 @@
       title: "Білім қоры", search: "Іздеу: чек-лист, bug, қате…", found: "Табылды", ctrlf: "<b>Ctrl+F</b> — ашық беттен сөз табу. Жоғарыдағы іздеу — бүкіл қордан тақырып табу.",
       topics: "☰ Барлық тақырып", blocks: { toolkit: "QA құралдары", tools: "Анықтамалар", k1: "Негіздер · 1 курс", k2: "2 курс", practice: "API және автотесттер", extra: "Қосымша" },
       steps: "Қадаммен орында", sources: "Ресми нұсқаулықтар",
-      short: "Қысқаша", when: "Қашан және не үшін", analogy: "Өмірден мысал", body: "Толығырақ", template: "Үлгі",
-      example: "qala coffe мысалы", mistakes: "Жиі кездесетін қателер", remember: "Есте сақта", check: "Өзіңді тексер",
+      short: "Түсіндіру", when: "Қашан және не үшін", analogy: "Өмірден мысал", body: "Толығырақ", template: "Үлгі",
+      example: "Мысалдар", mistakes: "Жиі кездесетін қателер", remember: "Есте сақта", check: "Өзіңді тексер",
       check_hint: "Алдымен өзің жауап бер, содан кейін сұрақты бас.", terms: "Іздеуге арналған сөздер", open_shop: "Дүкеннен ашу →",
       copy: "Көшіру", copied: "Көшірілді", read: "Оқыдым", unread: "Оқылды ✓ (алып тастау үшін бас)",
       prev: "← Артқа", next: "Әрі қарай →", pairs: { k1: "1 курс, сабақ", k2: "2 курс, сабақ" }, nothing: "Ештеңе табылмады. Басқа сөзді немесе ағылшын терминін жазып көр.",
@@ -73,7 +73,7 @@
     { id: 'theory', icon: 'book', title: tr('Основы тестирования', 'Тестілеу негіздері'), note: tr('От первого бага до тест-дизайна', 'Алғашқы багтан тест-дизайнға дейін'), match: tp => ['k1', 'k2', 'extra'].includes(tp.block) },
     { id: 'toolkit', icon: 'inspect', title: tr('Инструменты QA', 'QA құралдары'), note: tr('Открой инструмент и попробуй по шагам', 'Құралды ашып, қадаммен орында'), match: tp => toolIds.includes(tp.id) },
     { id: 'practice', icon: 'api', title: tr('API и автотесты', 'API және автотесттер'), note: tr('Запросы, ответы и первый Playwright', 'Сұраныс, жауап және алғашқы Playwright'), match: tp => tp.block === 'practice' },
-    { id: 'templates', icon: 'report', title: tr('Шпаргалки и шаблоны', 'Анықтамалар мен үлгілер'), note: tr('Тест-кейсы, чек-листы и баг-репорты', 'Тест-кейс, чек-лист және баг-репорт'), match: tp => tp.block === 'tools' || ['test-case', 'checklist', 'bug-report', 'qa-report'].includes(tp.id) }
+    { id: 'templates', icon: 'report', title: tr('Шпаргалки и шаблоны', 'Анықтамалар мен үлгілер'), note: tr('Тест-кейсы, чек-листы и баг-репорты', 'Тест-кейс, чек-лист және баг-репорт'), match: tp => tp.block === 'tools' || tp.id === 'qa-report' }
   ];
 
   /* ---------- tiny markdown: paragraphs, lists, tables, ``` blocks, **b**, `code`, [link](url), ### h ---------- */
@@ -125,7 +125,7 @@
   }
 
   function label(tp) {
-    return (tp.n == null || tp.n < 0 ? "" : tp.n + ". ") + tp[lang()].title;
+    return tp[lang()].title;
   }
   function pairsText(tp) {
     if (!tp.pairs) return "";
@@ -223,8 +223,8 @@
 
   function drawTopic(tp) {
     const c = tp[lang()];
-    const testsTopic = ['playwright-basics', 'automation-diagnostics'].includes(tp.id);
-    const practiceHref = c.exampleLink?.href || (testsTopic ? 'labs.html?version=2.0&tool=tests' : tp.block === 'practice' ? 'labs.html?version=1.5&tool=api' : 'labs.html');
+    const testsTopic = Boolean(c.code);
+    const practiceHref = c.exampleLink?.href || (testsTopic ? 'labs.html?version=2.0&tool=tests' : tp.block === 'practice' || ['tool-postman','tool-network'].includes(tp.id) ? 'labs.html?version=1.5&tool=api' : 'menu.html?version=1.5');
     const idx = topics.indexOf(tp);
     const prev = topics[idx - 1], next = topics[idx + 1];
     const done = readSet().has(tp.id);
@@ -234,7 +234,16 @@
       sections.push([key, u(key)]);
       return `<section class="kb-sec ${cls || ""}" id="kb-section-${key}"><h2>${u(key)}</h2>${html}</section>`;
     };
-    const content = `${sec("short", md(c.short), "kb-short")}
+    const content = tp.format === 'simple-guide' ? `${sec('short', md(c.short)
+      + (c.steps?.length ? `<ol class="kb-simple-steps">${c.steps.map(s=>`<li>${inline(s)}</li>`).join('')}</ol>` : '')
+      + (c.links?.length ? `<div class="kb-template-links">${c.links.map(l=>`<a href="${esc(l.href)}">${esc(l.label)} →</a>`).join('')}</div>` : '')
+      + (c.idHelp ? `<details class="kb-simple-more"><summary>${tr('Как составить ID','ID қалай құрылады')}</summary>${md(c.idHelp)}</details>` : '')
+      + (c.contract ? `<details class="kb-simple-more"><summary>${tr('Правила учебных API-запросов','Оқу API сұранысының ережелері')}</summary><ul>${c.contract.map(s=>`<li>${inline(s)}</li>`).join('')}</ul></details>` : '')
+      + (c.template ? `<details class="kb-simple-more"><summary>${tr('Открыть шаблон для копирования','Көшіру үлгісін ашу')}</summary><div class="kb-tpl"><pre class="kb-pre">${esc(c.template)}</pre>${copyBtn(c.template)}</div></details>` : ''), 'kb-short')}
+      ${sec('example', `<div class="kb-comparison kb-correct"><h3>${tr('Правильно','Дұрыс')}</h3>${md(c.good)}</div><div class="kb-comparison kb-incorrect"><h3>${tr('Неправильно','Қате')}</h3>${md(c.bad)}</div>`
+      + (c.requestBody ? `<p>${tr('Body для POST /cart/items:','POST /cart/items үшін Body:')}</p><pre class="kb-pre">${esc(c.requestBody)}</pre>${copyBtn(c.requestBody)}` : '')
+      + (c.code ? `<details class="kb-simple-more"><summary>${tr('Готовый код и объяснение строк','Дайын код және жол түсіндіруі')}</summary><pre class="kb-pre">${esc(c.code)}</pre>${copyBtn(c.code)}${md(c.codeNote)}</details>` : ''))}
+      ${sec('mistakes', `<ul>${c.mistakes.map(m=>`<li>${inline(m)}</li>`).join('')}</ul>`)}` : `${sec("short", md(c.short), "kb-short")}
       ${sec("when", md(c.when))}
       ${sec("steps", c.steps ? `<ol class="kb-guide-steps">${c.steps.map(([title, text], i) => `<li><span class="kb-step-number">${i + 1}</span><div><h3>${esc(title)}</h3>${md(text)}</div></li>`).join('')}</ol>` : '')}
       ${sec("analogy", md(c.analogy), "kb-analogy")}
@@ -245,10 +254,10 @@
       ${c.remember ? `<div class="kb-remember"><b>${u("remember")}:</b> ${inline(c.remember)}</div>` : ""}
       ${sec("check", c.check?.length ? `<p class="muted">${u("check_hint")}</p>` + c.check.map(([q, a]) => `<details class="kb-q"><summary>${inline(q)}</summary><div>${md(a)}</div></details>`).join("") : "")}
       ${sec('sources', tp.sources?.length ? `<ul class="kb-sources">${tp.sources.map(([title, href]) => `<li><a href="${href}" target="_blank" rel="noopener">${esc(title)} ↗</a></li>`).join('')}</ul>` : '')}`;
-    document.getElementById('kb-layout').className = 'kb kb-layout is-reading';
+    document.getElementById('kb-layout').className = 'kb kb-layout is-reading' + (tp.format === 'simple-guide' ? ' is-simple-guide' : '');
     document.getElementById("kb-main").innerHTML = `
       <div class="kb-breadcrumb"><a href="#home">${u('title')}</a><span>/</span><a href="#catalog-${tp.block === 'toolkit' ? 'toolkit' : tp.block === 'practice' ? 'practice' : tp.block === 'tools' ? 'templates' : 'theory'}">${esc(u('blocks')[tp.block])}</a></div>
-      <header class="kb-topic-head"><span class="kb-topic-badge">${icon(topicIcon(tp))}${tp.block === 'toolkit' ? tr('Инструмент · инструкция', 'Құрал · нұсқаулық') : esc(pairsText(tp)) || u('blocks')[tp.block]}${tp.minutes ? ' · ~' + tp.minutes + ' ' + tr('мин', 'мин') : ''}</span><h1>${esc(c.title)}</h1><p>${tr('Разберись → попробуй → проверь себя', 'Түсін → орында → өзіңді тексер')}</p></header>
+      <header class="kb-topic-head"><span class="kb-topic-badge">${icon(topicIcon(tp))}${tp.block === 'toolkit' ? tr('Инструмент · инструкция', 'Құрал · нұсқаулық') : esc(pairsText(tp)) || u('blocks')[tp.block]}${tp.minutes ? ' · ~' + tp.minutes + ' ' + tr('мин', 'мин') : ''}</span><h1>${esc(c.title)}</h1><p>${tr('Короткое объяснение, сравнение и частые ошибки', 'Қысқа түсіндіру, салыстыру және жиі қателер')}</p></header>
       <div class="kb-reading-grid"><div class="kb-reading-content">${content}
       ${tp.terms && tp.terms.length ? `<p class="kb-terms"><b>${u("terms")}:</b> ${tp.terms.map(t => esc(t.filter(Boolean).join(" / "))).join(" · ")}</p>` : ""}
       <div class="kb-foot">

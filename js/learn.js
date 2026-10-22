@@ -1,5 +1,5 @@
-/* Уроки: список пар по этапам (#k1, #k2) и страница пары (#k1-5). Режимы «Просто» / «Подробно» со сдвигом.
-   Данные: js/learn/course.js (структура курсов) и js/learn/<курс>-<пара>.js (содержимое пар). */
+/* Уроки: список пар по этапам (#k1, #k2) и краткая страница пары (#k1-5).
+   Данные: js/learn/course.js и общий источник js/study-content.js. */
 (function () {
   "use strict";
 
@@ -216,6 +216,11 @@
       window.scrollTo(0, 0);
       return;
     }
+    if (d.format === "simple-course") {
+      renderSimpleLesson(d, head, nav);
+      window.scrollTo(0, 0);
+      return;
+    }
     app.innerHTML = `
       <section class="wrap section ln">
         ${head}
@@ -246,6 +251,42 @@
       </section>`;
     wirePair(d);
     window.scrollTo(0, 0);
+  }
+
+  function renderSimpleLesson(d, head, nav) {
+    const content = window.STUDY_CONTENT, x = d[L], tr = (ru, kz) => L === 'kz' ? kz : ru;
+    const topic = id => content.topics.find(t => t.id === id);
+    const destination = d.kind === 'api' ? `labs.html?version=${d.version}&tool=api` : d.kind === 'auto' ? `labs.html?version=${d.version}&tool=tests` : `menu.html?version=${d.version}`;
+    const template = {case:'test-case',bug:'bug-report',checklist:'checklist',api:'api-test-design',auto:'playwright-basics',record:'qa-report'}[d.kind];
+    const taskFormat = ['case','bug','checklist','api'].includes(d.kind) ? `<p class="ln-format-link"><a href="kb.html#${template}" target="_blank" rel="noopener">${tr('Открыть шаблон и объяснение полей', 'Үлгі мен өріс түсіндіруін ашу')} ↗</a></p>` : '';
+    const submission = d.kind === 'record' ? tr('Запиши короткие ответы по трём пунктам и версию сайта.', 'Үш пунктке қысқа жауап пен сайт нұсқасын жаз.') : d.kind === 'auto' ? tr('Сохрани код, результат запуска или причину Blocked и короткий вывод.', 'Код, орындау нәтижесі не Blocked себебін, қысқа қорытындыны сақта.') : tr('Оформи результат по шаблону ниже. Необязательные поля без нужды удали.', 'Нәтижені төмендегі үлгімен жаз. Қажетсіз міндетті емес өрісті алып таста.');
+    app.innerHTML = `<div class="wrap section ln ln-first ln-simple-course">${head}
+      <section class="ln-sec" aria-labelledby="simple-learn"><h2 id="simple-learn">${tr('Что сегодня выучим','Бүгін не үйренеміз')}</h2>
+        <p class="ln-first-intro">${esc(x.intro)}</p>
+        <p class="ln-topic-hint">${tr('Нажми на каждую тему: прочитай объяснение и посмотри пример. По синей ссылке — разбор и частые ошибки. Примеры — учебные ситуации.', 'Әр тақырыпты бас: түсіндіру мен мысалды оқы. Көк сілтемеде талдау мен жиі қателер бар. Мысалдар — оқу жағдайлары.')}</p>
+        <div class="ln-topic-choices" role="group" aria-label="${tr('Темы пары','Сабақ тақырыптары')}">${d.topics.map((id,i)=>`<button type="button" data-study-topic="${esc(id)}" aria-pressed="${i===0}">${esc(topic(id)[L].title)}</button>`).join('')}</div>
+        <div class="ln-topic-content"></div>
+        <div class="ln-example"><div class="ln-example-bar"><span class="ln-example-count"></span><div class="ln-example-controls"><button type="button" class="ln-example-prev" aria-label="${tr('Предыдущий пример','Алдыңғы мысал')}">← ${tr('Назад','Артқа')}</button><button type="button" class="ln-example-next" aria-label="${tr('Следующий пример','Келесі мысал')}">${tr('Вперёд','Алға')} →</button></div></div><div class="ln-example-content" aria-live="polite" aria-atomic="true"></div></div>
+      </section>
+      <section class="ln-sec ln-first-tasks" aria-labelledby="simple-tasks"><h2 id="simple-tasks">${tr('Задачи','Тапсырмалар')}</h2>
+        <p><a class="ln-work-link" href="${destination}" target="_blank" rel="noopener">${tr('Открыть рабочую страницу','Жұмыс бетін ашу')} · ${esc(d.version)} ↗</a> · <a href="docs.html?version=${d.version}" target="_blank" rel="noopener">${tr('Требования','Талаптар')}</a></p>
+        <ol>${x.tasks.map(t=>`<li>${inline(t,'s')}</li>`).join('')}<li>${submission} ${tr('Отправь в свою ветку','Өз тармағыңа жібер')} <a href="https://discord.com/channels/1559176798489673840" target="_blank" rel="noopener">Discord</a>: work-chat → «Сдать работу» → ${tr('ссылка бота','бот сілтемесі')}. <a href="kb.html#start-here" target="_blank" rel="noopener">${tr('Как отправить по шагам','Жіберу қадамдары')} ↗</a></li></ol>${taskFormat}
+      </section>${nav}</div>`;
+    let selected=d.topics[0], index=0;
+    function example() {
+      const rows=content.examples[selected], row=rows[index][L];
+      app.querySelector('.ln-example-count').textContent=`${tr('Пример','Мысал')} ${index+1} ${tr('из','/')} ${rows.length}`;
+      app.querySelector('.ln-example-content').innerHTML=`<h3>${esc(row[0])}</h3><p>${inline(row[1],'s')}</p><p class="ln-example-meaning">${inline(row[2],'s')}</p>`;
+    }
+    function explain() {
+      const t=topic(selected), words=(t.terms||[]).map(w=>w[0]).filter(Boolean).slice(0,3).join(' · ');
+      app.querySelector('.ln-topic-content').innerHTML=`<p class="ln-topic-en">${esc(words)}</p><p>${inline(t[L].short,'s')}</p><a class="ln-kb-link" href="kb.html#${esc(selected)}" target="_blank" rel="noopener">${tr('Объяснение, сравнение и частые ошибки','Түсіндіру, салыстыру және жиі қателер')} ↗</a>`;
+      app.querySelectorAll('[data-study-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.studyTopic===selected)));
+      example();
+    }
+    app.querySelectorAll('[data-study-topic]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.studyTopic;index=0;explain();}));
+    for(const [selector,direction] of [['.ln-example-prev',-1],['.ln-example-next',1]])app.querySelector(selector).addEventListener('click',()=>{index=(index+direction+content.examples[selected].length)%content.examples[selected].length;example();});
+    explain();
   }
 
   function wireBody(root) {
