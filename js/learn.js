@@ -144,6 +144,52 @@
       ${x.task ? `<p class="ln-task">📝 ${esc(x.task)}</p>` : ""}`;
   }
 
+  function renderFirstLesson(d, head, nav) {
+    const x = d[L], kz = L === "kz";
+    const text = {
+      learn: kz ? "Бүгін не үйренеміз" : "Что сегодня выучим",
+      tasks: kz ? "Тапсырмалар" : "Задачи",
+      next: kz ? "Жаңа мысал" : "Новый пример",
+      example: kz ? "Мысал" : "Пример",
+      of: kz ? "/" : "из",
+      copy: kz ? "Үлгіні көшіру" : "Скопировать шаблон",
+      labels: kz ? ["Талап", "Не істедік", "Күтілетін нәтиже", "Нақты нәтиже", "Бұл нені білдіреді"]
+        : ["Требование", "Что сделали", "Ожидаемый результат", "Фактический результат", "Что это значит"]
+    };
+    const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
+    app.innerHTML = `<div class="wrap section ln ln-first">
+      ${head}
+      <section class="ln-sec ln-first-learn" aria-labelledby="first-learn-title">
+        <h2 id="first-learn-title">${text.learn}</h2>
+        <p class="ln-first-intro">${esc(x.intro)}</p>
+        ${x.explanation.map(p => md(p, "s")).join("")}
+        <div class="ln-first-links">${x.links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>
+        <p class="ln-example-note">${esc(x.exampleNote)}</p>
+        <div class="ln-example">
+          <div class="ln-example-bar"><span class="ln-example-count"></span><button type="button" class="ln-example-next">${text.next} <span aria-hidden="true">↻</span></button></div>
+          <div class="ln-example-content" aria-live="polite" aria-atomic="true"></div>
+        </div>
+      </section>
+      <section class="ln-sec ln-first-tasks" aria-labelledby="first-tasks-title">
+        <h2 id="first-tasks-title">${text.tasks}</h2>
+        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === 2 ? `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>` : ""}</li>`).join("")}</ol>
+      </section>
+      ${nav}
+    </div>`;
+    let exampleIndex = 0;
+    const showExample = () => {
+      const example = x.examples[exampleIndex];
+      app.querySelector(".ln-example-count").textContent = `${text.example} ${exampleIndex + 1} ${text.of} ${x.examples.length}`;
+      app.querySelector(".ln-example-content").innerHTML = `<h3>${esc(example[0])}</h3><dl>${example.slice(1).map((value, i) => `<div><dt>${text.labels[i]}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
+    };
+    showExample();
+    app.querySelector(".ln-example-next").addEventListener("click", () => {
+      exampleIndex = (exampleIndex + 1) % x.examples.length;
+      showExample();
+    });
+    wireBody(app);
+  }
+
   function renderPair(k, n) {
     const d = P[`${k}-${n}`];
     const st = stageOf(k, n);
@@ -157,6 +203,11 @@
     if (!d) {
       app.innerHTML = `<section class="wrap section ln">${head}
         <p class="ln-empty">${UI.empty} <a href="kb.html">${UI.kb}</a>.</p>${nav}</section>`;
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (d.format === "guided-first-lesson") {
+      renderFirstLesson(d, head, nav);
       window.scrollTo(0, 0);
       return;
     }
@@ -195,7 +246,8 @@
   function wireBody(root) {
     root.querySelectorAll(".ln-copy").forEach(b => b.addEventListener("click", () => {
       const text = b.parentElement.querySelector("pre").textContent;
-      const done = () => { b.textContent = UI.copied; setTimeout(() => { b.textContent = UI.copy; }, 1500); };
+      const label = b.dataset.copyLabel || (b.dataset.copyLabel = b.textContent);
+      const done = () => { b.textContent = UI.copied; setTimeout(() => { b.textContent = label; }, 1500); };
       const manual = () => prompt(L === "kz" ? "Мәтінді қолмен көшір: Ctrl+C" : "Скопируй текст вручную: Ctrl+C", text);
       if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, manual); else manual();
     }));
