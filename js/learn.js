@@ -149,7 +149,10 @@
     const text = {
       learn: kz ? "Бүгін не үйренеміз" : "Что сегодня выучим",
       tasks: kz ? "Тапсырмалар" : "Задачи",
-      next: kz ? "Жаңа мысал" : "Новый пример",
+      prev: kz ? "Артқа" : "Назад",
+      next: kz ? "Алға" : "Вперёд",
+      prevLabel: kz ? "Алдыңғы мысал" : "Предыдущий пример",
+      nextLabel: kz ? "Келесі мысал" : "Следующий пример",
       example: kz ? "Мысал" : "Пример",
       of: kz ? "/" : "из",
       copy: kz ? "Үлгіні көшіру" : "Скопировать шаблон",
@@ -166,7 +169,7 @@
         <div class="ln-first-links">${x.links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>
         <p class="ln-example-note">${esc(x.exampleNote)}</p>
         <div class="ln-example">
-          <div class="ln-example-bar"><span class="ln-example-count"></span><button type="button" class="ln-example-next">${text.next} <span aria-hidden="true">↻</span></button></div>
+          <div class="ln-example-bar"><span class="ln-example-count"></span><div class="ln-example-controls"><button type="button" class="ln-example-prev" aria-label="${text.prevLabel}"><span aria-hidden="true">←</span> ${text.prev}</button><button type="button" class="ln-example-next" aria-label="${text.nextLabel}">${text.next} <span aria-hidden="true">→</span></button></div></div>
           <div class="ln-example-content" aria-live="polite" aria-atomic="true"></div>
         </div>
       </section>
@@ -183,10 +186,12 @@
       app.querySelector(".ln-example-content").innerHTML = `<h3>${esc(example[0])}</h3><dl>${example.slice(1).map((value, i) => `<div><dt>${text.labels[i]}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
     };
     showExample();
-    app.querySelector(".ln-example-next").addEventListener("click", () => {
-      exampleIndex = (exampleIndex + 1) % x.examples.length;
+    const moveExample = direction => {
+      exampleIndex = (exampleIndex + direction + x.examples.length) % x.examples.length;
       showExample();
-    });
+    };
+    app.querySelector(".ln-example-prev").addEventListener("click", () => moveExample(-1));
+    app.querySelector(".ln-example-next").addEventListener("click", () => moveExample(1));
     wireBody(app);
   }
 
