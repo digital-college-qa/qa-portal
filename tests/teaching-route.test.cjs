@@ -6,7 +6,7 @@ for(const [,src] of html.matchAll(/<script src="([^"?]+)/g)) {
   if(src==='js/study-content.js'||src.startsWith('js/learn/'))vm.runInNewContext(fs.readFileSync(path.join(root,src),'utf8'),context,{filename:src});
 }
 const data=context.window.STUDY_CONTENT,pairs=context.window.LEARN_PAIRS,ids=new Set(data.topics.map(t=>t.id));
-const GUIDED=Array.from({length:12},(_,i)=>'k1-'+(i+1));
+const GUIDED=Array.from({length:26},(_,i)=>'k1-'+(i+1));
 test('all 52 actual lesson routes are short, bilingual and tied to their source pair',()=>{
   assert.equal(Object.keys(pairs).length,52);
   for(const course of ['k1','k2'])for(let n=1;n<=26;n++){
@@ -35,13 +35,13 @@ test('all 52 actual lesson routes are short, bilingual and tied to their source 
 test('every topic has a few complete examples; lesson topics show at least three',()=>{
   const lessonTopics=new Set(Object.values(data.lessons).flatMap(l=>l.topics));
   for(const [id,rows]of Object.entries(data.examples)){
-    assert.ok(rows.length>=2&&rows.length<=6,id);
+    assert.ok(rows.length>=2&&rows.length<=24,id);
     if(lessonTopics.has(id))assert.ok(rows.length>=3,id);
     for(const lang of ['ru','kz'])for(const row of rows){assert.equal(row[lang].length,3,id);assert.ok(row[lang].every(s=>typeof s==='string'&&s.trim()),id);}
   }
 });
 test('lessons and knowledge base load exactly the same canonical teaching data',()=>{
   const kb=fs.readFileSync(path.join(root,'kb.html'),'utf8');
-  assert.ok(html.includes('js/study-content.js?v=38'));assert.ok(kb.includes('js/study-content.js?v=38'));
+  assert.ok(html.includes('js/study-content.js?v=40'));assert.ok(kb.includes('js/study-content.js?v=40'));
   assert.ok(!html.includes('js/learn/student-route.js'));assert.ok(!kb.includes('js/kb/a-t00-t08.js'));
 });

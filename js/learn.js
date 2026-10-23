@@ -282,7 +282,7 @@
     }
     function explain() {
       const t=topic(selected), words=(t.terms||[]).map(w=>w[0]).filter(Boolean).slice(0,3).join(' · ');
-      app.querySelector('.ln-topic-content').innerHTML=`<p class="ln-topic-en">${esc(words)}</p><p>${inline(t[L].short,'s')}</p><a class="ln-kb-link" href="kb.html#${esc(selected)}" target="_blank" rel="noopener">${tr('Объяснение, сравнение и частые ошибки','Түсіндіру, салыстыру және жиі қателер')} ↗</a>`;
+      app.querySelector('.ln-topic-content').innerHTML=`<p class="ln-topic-en">${esc(words)}</p><p>${inline(t[L].short,'s')}</p><a class="ln-kb-link" href="kb.html#${esc(selected)}" target="_blank" rel="noopener">${tr('Объяснение, примеры и частые ошибки','Түсіндіру, мысалдар және жиі қателер')} ↗</a>`;
       app.querySelectorAll('[data-study-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.studyTopic===selected)));
       example();
     }

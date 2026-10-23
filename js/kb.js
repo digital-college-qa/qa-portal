@@ -46,6 +46,8 @@
   const u = k => UI[lang()][k];
 
   const tr = (ru, kz) => lang() === 'kz' ? kz : ru;
+  /* Russian plural: 1 тема, 3 темы, 5 тем. Kazakh nouns do not change after numbers. */
+  const plural = (n, one, few, many) => { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; };
   const ORDER = ["tools", "k1", "practice", "toolkit", "k2", "extra"];
   const topics = (window.KB || []).slice().sort((a, b) =>
     ORDER.indexOf(a.block) - ORDER.indexOf(b.block) || (a.n == null ? -1 : a.n) - (b.n == null ? -1 : b.n));
@@ -200,11 +202,11 @@
     const main = document.getElementById('kb-main');
     if (home) {
       const last = byId(load('qc_kb_last', ''));
-      main.innerHTML = `<section class="kb-hero"><div class="kb-hero-copy"><span class="hub-eyebrow"><i></i>${tr('ТВОЯ ПОЛКА ЗНАНИЙ', 'СЕНІҢ БІЛІМ СӨРЕҢ')}</span><h1>${tr('Меньше путаницы.<br><em>Больше практики.</em>', 'Аз шатасу.<br><em>Көп тәжірибе.</em>')}</h1><p>${tr('Понятные объяснения, инструменты тестировщика и задания на qala coffe. Найди тему, попробуй по шагам и объясни результат.', 'Түсінікті түсіндірме, тестілеуші құралдары және qala coffe тапсырмалары. Тақырыпты тап, қадаммен орында және нәтижені түсіндір.')}</p><div class="kb-hero-actions"><a class="btn" href="#start-here">${tr('Начни с трёх действий', 'Үш әрекеттен баста')} ↗</a><a href="#catalog-toolkit">${tr('К инструментам →', 'Құралдарға →')}</a></div><div class="kb-hero-facts"><span><b>${topics.length}</b> ${tr('тем', 'тақырып')}</span><span><b>${toolIds.length}</b> ${tr('инструментов и приёмов', 'құрал мен тәсіл')}</span><span>RU + KZ</span></div></div><div class="kb-kit-art" aria-hidden="true"><div class="kb-kit-orbit"></div><div class="kb-kit-window"><div class="kb-kit-window-top"><i></i><i></i><i></i><span>qa-toolkit</span></div><div class="kb-kit-code"><span>01</span> observe()<br><span>02</span> compare()<br><span>03</span> explain()</div><div class="kb-kit-success">✓ ${tr('Теперь понятно', 'Енді түсінікті')}</div></div><div class="kb-kit-chip chip-inspect">${icon('inspect')} DevTools</div><div class="kb-kit-chip chip-api">${icon('api')} API</div><div class="kb-kit-chip chip-tests">${icon('tests')} Playwright</div><span class="kb-kit-spark">✳</span></div></section>
+      main.innerHTML = `<section class="kb-hero"><div class="kb-hero-copy"><span class="hub-eyebrow"><i></i>${tr('ТВОЯ ПОЛКА ЗНАНИЙ', 'СЕНІҢ БІЛІМ СӨРЕҢ')}</span><h1>${tr('Меньше путаницы.<br><em>Больше практики.</em>', 'Аз шатасу.<br><em>Көп тәжірибе.</em>')}</h1><p>${tr('Понятные объяснения, инструменты тестировщика и задания на qala coffe. Найди тему, попробуй по шагам и объясни результат.', 'Түсінікті түсіндірме, тестілеуші құралдары және qala coffe тапсырмалары. Тақырыпты тап, қадаммен орында және нәтижені түсіндір.')}</p><div class="kb-hero-actions"><a class="btn" href="#start-here">${tr('Начни с трёх действий', 'Үш әрекеттен баста')} ↗</a><a href="#catalog-toolkit">${tr('К инструментам →', 'Құралдарға →')}</a></div><div class="kb-hero-facts"><span><b>${topics.length}</b> ${tr(plural(topics.length, 'тема', 'темы', 'тем'), 'тақырып')}</span><span><b>${toolIds.length}</b> ${tr('инструментов и приёмов', 'құрал мен тәсіл')}</span><span>RU + KZ</span></div></div><div class="kb-kit-art" aria-hidden="true"><div class="kb-kit-orbit"></div><div class="kb-kit-window"><div class="kb-kit-window-top"><i></i><i></i><i></i><span>qa-toolkit</span></div><div class="kb-kit-code"><span>01</span> observe()<br><span>02</span> compare()<br><span>03</span> explain()</div><div class="kb-kit-success">✓ ${tr('Теперь понятно', 'Енді түсінікті')}</div></div><div class="kb-kit-chip chip-inspect">${icon('inspect')} DevTools</div><div class="kb-kit-chip chip-api">${icon('api')} API</div><div class="kb-kit-chip chip-tests">${icon('tests')} Playwright</div><span class="kb-kit-spark">✳</span></div></section>
       ${last ? `<a class="kb-continue" href="#${last.id}"><span>${tr('Продолжить чтение', 'Оқуды жалғастыру')} <strong>${esc(last[lang()].title)}</strong></span>${icon('arrow')}</a>` : ''}
-      <section class="kb-catalog-section"><div class="kb-section-heading"><div><span class="hub-eyebrow">${tr('НАЙДИ СВОЁ НАПРАВЛЕНИЕ', 'ӨЗ БАҒЫТЫҢДЫ ТАП')}</span><h2>${tr('Что разберём сегодня?', 'Бүгін нені талдаймыз?')}</h2></div><a href="#catalog-all">${tr('Все темы', 'Барлық тақырып')} →</a></div><div class="kb-category-grid">${categories.map(c => `<a class="kb-category" href="#catalog-${c.id}"><span class="kb-card-icon">${icon(c.icon)}</span><strong>${c.title}</strong><span>${c.note}</span><small>${topics.filter(c.match).length} ${tr('материалов', 'материал')} ↗</small></a>`).join('')}</div></section>
+      <section class="kb-catalog-section"><div class="kb-section-heading"><div><span class="hub-eyebrow">${tr('НАЙДИ СВОЁ НАПРАВЛЕНИЕ', 'ӨЗ БАҒЫТЫҢДЫ ТАП')}</span><h2>${tr('Что разберём сегодня?', 'Бүгін нені талдаймыз?')}</h2></div><a href="#catalog-all">${tr('Все темы', 'Барлық тақырып')} →</a></div><div class="kb-category-grid">${categories.map(c => `<a class="kb-category" href="#catalog-${c.id}"><span class="kb-card-icon">${icon(c.icon)}</span><strong>${c.title}</strong><span>${c.note}</span><small>${topics.filter(c.match).length} ${tr(plural(topics.filter(c.match).length, 'материал', 'материала', 'материалов'), 'материал')} ↗</small></a>`).join('')}</div></section>
       <section class="kb-catalog-section"><div class="kb-section-heading"><div><span class="hub-eyebrow">${tr('ПОЛЕЗНО С ПЕРВОГО ДНЯ', 'АЛҒАШҚЫ КҮННЕН ПАЙДАЛЫ')}</span><h2>${tr('Инструменты тестировщика', 'Тестілеуші құралдары')}</h2></div><a href="#catalog-toolkit">${tr('Все инструменты', 'Барлық құрал')} →</a></div><p class="kb-section-note">${tr('Что открыть, куда нажать и как понять результат. Начни с любой карточки.', 'Нені ашу, қайда басу және нәтижені қалай түсіну керек. Кез келген карточкадан баста.')}</p><div class="kb-topic-grid">${toolIds.slice(0, 6).map(byId).filter(Boolean).map(card).join('')}</div></section>
-      <section class="kb-start-route"><span class="kb-route-icon">${icon('network')}</span><div><h2>${tr('Первая практика за три шага', 'Үш қадамдық алғашқы тәжірибе')}</h2><p>${tr('Открой Network → отправь запрос в лаборатории → сравни ответ с сайтом.', 'Network аш → зертханада сұраныс жібер → жауапты сайтпен салыстыр.')}</p></div><a href="#tool-network">${tr('Попробовать', 'Орындап көру')} →</a></section>`;
+      <section class="kb-start-route"><span class="kb-route-icon">${icon('book')}</span><div><h2>${tr('Впервые здесь? Начни с трёх шагов', 'Алғаш рет пе? Үш қадамнан баста')}</h2><p>${tr('Открой урок → прочитай объяснение и пример → сдай работу в Discord.', 'Сабақты аш → түсіндіру мен мысалды оқы → жұмысты Discord-қа тапсыр.')}</p></div><a href="#start-here">${tr('Как начать', 'Қалай бастау')} →</a></section>`;
       return;
     }
     const group = categories.find(c => c.id === category), q = query.trim().toLowerCase();
@@ -219,6 +221,15 @@
     if (location.hash !== '#catalog-toolkit') return;
     const grid = document.querySelector('#kb-main .kb-topic-grid');
     if (grid) grid.insertAdjacentHTML('beforebegin', `<a class="kb-glossary-card" href="#tool-software-map">${icon('book')}<span><strong>${tr('Какой инструмент для чего?', 'Қай құрал не үшін?')}</strong><small>${tr('Простая таблица: баги, тест-кейсы, API и макеты. Выбери один инструмент под задачу.', 'Қарапайым кесте: баг, тест-кейс, API және макет. Міндетке сай бір құрал таңда.')}</small></span>${icon('arrow')}</a>`);
+  }
+
+  /* Situations from study-content.js; the first two rows repeat «Правильно» / «Неправильно». */
+  function topicExamples(tp) {
+    const rows = (window.STUDY_CONTENT?.examples?.[tp.id] || []).slice(2);
+    if (!rows.length) return '';
+    return `<h3 class="kb-examples-title">${tr('Ещё примеры','Тағы мысалдар')}</h3><div class="kb-examples">`
+      + rows.map(r => { const [title, text, meaning] = r[lang()]; return `<article class="kb-example-card"><h4>${esc(title)}</h4><p>${inline(text)}</p><p class="kb-example-meaning">${inline(meaning)}</p></article>`; }).join('')
+      + `</div>`;
   }
 
   function renderVisuals(tp) {
@@ -255,6 +266,7 @@
       + (c.template ? `<details class="kb-simple-more"><summary>${tr('Открыть шаблон для копирования','Көшіру үлгісін ашу')}</summary><div class="kb-tpl"><pre class="kb-pre">${esc(c.template)}</pre>${copyBtn(c.template)}</div></details>` : ''), 'kb-short')}
       ${sec('visuals', renderVisuals(tp))}
       ${sec('example', `<div class="kb-comparison kb-correct"><h3>${tr('Правильно','Дұрыс')}</h3>${md(c.good)}</div><div class="kb-comparison kb-incorrect"><h3>${tr('Неправильно','Қате')}</h3>${md(c.bad)}</div>`
+      + topicExamples(tp)
       + (c.requestBody ? `<p>${tr('Body для POST /cart/items:','POST /cart/items үшін Body:')}</p><pre class="kb-pre">${esc(c.requestBody)}</pre>${copyBtn(c.requestBody)}` : '')
       + (c.code ? `<details class="kb-simple-more"><summary>${tr('Готовый код и объяснение строк','Дайын код және жол түсіндіруі')}</summary><pre class="kb-pre">${esc(c.code)}</pre>${copyBtn(c.code)}${md(c.codeNote)}</details>` : ''))}
       ${sec('mistakes', `<ul>${c.mistakes.map(m=>`<li>${inline(m)}</li>`).join('')}</ul>`)}` : `${sec("short", md(c.short), "kb-short")}
@@ -272,7 +284,7 @@
     document.getElementById('kb-layout').className = 'kb kb-layout is-reading' + (tp.format === 'simple-guide' ? ' is-simple-guide' : '');
     document.getElementById("kb-main").innerHTML = `
       <div class="kb-breadcrumb"><a href="#home">${u('title')}</a><span>/</span><a href="#catalog-${tp.block === 'toolkit' ? 'toolkit' : tp.block === 'practice' ? 'practice' : tp.block === 'tools' ? 'templates' : 'theory'}">${esc(u('blocks')[tp.block])}</a></div>
-      <header class="kb-topic-head"><span class="kb-topic-badge">${icon(topicIcon(tp))}${tp.block === 'toolkit' ? tr('Инструмент · инструкция', 'Құрал · нұсқаулық') : esc(pairsText(tp)) || u('blocks')[tp.block]}${tp.minutes ? ' · ~' + tp.minutes + ' ' + tr('мин', 'мин') : ''}</span><h1>${esc(c.title)}</h1><p>${tr('Короткое объяснение, сравнение и частые ошибки', 'Қысқа түсіндіру, салыстыру және жиі қателер')}</p></header>
+      <header class="kb-topic-head"><span class="kb-topic-badge">${icon(topicIcon(tp))}${tp.block === 'toolkit' ? tr('Инструмент · инструкция', 'Құрал · нұсқаулық') : esc(pairsText(tp)) || u('blocks')[tp.block]}${tp.minutes ? ' · ~' + tp.minutes + ' ' + tr('мин', 'мин') : ''}</span><h1>${esc(c.title)}</h1><p>${tr('Объяснение, примеры и частые ошибки', 'Түсіндіру, мысалдар және жиі қателер')}</p></header>
       <div class="kb-reading-grid"><div class="kb-reading-content">${content}
       ${tp.terms && tp.terms.length ? `<p class="kb-terms"><b>${u("terms")}:</b> ${tp.terms.map(t => esc(t.filter(Boolean).join(" / "))).join(" · ")}</p>` : ""}
       <div class="kb-foot">
