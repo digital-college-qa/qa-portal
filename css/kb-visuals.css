@@ -1,0 +1,14 @@
+.kb-visual-intro { color: #526079; margin-bottom: 18px; }
+.kb-visual { margin: 0 0 28px; border: 1px solid #d9e1f0; border-radius: 16px; overflow: hidden; background: #fff; }
+.kb-visual-scroll { overflow-x: auto; background: #f7f9fe; }
+.kb-visual-scroll:focus-visible { outline: 3px solid #4968ad; outline-offset: -3px; }
+.kb-visual img { display: block; width: 100%; height: auto; min-width: 680px; max-width: none; }
+.kb-visual figcaption { padding: 18px 20px; color: #374660; }
+.kb-visual figcaption h3 { margin: 0 0 8px; font-size: var(--text-body); color: #26334d; }
+.kb-visual-credit { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: var(--text-small); }
+.kb-visual-credit a { padding-block: 6px; text-underline-offset: 3px; }
+.kb-visual-license { color: #526079; font-size: var(--text-small); }
+@media (max-width:600px) {
+  .kb-visual figcaption { padding: 14px; }
+  .kb-visual-credit { flex-direction: column; gap: 2px; }
+}
