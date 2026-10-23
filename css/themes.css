@@ -35,6 +35,21 @@ html[data-theme] .kb-incorrect {background:var(--theme-badbg)!important;color:va
 html[data-theme] :is(.kb-correct,.kb-incorrect) h3 {color:inherit!important}
 html[data-theme] :is(table,th,td,hr,fieldset) {border-color:var(--theme-line)!important}
 html[data-theme] .kb-kit-title::before {background:var(--theme-accent)!important}
+/* Numeric values must not retain the coffee shop's original brown ink. */
+html[data-theme] :is(.price,.coffee-release .price,.summary .row,.summary .row.total,output,.test-duration,.api-response-head strong,.api-collection button,.ide-tabs button,.studio-notice,.runner-message,.log-rows,.log-details,.test-step) {color:var(--theme-text)!important}
+html[data-theme] .studio :is(pre.api-json,textarea.test-code) {background:var(--theme-surface)!important;color:var(--theme-text)!important}
+html[data-theme] .json-key {color:var(--theme-codekey)!important}
+html[data-theme] .json-num {color:var(--theme-codenum)!important}
+html[data-theme] .json-string {color:var(--theme-codestring)!important}
+html[data-theme] .method-tag {color:var(--theme-codestring)!important}
+html[data-theme] .method-tag.patch {color:var(--theme-codenum)!important}
+html[data-theme] .method-tag.post {color:var(--theme-codekey)!important}
+html[data-theme] .method-tag.delete {color:var(--theme-bad)!important}
+html[data-theme] .api-http {background:var(--theme-goodbg)!important;color:var(--theme-good)!important}
+html[data-theme] :is(.api-http.error,.test-error,.test-step.fail .test-check) {background:var(--theme-badbg)!important;color:var(--theme-bad)!important}
+html[data-theme] .api-http.pending {background:var(--theme-soft)!important;color:var(--theme-text)!important}
+html[data-theme] :is(.studio button.send,.studio button.run-test,.ide-status) {background:var(--theme-accent)!important;color:var(--theme-onaccent)!important}
+html[data-theme] .test-step.pass .test-check {color:var(--theme-good)!important}
 html[data-theme] .kb-visual-scroll {background:#f7f9fe} /* original diagrams retain their paper background */
 html[data-theme] :focus-visible {outline:3px solid var(--theme-link);outline-offset:3px}
 html[data-theme] ::selection {background:var(--theme-accent);color:var(--theme-onaccent)}

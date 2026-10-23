@@ -42,6 +42,9 @@
       muted:mix(palette.text,palette.surface,.24),line:mix(palette.surface,palette.text,.22),
       soft:mix(palette.surface,palette.accent,.12),onaccent:on(palette.accent),link:contrast(palette.accent,palette.surface)>=4.5?palette.accent:palette.text,
       good:dark?'#a0d9b5':'#245f3e',goodbg:dark?'#233f33':'#edf7ef',bad:dark?'#f3b3b3':'#943d3d',badbg:dark?'#492e36':'#fff0f0'};
+    for (const [key, candidate] of Object.entries({codekey:dark?'#d7c2ff':'#67449b',codenum:dark?'#f5d28f':'#80521a',codestring:dark?'#9cdeca':'#1b6b50'})) {
+      vars[key] = contrast(candidate,palette.surface)>=4.5 ? candidate : palette.text;
+    }
     Object.entries(vars).forEach(([k,v])=>root.style.setProperty('--theme-'+k,v));
     root.style.colorScheme=dark?'dark':'light';
     if(persist)try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}

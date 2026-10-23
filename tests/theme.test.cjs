@@ -33,6 +33,10 @@ test('every preset has readable text and buttons',()=>{
     assert.ok(a.theme.contrast(a.styles['--theme-onaccent'],a.styles['--theme-accent'])>=4.5,mode);
   }
 });
+test('JSON keys, numbers and strings remain readable in all palettes and custom dark colours',()=>{
+  const a=setup();const cases=Object.keys(a.theme.presets).map(mode=>({mode})).concat([{mode:'custom',custom:{bg:'#101e24',surface:'#233c45',text:'#e8f5fa',accent:'#9cdef0'}}]);
+  for(const input of cases){a.theme.apply(input);for(const part of ['codekey','codenum','codestring'])assert.ok(a.theme.contrast(a.styles['--theme-'+part],a.styles['--theme-surface'])>=4.5,input.mode+': '+part);}
+});
 test('all entry pages load appearance before body rendering; diagrams exist in both languages',()=>{
   for(const file of fs.readdirSync(root).filter(f=>f.endsWith('.html'))){const s=fs.readFileSync(path.join(root,file),'utf8');assert.ok(s.indexOf('js/theme.js')>0&&s.indexOf('js/theme.js')<s.indexOf('</head>'),file);}
   const c={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'js/kb-visuals.js'),'utf8'),c);
