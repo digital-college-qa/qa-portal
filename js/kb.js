@@ -19,7 +19,7 @@
     ru: {
       title: "База знаний", search: "Поиск: чек-лист, bug, қате…", found: "Найдено", ctrlf: "<b>Ctrl+F</b> — найти слово на открытой странице. Поиск выше — найти тему по всей базе.",
       topics: "☰ Все темы", blocks: { toolkit: "Инструменты QA", tools: "Шпаргалки", k1: "Основы · 1 курс", k2: "2 курс", practice: "API и автотесты", extra: "Дополнительно" },
-      steps: "Сделай пошагово", sources: "Официальные инструкции",
+      steps: "Сделай пошагово", sources: "Официальные инструкции", visuals: "На схемах",
       short: "Объяснение", when: "Когда и зачем", analogy: "Пример из жизни", body: "Подробнее", template: "Шаблон",
       example: "Примеры", mistakes: "Частые ошибки", remember: "Запомни", check: "Проверь себя",
       check_hint: "Сначала ответь сам, потом нажми на вопрос.", terms: "Слова для поиска", open_shop: "Открыть в магазине →",
@@ -32,7 +32,7 @@
     kz: {
       title: "Білім қоры", search: "Іздеу: чек-лист, bug, қате…", found: "Табылды", ctrlf: "<b>Ctrl+F</b> — ашық беттен сөз табу. Жоғарыдағы іздеу — бүкіл қордан тақырып табу.",
       topics: "☰ Барлық тақырып", blocks: { toolkit: "QA құралдары", tools: "Анықтамалар", k1: "Негіздер · 1 курс", k2: "2 курс", practice: "API және автотесттер", extra: "Қосымша" },
-      steps: "Қадаммен орында", sources: "Ресми нұсқаулықтар",
+      steps: "Қадаммен орында", sources: "Ресми нұсқаулықтар", visuals: "Сызбалармен түсіндіру",
       short: "Түсіндіру", when: "Қашан және не үшін", analogy: "Өмірден мысал", body: "Толығырақ", template: "Үлгі",
       example: "Мысалдар", mistakes: "Жиі кездесетін қателер", remember: "Есте сақта", check: "Өзіңді тексер",
       check_hint: "Алдымен өзің жауап бер, содан кейін сұрақты бас.", terms: "Іздеуге арналған сөздер", open_shop: "Дүкеннен ашу →",
@@ -221,6 +221,18 @@
     if (grid) grid.insertAdjacentHTML('beforebegin', `<a class="kb-glossary-card" href="#tool-software-map">${icon('book')}<span><strong>${tr('Какой инструмент для чего?', 'Қай құрал не үшін?')}</strong><small>${tr('Простая таблица: баги, тест-кейсы, API и макеты. Выбери один инструмент под задачу.', 'Қарапайым кесте: баг, тест-кейс, API және макет. Міндетке сай бір құрал таңда.')}</small></span>${icon('arrow')}</a>`);
   }
 
+  function renderVisuals(tp) {
+    const figures = window.KB_VISUALS?.[tp.id];
+    if (!figures?.length) return '';
+    const language = lang(), i = language === 'kz' ? 1 : 0;
+    return `<p class="kb-visual-intro">${tr('Три схемы на примере задач кофейни. На телефоне схему можно прокрутить в сторону или открыть крупнее.', 'Кофехана міндеттері арқылы үш сызба. Телефонда сызбаны көлденең жылжытуға немесе үлкейтіп ашуға болады.')}</p>`
+      + figures.map(f => {
+        const src = `img/methods/${f.file}-${language}.svg`;
+        return `<figure class="kb-visual"><div class="kb-visual-scroll" tabindex="0" role="region" aria-label="${esc(f.title[i])}"><img src="${src}" alt="${esc(f.alt[i])}" width="${f.width}" height="${f.height}" loading="lazy" decoding="async"></div><figcaption><h3>${esc(f.title[i])}</h3><p>${esc(f.caption[i])}</p><div class="kb-visual-credit"><a href="${src}" target="_blank" rel="noopener">${tr('Открыть схему крупнее', 'Сызбаны үлкейтіп ашу')} ↗</a><a href="${esc(f.href)}" target="_blank" rel="noopener">${tr('По теме:', 'Тақырып бойынша:')} ${esc(f.source[i])} ↗</a></div></figcaption></figure>`;
+      }).join('')
+      + `<p class="kb-visual-license">${tr('Оригинальные иллюстрации QA Portal,', 'QA Portal түпнұсқа суреттері,')} <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>. ${tr('Можно свободно использовать в учебных материалах.', 'Оқу материалдарында еркін пайдалануға болады.')}</p>`;
+  }
+
   function drawTopic(tp) {
     const c = tp[lang()];
     const testsTopic = Boolean(c.code);
@@ -240,10 +252,12 @@
       + (c.idHelp ? `<details class="kb-simple-more"><summary>${tr('Как составить ID','ID қалай құрылады')}</summary>${md(c.idHelp)}</details>` : '')
       + (c.contract ? `<details class="kb-simple-more"><summary>${tr('Правила учебных API-запросов','Оқу API сұранысының ережелері')}</summary><ul>${c.contract.map(s=>`<li>${inline(s)}</li>`).join('')}</ul></details>` : '')
       + (c.template ? `<details class="kb-simple-more"><summary>${tr('Открыть шаблон для копирования','Көшіру үлгісін ашу')}</summary><div class="kb-tpl"><pre class="kb-pre">${esc(c.template)}</pre>${copyBtn(c.template)}</div></details>` : ''), 'kb-short')}
+      ${sec('visuals', renderVisuals(tp))}
       ${sec('example', `<div class="kb-comparison kb-correct"><h3>${tr('Правильно','Дұрыс')}</h3>${md(c.good)}</div><div class="kb-comparison kb-incorrect"><h3>${tr('Неправильно','Қате')}</h3>${md(c.bad)}</div>`
       + (c.requestBody ? `<p>${tr('Body для POST /cart/items:','POST /cart/items үшін Body:')}</p><pre class="kb-pre">${esc(c.requestBody)}</pre>${copyBtn(c.requestBody)}` : '')
       + (c.code ? `<details class="kb-simple-more"><summary>${tr('Готовый код и объяснение строк','Дайын код және жол түсіндіруі')}</summary><pre class="kb-pre">${esc(c.code)}</pre>${copyBtn(c.code)}${md(c.codeNote)}</details>` : ''))}
       ${sec('mistakes', `<ul>${c.mistakes.map(m=>`<li>${inline(m)}</li>`).join('')}</ul>`)}` : `${sec("short", md(c.short), "kb-short")}
+      ${sec('visuals', renderVisuals(tp))}
       ${sec("when", md(c.when))}
       ${sec("steps", c.steps ? `<ol class="kb-guide-steps">${c.steps.map(([title, text], i) => `<li><span class="kb-step-number">${i + 1}</span><div><h3>${esc(title)}</h3>${md(text)}</div></li>`).join('')}</ol>` : '')}
       ${sec("analogy", md(c.analogy), "kb-analogy")}
