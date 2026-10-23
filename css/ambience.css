@@ -7,6 +7,11 @@ html[data-theme] body.portal {
     radial-gradient(ellipse 75vw 620px at 8% 65%,color-mix(in srgb,var(--theme-accent) 5%,transparent),transparent 78%)!important;
   background-attachment:fixed!important;
 }
+/* Light canvas needs stronger circuits than the dark and tinted palettes. */
+html:is([data-theme="light"],[data-theme="system"][data-tone="light"]) body.portal {
+  --theme-pattern-opacity:.22;
+  --theme-glow-strength:6%;
+}
 body.portal::before {
   content:"";
   position:fixed;
