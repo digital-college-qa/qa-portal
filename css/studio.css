@@ -23,3 +23,32 @@ body[data-page="labs"]{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.studio *,.studio *::before,.studio *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .api-collection button{font-size:var(--text-control)}.api-collection h3{font-size:var(--text-small)}.method-tag{font-size:var(--text-small)}.api-bar input,.api-bar select{font-size:var(--text-control)}.ide-titlebar strong{font-size:var(--text-small)}.ide-tabs button{font-size:var(--text-control)}.api-json{font-size:var(--text-small)}.api-editor label,.studio-hint,.api-message{font-size:var(--text-small)}.studio-docs{font-size:var(--text-small)}.studio-docs code,.studio-docs .endpoint{font-size:var(--text-small)}.test-code{font-size:var(--text-small)}.test-step{font-size:var(--text-small)}.runner-login summary,.runner-message{font-size:var(--text-small)}.log-rows{font-size:var(--text-small)}
 @media(min-width:701px){.studio-dock button{font-size:var(--text-control)}}
+
+/* Each panel owns its scrolling. Flex items must not paint over the next section. */
+.studio {height:calc(100dvh - var(--portal-header-height,132px));min-height:0}
+.ide-window {isolation:isolate;overscroll-behavior:contain}
+.ide-titlebar,.ide-status {flex-shrink:0}
+.ide-body {overscroll-behavior:contain;scrollbar-gutter:stable}
+.ide-body>* {flex-shrink:0}
+.ide-window[data-window="api"] .ide-body {overflow:hidden}
+.api-layout {flex:1;overflow:hidden}
+.api-main,.api-collection,.api-json,.test-code,.log-rows {overscroll-behavior:contain;scrollbar-gutter:stable}
+.api-main>* {flex-shrink:0}
+.api-bar,.ide-tabs {flex-shrink:0}
+.api-response {flex:0 0 auto;min-height:0;overflow:hidden}
+.api-response-head {flex-wrap:wrap}
+.api-json {max-height:clamp(180px,30dvh,360px);min-height:80px;padding:12px;border-radius:7px;border:1px solid var(--line);line-height:1.7}
+.api-editor textarea {height:100px;min-height:80px;max-height:280px}
+.api-message {overflow-wrap:anywhere;white-space:normal}
+.studio-hint summary {cursor:pointer;font-weight:600}
+.studio-hint p {margin:8px 0 0}
+.api-collection button {flex-direction:column;gap:2px;overflow-wrap:anywhere}
+.api-collection button.on {box-shadow:inset 3px 0 var(--brand)}
+.test-results {flex:0 0 auto;min-height:120px;overflow-wrap:anywhere}
+.test-step {min-width:0}
+.test-step>span:nth-child(2) {min-width:0;overflow-wrap:anywhere}
+@media(max-width:700px) {
+  .ide-window,.ide-window[data-window="api"],.ide-window[data-window="tests"],.ide-window[data-window="docs"],.ide-window[data-window="logs"] {height:calc(100% - 145px)}
+  .api-collection {max-height:86px}
+  .api-collection button {flex:none;min-width:125px;max-width:155px}
+}
