@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#4a5a7a"/></marker></defs>
+  <rect width="900" height="330" fill="#f6f8fc"/>
+  <g stroke="#4a5a7a" stroke-width="2" fill="none" marker-end="url(#a)">
+    <path d="M128 90 H156"/><path d="M276 90 H304"/><path d="M424 90 H452"/><path d="M572 90 H600"/><path d="M720 90 H748"/>
+    <path d="M660 114 V186 H746"/>
+    <path d="M816 212 C816 285 364 285 364 116"/>
+    <path d="M216 116 V200"/>
+  </g>
+  <g stroke="#9fb3d6" fill="#ffffff">
+    <rect x="16" y="66" width="112" height="48" rx="9"/><rect x="156" y="66" width="120" height="48" rx="9"/>
+    <rect x="304" y="66" width="120" height="48" rx="9"/><rect x="452" y="66" width="120" height="48" rx="9"/>
+    <rect x="600" y="66" width="120" height="48" rx="9"/><rect x="748" y="66" width="136" height="48" rx="9" fill="#e7f5ec" stroke="#7fbf98"/>
+    <rect x="748" y="162" width="136" height="48" rx="9" fill="#fdecea" stroke="#e3a29a"/>
+    <rect x="96" y="204" width="260" height="96" rx="9" fill="#f1f2f6" stroke="#c9cfdb"/>
+  </g>
+  <g font-weight="700" fill="#1f2a44" text-anchor="middle">
+    <text x="72" y="86">New</text><text x="216" y="86">Open</text><text x="364" y="86">In Progress</text>
+    <text x="512" y="86">Fixed</text><text x="660" y="86">Retest</text><text x="816" y="86">Closed</text><text x="816" y="182">Reopened</text>
+  </g>
+  <g fill="#4a5a7a" font-size="11" text-anchor="middle">
+    <text x="72" y="105">тауып, сипаттады</text><text x="216" y="105">тағайындалды</text><text x="364" y="105">түзетіп жатыр</text>
+    <text x="512" y="105">түзетілді</text><text x="660" y="105">QA тексереді</text><text x="816" y="105">тексерілді — жақсы</text>
+    <text x="816" y="201">қате қалды</text><text x="590" y="272">қайта жұмысқа</text>
+  </g>
+  <g fill="#1f2a44" font-size="12">
+    <text x="110" y="226" font-weight="700">Басқа нәтижелер:</text>
+    <text x="110" y="248">Rejected — баг емес, солай ойластырылған</text>
+    <text x="110" y="268">Duplicate — мұндай баг бар</text>
+    <text x="110" y="288">Cannot Reproduce — қайталау мүмкін емес</text>
+  </g>
+  <text x="16" y="36" font-size="14" font-weight="700" fill="#1f2a44">Багтың өмірлік циклі (мысал; мәртебе атаулары командаға байланысты)</text>
+</svg>

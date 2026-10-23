@@ -235,6 +235,7 @@
       return `<section class="kb-sec ${cls || ""}" id="kb-section-${key}"><h2>${u(key)}</h2>${html}</section>`;
     };
     const content = tp.format === 'simple-guide' ? `${sec('short', md(c.short)
+      + (c.more ? `<div class="kb-more">${md(c.more)}</div>` : '')
       + (c.steps?.length ? `<ol class="kb-simple-steps">${c.steps.map(s=>`<li>${inline(s)}</li>`).join('')}</ol>` : '')
       + (c.links?.length ? `<div class="kb-template-links">${c.links.map(l=>`<a href="${esc(l.href)}">${esc(l.label)} →</a>`).join('')}</div>` : '')
       + (c.idHelp ? `<details class="kb-simple-more"><summary>${tr('Как составить ID','ID қалай құрылады')}</summary>${md(c.idHelp)}</details>` : '')

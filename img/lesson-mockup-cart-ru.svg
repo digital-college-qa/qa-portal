@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <rect width="900" height="360" fill="#f6f8fc"/>
+  <text x="24" y="30" font-size="13" fill="#5d6a85">Учебный макет · экран «Пустая корзина» · ширина 1280</text>
+  <rect x="24" y="44" width="852" height="296" rx="12" fill="#ffffff" stroke="#c9d3e3"/>
+  <rect x="24" y="44" width="852" height="52" rx="12" fill="#2d3b55"/>
+  <rect x="24" y="80" width="852" height="16" fill="#2d3b55"/>
+  <text x="48" y="77" font-size="17" font-weight="700" fill="#ffffff">qala coffe</text>
+  <text x="560" y="77" fill="#dfe6f3">Меню</text>
+  <text x="630" y="77" fill="#dfe6f3">Корзина</text>
+  <text x="720" y="77" fill="#dfe6f3">RU | KZ</text>
+  <text x="48" y="140" font-size="24" font-weight="700" fill="#1f2a44">Карзина</text>
+  <rect x="48" y="160" width="500" height="130" rx="10" fill="#f3f5f9" stroke="#dde3ec"/>
+  <text x="298" y="215" text-anchor="middle" font-size="16" fill="#3a4560">В корзине пока ничего нет</text>
+  <text x="298" y="243" text-anchor="middle" font-size="13" fill="#7a859c">Загляни позже</text>
+  <rect x="580" y="160" width="270" height="130" rx="10" fill="#f3f5f9" stroke="#dde3ec"/>
+  <text x="600" y="192" fill="#3a4560">Итого</text>
+  <text x="830" y="192" text-anchor="end" font-weight="700" fill="#1f2a44">0 ₸</text>
+  <rect x="600" y="222" width="230" height="46" rx="8" fill="#2d7a5b"/>
+  <text x="715" y="251" text-anchor="middle" font-weight="700" fill="#ffffff">Оформить заказ</text>
+</svg>
