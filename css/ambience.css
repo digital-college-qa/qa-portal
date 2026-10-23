@@ -3,7 +3,7 @@ html[data-theme] body.portal {
   position:relative;
   isolation:isolate;
   background-image:
-    radial-gradient(ellipse 90vw 660px at 80% 8%,color-mix(in srgb,var(--theme-accent) 9%,transparent),transparent 75%),
+    radial-gradient(ellipse 90vw 660px at 80% 8%,color-mix(in srgb,var(--theme-accent) var(--theme-glow-strength),transparent),transparent 75%),
     radial-gradient(ellipse 75vw 620px at 8% 65%,color-mix(in srgb,var(--theme-accent) 5%,transparent),transparent 78%)!important;
   background-attachment:fixed!important;
 }
@@ -16,9 +16,9 @@ body.portal::before {
   background:var(--theme-accent);
   -webkit-mask:url("../img/portal-circuits.svg") 50% 40px / 960px 720px repeat;
   mask:url("../img/portal-circuits.svg") 50% 40px / 960px 720px repeat;
-  opacity:.11;
+  opacity:var(--theme-pattern-opacity);
 }
-html[data-tone="dark"] body.portal::before {opacity:.13}
+
 
 /* The page canvas continues through large structural sections, without a rectangle. */
 html[data-theme] body.portal #app :is(.hub-hero,.kb-hero,.kb-welcome,.kb-topic-head,.ln-hero,.ln-header,.kb-main,.hub-playground,.studio) {
@@ -27,7 +27,7 @@ html[data-theme] body.portal #app :is(.hub-hero,.kb-hero,.kb-welcome,.kb-topic-h
 html[data-theme] body.portal #app :is(.hub-hero,.kb-hero) {position:relative;isolation:isolate}
 html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {
   content:"";position:absolute;inset:-80px -30px;z-index:-1;pointer-events:none;
-  background:radial-gradient(ellipse at 72% 48%,color-mix(in srgb,var(--theme-accent) 12%,transparent),transparent 68%);
+  background:radial-gradient(ellipse at 72% 48%,color-mix(in srgb,var(--theme-accent) var(--theme-glow-strength),transparent),transparent 68%);
 }
 .hub-hero-copy {padding-inline:6px}
 .hub-eyebrow>i {
@@ -58,8 +58,7 @@ html[data-theme] body.portal .p-project-context {
   border-bottom-color:transparent!important;
 }
 @media(max-width:700px) {
-  body.portal::before {mask-size:720px 540px;-webkit-mask-size:720px 540px;opacity:.08}
-  html[data-tone="dark"] body.portal::before {opacity:.1}
+  body.portal::before {mask-size:720px 540px;-webkit-mask-size:720px 540px;opacity:var(--theme-pattern-opacity)}
   html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {inset:-35px 0}
 }
 @media(forced-colors:active) {
