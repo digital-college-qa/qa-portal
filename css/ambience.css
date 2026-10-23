@@ -1,0 +1,67 @@
+/* Quiet, theme-aware scenery. Content and controls retain solid reading surfaces. */
+html[data-theme] body.portal {
+  position:relative;
+  isolation:isolate;
+  background-image:
+    radial-gradient(ellipse 90vw 660px at 80% 8%,color-mix(in srgb,var(--theme-accent) 9%,transparent),transparent 75%),
+    radial-gradient(ellipse 75vw 620px at 8% 65%,color-mix(in srgb,var(--theme-accent) 5%,transparent),transparent 78%)!important;
+  background-attachment:fixed!important;
+}
+body.portal::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:var(--theme-accent);
+  -webkit-mask:url("../img/portal-circuits.svg") 50% 40px / 960px 720px repeat;
+  mask:url("../img/portal-circuits.svg") 50% 40px / 960px 720px repeat;
+  opacity:.11;
+}
+html[data-tone="dark"] body.portal::before {opacity:.13}
+
+/* The page canvas continues through large structural sections, without a rectangle. */
+html[data-theme] body.portal #app :is(.hub-hero,.kb-hero,.kb-welcome,.kb-topic-head,.ln-hero,.ln-header,.kb-main,.hub-playground,.studio) {
+  background:transparent!important;
+}
+html[data-theme] body.portal #app :is(.hub-hero,.kb-hero) {position:relative;isolation:isolate}
+html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {
+  content:"";position:absolute;inset:-80px -30px;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at 72% 48%,color-mix(in srgb,var(--theme-accent) 12%,transparent),transparent 68%);
+}
+.hub-hero-copy {padding-inline:6px}
+.hub-eyebrow>i {
+  flex:none;width:16px;height:16px;border-radius:50%;box-shadow:none;
+  background:radial-gradient(circle,var(--theme-accent) 0 20%,color-mix(in srgb,var(--theme-accent) 25%,transparent) 26%,transparent 70%);
+}
+html[data-theme] body.portal #app :is(.hub-route,.hub-footer) {border-color:color-mix(in srgb,var(--theme-line) 55%,transparent)}
+html[data-theme] body.portal #app .kb-commandbar {
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--theme-surface) 88%,transparent) 14% 86%,transparent)!important;
+  border-color:transparent!important;
+}
+html[data-theme] body.portal #app .kb-side {
+  background:linear-gradient(180deg,color-mix(in srgb,var(--theme-surface) 94%,transparent) 80%,transparent)!important;
+  border-radius:18px;
+}
+html[data-theme] body.portal #app :is(.kb-sec,.ln-sec,.p-tile,.kb-topic-card,.kb-category,.hub-lab-banner,.p-reset,.requirements-rule) {
+  border-radius:18px;
+  border-color:color-mix(in srgb,var(--theme-line) 72%,transparent)!important;
+  box-shadow:0 14px 44px color-mix(in srgb,var(--theme-bg) 32%,transparent);
+}
+html[data-theme] body.portal :is(#header,#portal-header) {
+  background:linear-gradient(180deg,color-mix(in srgb,var(--theme-surface) 96%,transparent),color-mix(in srgb,var(--theme-bg) 90%,transparent))!important;
+  border-bottom-color:transparent!important;
+  box-shadow:0 10px 34px color-mix(in srgb,var(--theme-bg) 35%,transparent);
+}
+html[data-theme] body.portal .p-project-context {
+  background:linear-gradient(180deg,color-mix(in srgb,var(--theme-bg) 94%,transparent),color-mix(in srgb,var(--theme-bg) 72%,transparent))!important;
+  border-bottom-color:transparent!important;
+}
+@media(max-width:700px) {
+  body.portal::before {mask-size:720px 540px;-webkit-mask-size:720px 540px;opacity:.08}
+  html[data-tone="dark"] body.portal::before {opacity:.1}
+  html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {inset:-35px 0}
+}
+@media(forced-colors:active) {
+  body.portal::before,html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {display:none}
+}
