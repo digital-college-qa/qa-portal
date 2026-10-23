@@ -22,7 +22,7 @@ test('corrupt saved data and disabled storage never prevent the site from loadin
 });
 test('custom colours persist, reject CSS injection, and keep text readable on both surfaces',()=>{
   const a=setup();a.theme.apply({mode:'custom',custom:{bg:'#101010',surface:'#ffffff',text:'#101010',accent:'red;display:none'}});
-  assert.equal(a.styles['--theme-accent'],'#6950ad');
+  assert.equal(a.theme.read().custom.accent,'#6950ad');
   assert.ok(a.theme.contrast(a.styles['--theme-text'],a.styles['--theme-bg'])>=4.5);
   assert.ok(a.theme.contrast(a.styles['--theme-text'],a.styles['--theme-surface'])>=4.5);
   assert.equal(setup(a.values.get('qc_appearance')).theme.read().mode,'custom');
@@ -42,4 +42,17 @@ test('all entry pages load appearance before body rendering; diagrams exist in b
   const c={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'js/kb-visuals.js'),'utf8'),c);
   assert.equal(c.window.KB_VISUALS.agile.length,3);
   for(const f of c.window.KB_VISUALS.agile)for(const lang of ['ru','kz']){const s=fs.readFileSync(path.join(root,`img/methods/${f.file}-${lang}.svg`),'utf8');assert.ok(s.includes('<desc'));assert.doesNotMatch(s,/<image|<script/);}
+});
+
+test('semantic roles retain contrast across presets and 256 extreme custom palettes',()=>{
+ const a=setup(),colors=['#000000','#ffffff','#ff0000','#00ff00','#0000ff','#ffff00','#00ffff','#ff00ff'];
+ const cases=Object.keys(a.theme.presets).map(mode=>({mode}));
+ for(let n=0;n<256;n++)cases.push({mode:'custom',custom:{bg:colors[n%8],surface:colors[Math.floor(n/8)%8],text:colors[Math.floor(n/32)%8],accent:colors[Math.floor(n/4)%8]}});
+ for(const input of cases){const {vars:v}=a.theme.resolve(input);const check=(fg,bg,min=4.5)=>assert.ok(a.theme.contrast(v[fg],v[bg])>=min,JSON.stringify(input)+' '+fg+'/'+bg);
+  for(const bg of ['bg','surface','raised','soft','selected'])for(const fg of ['text','muted','link'])check(fg,bg);
+  for(const kind of ['good','bad'])check(kind,kind+'bg');check('warning','warnbg');check('selected-text','selected');
+  check('onaccent','accent');check('onaccent','accent-hover');check('disabled-text','disabled');
+  for(const bg of ['bg','surface','soft'])check('control-line',bg,3);
+  for(const fg of ['codekey','codenum','codestring'])check(fg,'code-bg');
+ }
 });
