@@ -20,7 +20,7 @@ html[data-theme] :is(.kb-filter-pills a[aria-current="page"],.kb-link.on,.kb-nav
 html[data-theme] :is(.float-request,.float-coffee,.float-passed,.p-tile,.hub-lab-banner,.ln-bar,.requirements-rule,.studio-docs) :is(strong,b,span,small,p) {color:inherit!important}
 html[data-theme] :is(.hub h1 em) {color:var(--theme-link)!important}
 html[data-theme] :is(.muted,.note,.kb-meta,.kb-topic-head>p,.kb-visual-intro,.kb-visual-license,.kb-terms,.kb-topic-card p,.kb-topic-card small,.kb-category>span,.kb-category>small,.hub-sub,.hub-eyebrow,.kb-section-note,.p-project-intro>p,.p-project-link small) {color:var(--theme-muted)!important}
-html[data-theme] :is(.ln-crumbs,.ln-first-intro,.ln-topic-hint,.ln-topic-en) {color:var(--theme-muted)!important}
+html[data-theme] :is(.ln-crumbs,.ln-first-intro,.ln-topic-hint,.ln-topic-en,.ln-example-note) {color:var(--theme-muted)!important}
 html[data-theme] :is(.requirements-count,.studio-docs p,.studio-docs li,.studio-dock button,.studio-toolbar,.studio-title,.studio-subtitle) {color:var(--theme-muted)!important}
 html[data-theme] :is(.studio,.studio-browser,.studio-live-preview,.release-coverage,.coffee-hero,.coffee-release footer) {background:var(--theme-bg)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
 html[data-theme] :is(.p-project-context a[aria-current="page"],.studio-dock button[aria-expanded="true"]) {background:var(--theme-soft)!important;color:var(--theme-link)!important}
@@ -126,3 +126,23 @@ html[data-theme] .ide-titlebar {background:var(--theme-raised)!important;color:v
 html[data-theme] .ide-titlebar button {color:var(--theme-muted)!important}
 
 html[data-theme] .api-response-head span {color:var(--theme-muted)!important}
+
+/* Status panels must change their background and foreground together. */
+html[data-theme] .success {
+  background:var(--theme-goodbg)!important;
+  color:var(--theme-good)!important;
+  border-color:var(--theme-good)!important;
+}
+html[data-theme] body .success :is(h1,h2,h3,p,strong,b,small) {color:inherit!important}
+html[data-theme] body .success .coffee-sticker {background:var(--theme-goodbg)!important;color:var(--theme-good)!important}
+html[data-theme] :is(.err,#order-state:not(:empty)) {color:var(--theme-bad)!important}
+html[data-theme] .note.warn {background:var(--theme-warnbg)!important;color:var(--theme-warning)!important;border-color:var(--theme-warning)!important}
+html[data-theme] :is(.order-comment,.cart-row,.review) {background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+html[data-theme] .tag-hit {background:var(--theme-warnbg)!important;color:var(--theme-warning)!important}
+html[data-theme] .tag-out {background:var(--theme-soft)!important;color:var(--theme-muted)!important}
+html[data-theme] :is(.toast,#coffee-toast,.studio-toast) {
+  background:var(--theme-raised)!important;
+  color:var(--theme-text)!important;
+  border:1px solid var(--theme-control-line);
+  box-shadow:0 8px 28px var(--theme-shadow);
+}
