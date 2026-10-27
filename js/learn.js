@@ -177,7 +177,8 @@
       </section>
       <section class="ln-sec ln-first-tasks" aria-labelledby="first-tasks-title">
         <h2 id="first-tasks-title">${text.tasks}</h2>
-        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter ? `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>` : ""}</li>`).join("")}</ol>
+        ${x.teacher ? `<p class="ln-teacher"><strong>${kz ? 'Оқытушыға' : 'Преподавателю'}:</strong> ${openLinks(inline(x.teacher, 's'))}</p>` : ''}
+        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter && x.practiceKind !== 'oral' ? (window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(x, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>`) : ""}</li>`).join("")}</ol>
       </section>
       ${nav}
     </div>`;
@@ -195,6 +196,7 @@
     app.querySelector(".ln-example-prev").addEventListener("click", () => moveExample(-1));
     app.querySelector(".ln-example-next").addEventListener("click", () => moveExample(1));
     wireBody(app);
+    if (x.practiceKind !== 'oral') window.LEARN_PRACTICE?.bind(app, x, L, location.hash.slice(1));
   }
 
   function renderPair(k, n) {
