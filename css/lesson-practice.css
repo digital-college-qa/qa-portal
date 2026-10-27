@@ -1,0 +1,20 @@
+.ln-teacher { border-inline-start: 3px solid var(--theme-accent, #7253ba); padding: 8px 12px; background: var(--theme-soft, #f5f3fb); border-radius: 0 8px 8px 0; }
+.ln-work { margin-top: 16px; border-top: 1px solid var(--theme-line, #d9d5e6); padding-top: 14px; }
+.ln-work-title, .ln-work > label { display: block; font-weight: 700; margin: 0 0 6px; }
+.ln-work .ln-work-help { font-size: .92em; color: var(--muted, #5d5b70); margin-bottom: 12px; }
+.ln-work-record { border: 1px solid var(--theme-line, #d9d5e6); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+.ln-work-record > summary { cursor: pointer; padding: 12px 14px; font-weight: 700; background: var(--theme-soft, #f5f3fb); color: var(--theme-text, #252336); }
+.ln-work-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; padding: 14px; }
+.ln-work-field { min-width: 0; }
+.ln-work-wide { grid-column: 1 / -1; }
+.ln-work-field label { display: block; font-weight: 600; margin-bottom: 4px; }
+.ln-work-field small { display: block; color: var(--muted, #5d5b70); line-height: 1.45; margin-top: 4px; }
+.ln-work input, .ln-work textarea, .ln-work select { box-sizing: border-box; display: block; width: 100%; max-width: 100%; border: 1px solid var(--theme-control-line, #c7bfdc); border-radius: 8px; padding: 10px 12px; background: var(--theme-surface, #fff); color: var(--theme-text, #252336); font: inherit; line-height: 1.45; min-height: 44px; }
+.ln-work input[readonly] { background: var(--theme-soft, #f5f3fb); }
+.ln-work textarea { resize: vertical; }
+.ln-work input:focus-visible, .ln-work textarea:focus-visible, .ln-work select:focus-visible { outline: 2px solid var(--brand, #7253ba); outline-offset: 2px; }
+.ln-work-text { min-height: 220px; }
+.ln-work-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 12px; }
+.ln-work-copy { min-height: 44px; white-space: normal; }
+.ln-work-status { font-size: .92em; color: var(--muted, #5d5b70); }
+@media (max-width: 600px) { .ln-work-fields { grid-template-columns: minmax(0, 1fr); padding: 12px; } .ln-work-actions { align-items: stretch; flex-direction: column; } }
