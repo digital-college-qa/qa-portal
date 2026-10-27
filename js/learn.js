@@ -156,9 +156,10 @@
       example: kz ? "Мысал" : "Пример",
       of: kz ? "/" : "из",
       copy: kz ? "Үлгіні көшіру" : "Скопировать шаблон",
-      labels: kz ? ["Талап", "Не істедік", "Күтілетін нәтиже", "Нақты нәтиже", "Бұл нені білдіреді"]
-        : ["Требование", "Что сделали", "Ожидаемый результат", "Фактический результат", "Что это значит"]
+      labels: x.exampleLabels || (kz ? ["Талап", "Не істедік", "Күтілетін нәтиже", "Нақты нәтиже", "Бұл нені білдіреді"]
+        : ["Требование", "Что сделали", "Ожидаемый результат", "Фактический результат", "Что это значит"])
     };
+    const templateAfter = x.templateAfter ?? 2;
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
     app.innerHTML = `<div class="wrap section ln ln-first">
       ${head}
@@ -166,6 +167,7 @@
         <h2 id="first-learn-title">${text.learn}</h2>
         <p class="ln-first-intro">${esc(x.intro)}</p>
         ${x.explanation.map(p => md(p, "s")).join("")}
+        ${x.image ? `<figure class="ln-figure"><img src="${esc(x.image.src)}" alt="${esc(x.image.alt)}" loading="lazy"><figcaption>${esc(x.image.caption)}</figcaption></figure>` : ""}
         <div class="ln-first-links">${x.links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>
         <p class="ln-example-note">${esc(x.exampleNote)}</p>
         <div class="ln-example">
@@ -175,7 +177,7 @@
       </section>
       <section class="ln-sec ln-first-tasks" aria-labelledby="first-tasks-title">
         <h2 id="first-tasks-title">${text.tasks}</h2>
-        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === 2 ? `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>` : ""}</li>`).join("")}</ol>
+        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter ? `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>` : ""}</li>`).join("")}</ol>
       </section>
       ${nav}
     </div>`;
@@ -280,7 +282,7 @@
     }
     function explain() {
       const t=topic(selected), words=(t.terms||[]).map(w=>w[0]).filter(Boolean).slice(0,3).join(' · ');
-      app.querySelector('.ln-topic-content').innerHTML=`<p class="ln-topic-en">${esc(words)}</p><p>${inline(t[L].short,'s')}</p><a class="ln-kb-link" href="kb.html#${esc(selected)}" target="_blank" rel="noopener">${tr('Объяснение, сравнение и частые ошибки','Түсіндіру, салыстыру және жиі қателер')} ↗</a>`;
+      app.querySelector('.ln-topic-content').innerHTML=`<p class="ln-topic-en">${esc(words)}</p><p>${inline(t[L].short,'s')}</p><a class="ln-kb-link" href="kb.html#${esc(selected)}" target="_blank" rel="noopener">${tr('Объяснение, примеры и частые ошибки','Түсіндіру, мысалдар және жиі қателер')} ↗</a>`;
       app.querySelectorAll('[data-study-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.studyTopic===selected)));
       example();
     }

@@ -16,7 +16,19 @@ test('all 52 actual lesson routes are short, bilingual and tied to their source 
     assert.ok(source.topics.length>0&&source.topics.every(t=>ids.has(t)),id);
     for(const lang of ['ru','kz']){
       assert.ok(pair[lang].intro.trim());
-      if(id==='k1-1'){assert.equal(pair.format,'guided-first-lesson');assert.equal(pair[lang].examples.length,10);continue;}
+      if(course==='k1'){
+        const x=pair[lang];
+        assert.equal(pair.format,'guided-first-lesson',id);
+        assert.ok(x.examples.length>=8&&x.examples.length<=10,id);
+        assert.ok(x.tasks[x.templateAfter??2],id);
+        assert.ok(x.template.trim(),id);
+        assert.equal(x.tasks.length,pair.ru.tasks.length,id);
+        assert.equal(x.examples.length,pair.ru.examples.length,id);
+        const width=(x.exampleLabels||[1,2,3,4,5]).length+1;
+        assert.ok(x.examples.every(e=>e.length===width&&e.every(s=>s.trim())),id);
+        if(x.image)assert.ok(fs.existsSync(path.join(root,x.image.src)),id);
+        continue;
+      }
       assert.equal(pair.format,'simple-course',id);assert.equal(pair[lang].tasks.length,3,id);
       assert.ok(pair[lang].tasks.every(t=>t.length>20),id);
       assert.doesNotMatch(pair[lang].tasks.join(' '),/version=(1\.1|2\.1)/);

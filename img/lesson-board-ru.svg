@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 290" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+  <rect width="900" height="290" fill="#eef3fb"/>
+  <text x="20" y="28" font-size="15" font-weight="700" fill="#1f2a44">QA — Айгерим</text>
+  <g fill="#f7f8fa" stroke="#d6dce6">
+    <rect x="16" y="42" width="164" height="232" rx="10"/>
+    <rect x="192" y="42" width="164" height="232" rx="10"/>
+    <rect x="368" y="42" width="164" height="232" rx="10"/>
+    <rect x="544" y="42" width="164" height="232" rx="10"/>
+    <rect x="720" y="42" width="164" height="232" rx="10"/>
+  </g>
+  <g font-weight="700" fill="#1f2a44">
+    <text x="28" y="66">Backlog</text>
+    <text x="204" y="66">To do</text>
+    <text x="380" y="66">In progress</text>
+    <text x="556" y="66">Review</text>
+    <text x="732" y="66">Done</text>
+  </g>
+  <g fill="#ffffff" stroke="#cdd5e1">
+    <rect x="26" y="78" width="144" height="54" rx="7"/>
+    <rect x="26" y="140" width="144" height="54" rx="7"/>
+    <rect x="202" y="78" width="144" height="54" rx="7"/>
+    <rect x="378" y="78" width="144" height="54" rx="7" stroke="#175fc9" stroke-width="2"/>
+    <rect x="730" y="78" width="144" height="54" rx="7"/>
+  </g>
+  <g fill="#2b3550">
+    <text x="36" y="100">Подсказка у поля</text><text x="36" y="118">телефона</text>
+    <text x="36" y="162">Фильтр «без</text><text x="36" y="180">кофеина»</text>
+    <text x="212" y="100">Проверить</text><text x="212" y="118">RU / KZ</text>
+    <text x="388" y="100">Подпись «без</text><text x="388" y="118">сахара»</text>
+    <text x="740" y="100">Страница</text><text x="740" y="118">«Контакты»</text>
+  </g>
+  <g fill="#5d6a85" font-size="12">
+    <text x="28" y="262">запас идей</text>
+    <text x="204" y="262">выбрали в работу</text>
+    <text x="380" y="262">делаем сейчас</text>
+    <text x="556" y="262">проверяем результат</text>
+    <text x="732" y="262">сделано и проверено</text>
+  </g>
+  <path d="M523 105 h28" stroke="#175fc9" stroke-width="2" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#175fc9"/></marker></defs>
+</svg>

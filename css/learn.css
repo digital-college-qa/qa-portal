@@ -40,10 +40,16 @@
 .ln-sec code { background: #F3F4F6; border-radius: 4px; padding: 0 4px; font-size: .95em; }
 .ln-term { font: inherit; color: #1A56C4; background: none; border: 0; padding: 0; border-bottom: 2px dotted #1A56C4; cursor: pointer; }
 .ln-term:hover { background: #EAF1FB; }
-.ln-tablewrap { overflow-x: auto; }
+.ln-tablewrap { overflow-x: auto; margin-bottom: 16px; }
 .ln-table { border-collapse: collapse; width: 100%; font-size: var(--text-body); }
 .ln-table th, .ln-table td { border: 1px solid #E1E4E8; padding: 6px 10px; text-align: left; vertical-align: top; }
 .ln-table th { background: #F6F7F9; }
+@media (max-width: 560px) {
+  .ln-first .ln-table thead { display: none; }
+  .ln-first .ln-table tr { display: block; border: 1px solid #E1E4E8; border-radius: 8px; margin-bottom: 8px; padding: 6px 10px; }
+  .ln-first .ln-table td { display: block; border: 0; padding: 2px 0; }
+  .ln-first .ln-table td:first-child { font-weight: 700; }
+}
 .ln-code { position: relative; margin: 8px 0; }
 .ln-code pre { background: #F6F8FA; border: 1px solid #E1E4E8; border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; font-size: var(--text-body); margin: 0; }
 .ln-copy { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: var(--text-small); }
@@ -100,6 +106,9 @@ body.portal #app > .ln-first { max-width: 1060px; }
 .ln-first .ln-sec p { margin: 0 0 14px; }
 .ln-first .ln-first-intro { color: #55536b; }
 body.portal .ln-first a:not(.btn) { color: #155ac7; text-decoration: underline; text-underline-offset: 3px; }
+.ln-figure { margin: 6px 0 18px; }
+.ln-figure img { display: block; width: 100%; height: auto; border: 1px solid #d3dff5; border-radius: 12px; background: #fff; }
+.ln-figure figcaption { font-size: .92em; color: #5d5b70; margin-top: 6px; }
 .ln-first-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
 body.portal .ln-first-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 14px; border: 1px solid #b4cdf6; border-radius: 10px; background: #f0f6ff; font-weight: 600; text-decoration: none; }
 .ln-first-links a:hover { background: #e3eeff; }
