@@ -200,54 +200,69 @@
     app.querySelector(".ln-example-prev").addEventListener("click", () => moveExample(-1));
     app.querySelector(".ln-example-next").addEventListener("click", () => moveExample(1));
     wireBody(app);
-    if (x.practiceKind !== 'oral') window.LEARN_PRACTICE?.bind(app, d.simple ? { ...x, workHeader: kz ? "Деңгей: кеңейтілген нұсқа" : "Уровень: продвинутая версия" } : x, L, location.hash.slice(1));
+    if (x.practiceKind !== 'oral') window.LEARN_PRACTICE?.bind(app, x, L, location.hash.slice(1));
   }
 
-  // Переключатель «Простая / Продвинутая» над парой, у которой есть простая версия.
+  // Переключатель «Простая / Продвинутая» над парой в двух уровнях.
   function levelBar() {
     const kz = L === "kz";
     const hint = level === "simple"
       ? (kz ? "Қысқаша: не үйренеміз, үлгі және тапсырма. 70 баллға дейін." : "Коротко: что изучаем, образец и задача. До 70 баллов.")
-      : (kz ? "Толық сабақ: түсіндіру, мысалдар және егжей-тегжейлі қадамдар. 100 баллға дейін." : "Полный урок: объяснение, примеры и подробные шаги. До 100 баллов.");
+      : (kz ? "Сол тапсырма + терминдер және «неге солай». Тағы екі сұраққа жауап бер — 100 баллға дейін." : "Та же задача + термины и «почему так». Ответь ещё на два вопроса — до 100 баллов.");
     return `<div class="ln-level-bar"><div class="ln-mode ln-level" role="group" aria-label="${kz ? "Сабақ деңгейі" : "Уровень пары"}">
       <button type="button" data-level="simple" class="${level === "simple" ? "on" : ""}" aria-pressed="${level === "simple"}">🙂 ${kz ? "Қарапайым" : "Простая"}</button>
       <button type="button" data-level="full" class="${level === "full" ? "on" : ""}" aria-pressed="${level === "full"}">🎓 ${kz ? "Кеңейтілген" : "Продвинутая"}</button>
     </div><p class="ln-level-hint">${hint}</p></div>`;
   }
 
-  function renderSimplePair(d, head, nav) {
-    const x = d.simple[L], kz = L === "kz";
+  // Пара в двух уровнях: задача и шаблон одни и те же; продвинутый уровень добавляет термины, «почему так» и два вопроса.
+  function renderTwoLevel(d, head, nav) {
+    const x = d[L], kz = L === "kz", full = level === "full";
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
+    const linkRow = links => `<div class="ln-first-links">${links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>`;
+    const kbLinks = x.links.filter(([, href]) => href.startsWith("kb.html#")), siteLinks = x.links.filter(([, href]) => !href.startsWith("kb.html#"));
     const list = x.steps ? `<ol class="ln-simple-list">${x.steps.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ol>`
       : x.options ? `<ul class="ln-simple-list">${x.options.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ul>` : "";
+    const more = full ? `<div class="ln-level-more"><p class="ln-level-more-title">🎓 ${kz ? "Кеңейтілген деңгейге" : "Для продвинутого уровня"}</p>
+        <h3>${kz ? "Терминдер" : "Термины"}</h3><ul>${x.terms.map(([term, en, meaning]) => `<li><b>${esc(term)}</b> (${esc(en)}) — ${inline(meaning, "s")}</li>`).join("")}</ul>
+        <h3>${kz ? "Неге солай" : "Почему так"}</h3><ul>${x.why.map(w => `<li>${inline(w, "s")}</li>`).join("")}</ul>
+        ${kbLinks.length ? linkRow(kbLinks) : ""}</div>` : "";
     const ai = x.prompt ? `<div class="ln-ai"><p><strong>${kz ? "ЖИ-ге промпт" : "Промпт для ИИ"}</strong> — ${kz ? "кез келген тегін ЖИ-чатқа қой. ЖИ қателесуі мүмкін: жауапты іске қосып тексер." : "вставь в любой бесплатный ИИ-чат. ИИ может ошибиться: проверь ответ запуском."}</p><div class="ln-code"><pre>${esc(x.prompt)}</pre><button type="button" class="btn btn-ghost ln-copy">${kz ? "Промптты көшіру" : "Скопировать промпт"}</button></div></div>` : "";
-    const hints = [...x.template.matchAll(/\([^()\n]+\)/g)].map(m => m[0]);
-    const work = { template: x.template, templateHints: hints, workHeader: kz ? "Деңгей: қарапайым нұсқа" : "Уровень: простая версия" };
+    // основной ответ общий для обоих уровней (один черновик); вопросы «почему» — только на продвинутом
+    const work = {
+      template: x.template, draftVersion: d.draftVersion,
+      templateHints: [...(x.template + "\n" + x.whyTemplate).matchAll(/\([^()\n]+\)/g)].map(m => m[0]),
+      extraTemplate: full ? x.whyTemplate : undefined,
+      extraLabel: kz ? "100 балл үшін: екі сұраққа өз сөзіңмен жауап бер" : "Для 100 баллов: ответь на два вопроса своими словами",
+      workHeader: full ? (kz ? "Деңгей: кеңейтілген" : "Уровень: продвинутый") : (kz ? "Деңгей: қарапайым" : "Уровень: простой")
+    };
     const submit = kz
       ? `Дайын ба? **«Жұмысты көшіру»** бас → [Discord](https://discord.com/channels/1559176798489673840) → өз тобың → **work-chat** → **«Сдать работу»** → өз тармағыңа қойып, жібер. [Жіберу қадамдары](kb.html#start-here)`
       : `Готово? Нажми **«Скопировать работу»** → [Discord](https://discord.com/channels/1559176798489673840) → своя группа → **work-chat** → **«Сдать работу»** → вставь в свою ветку и отправь. [Как отправить по шагам](kb.html#start-here)`;
-    app.innerHTML = `<div class="wrap section ln ln-first ln-simple-pair">
+    app.innerHTML = `<div class="wrap section ln ln-first ln-two-level">
       ${head}
-      <section class="ln-sec ln-first-learn" aria-labelledby="simple-learn-title">
-        <h2 id="simple-learn-title">${kz ? "Бүгін үйренеміз" : "Сегодня изучаем"}: ${esc(x.topic)}</h2>
+      <section class="ln-sec ln-first-learn" aria-labelledby="level-learn-title">
+        <h2 id="level-learn-title">${kz ? "Бүгін үйренеміз" : "Сегодня изучаем"}: ${esc(x.topic)}</h2>
         ${x.learn.map(p => openLinks(md(p, "s"))).join("")}
+        ${more}
         <h3>${kz ? "Былай жасалады" : "Делается вот так"}</h3>
         <p class="ln-sample-note">${esc(x.sample.note)}</p>
         <div class="ln-code"><pre>${esc(x.sample.text)}</pre></div>
       </section>
-      <section class="ln-sec ln-first-tasks" aria-labelledby="simple-task-title">
-        <h2 id="simple-task-title">${kz ? "Тапсырма" : "Задача"}</h2>
+      <section class="ln-sec ln-first-tasks" aria-labelledby="level-task-title">
+        <h2 id="level-task-title">${kz ? "Тапсырма" : "Задача"}</h2>
         <p>${openLinks(inline(x.task, "s"))}</p>
         ${list}
-        <div class="ln-first-links">${x.links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>
+        ${linkRow(siteLinks)}
         ${ai}
         ${window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(work, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre></div>`}
         <p class="ln-simple-submit">${openLinks(inline(submit, "s"))}</p>
+        <details class="ln-teacher-note"><summary>${kz ? "Оқытушыға" : "Преподавателю"}</summary><p>${openLinks(inline(x.teacher, "s"))}</p></details>
       </section>
       ${nav}
     </div>`;
     wireBody(app);
-    window.LEARN_PRACTICE?.bind(app, work, L, location.hash.slice(1) + ".simple");
+    window.LEARN_PRACTICE?.bind(app, work, L, location.hash.slice(1));
   }
 
   function renderPair(k, n) {
@@ -266,17 +281,19 @@
       window.scrollTo(0, 0);
       return;
     }
+    if (d.format === "two-level") {
+      renderTwoLevel(d, head + levelBar(), nav);
+      app.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
+        if (b.dataset.level === level) return;
+        level = b.dataset.level;
+        save("qc_learn_level", level);
+        renderPair(k, n);
+      }));
+      window.scrollTo(0, 0);
+      return;
+    }
     if (d.format === "guided-first-lesson") {
-      if (d.simple) {
-        const withBar = head + levelBar();
-        if (level === "simple") renderSimplePair(d, withBar, nav); else renderFirstLesson(d, withBar, nav);
-        app.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
-          if (b.dataset.level === level) return;
-          level = b.dataset.level;
-          save("qc_learn_level", level);
-          renderPair(k, n);
-        }));
-      } else renderFirstLesson(d, head, nav);
+      renderFirstLesson(d, head, nav);
       window.scrollTo(0, 0);
       return;
     }

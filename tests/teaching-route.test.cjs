@@ -13,7 +13,8 @@ test('unified course pairs are guided, bilingual and carry a filled sample under
   assert.equal(ready.length,26);
   for(const id of ready){
     const pair=pairs[id];
-    assert.ok(course.titles[id.slice(3)],id);assert.equal(pair.format,'guided-first-lesson',id);
+    assert.ok(course.titles[id.slice(3)],id);assert.ok(['guided-first-lesson','two-level'].includes(pair.format),id);
+    if(pair.format==='two-level')continue;
     for(const lang of ['ru','kz']){
       const x=pair[lang];
       assert.equal(x.examples.length,4,id);assert.equal(x.templateAfter,0,id);assert.ok(x.template.trim(),id);
@@ -28,19 +29,30 @@ test('unified course pairs are guided, bilingual and carry a filled sample under
     }
   }
 });
-test('a short version of a pair has a topic, a filled sample, a simple task and a blank template in RU and KZ',()=>{
-  const simple=Object.entries(pairs).filter(([,pair])=>pair.simple);
-  assert.ok(simple.length>=2);
-  for(const [id,pair] of simple)for(const lang of ['ru','kz']){
-    const x=pair.simple[lang],list=x.options||x.steps||[];
-    assert.ok(x.topic.trim()&&x.task.trim()&&x.sample.note.trim()&&x.sample.text.trim(),id);
-    assert.ok(x.learn.length>=1&&x.learn.length<=4,id);assert.ok(list.length>=2,id);
-    const words=[...x.learn,x.task,...list].join(' ').split(/\s+/).length;
-    assert.ok(words<=200,`${id} ${lang}: простая версия короткая (${words} слов)`);
-    assert.doesNotMatch(x.sample.text,/\([^()\n]+\)/,id+': образец заполнен до конца');
-    assert.match(x.template,/\([^()\n]+\)/,id+': в шаблоне есть места для ответа');
-    assert.equal(x.template.split('\n').length,pair.simple.ru.template.split('\n').length,id+': шаблоны RU и KZ');
-    for(const [,href]of x.links)if(href.startsWith('kb.html#'))assert.ok(ids.has(href.split('#')[1]),id+' '+href);
+test('a two-level pair has one task and template for both levels; the full level adds terms, why and two questions',()=>{
+  const two=Object.entries(pairs).filter(([,pair])=>pair.format==='two-level');
+  assert.ok(two.length>=2);
+  const words=list=>list.join(' ').split(/\s+/).length;
+  for(const [id,pair] of two){
+    assert.ok(pair.summary.length===2&&pair.sourcePairs.length,id);
+    for(const lang of ['ru','kz']){
+      const x=pair[lang],list=x.options||x.steps||[];
+      assert.ok(x.intro.trim()&&x.topic.trim()&&x.task.trim()&&x.teacher.trim(),id);assert.equal(x.practiceKind,'written',id);
+      assert.ok(x.learn.length>=1&&x.learn.length<=4&&list.length>=2,id);
+      assert.ok(words([...x.learn,x.task,...list])<=200,`${id} ${lang}: простой уровень короткий`);
+      assert.ok(x.terms.length>=3&&x.terms.every(t=>t.length===3&&t.every(v=>v.trim())),id);
+      assert.ok(x.why.length>=2&&x.why.length<=4,id);
+      assert.ok(words([...x.terms.flat(),...x.why])<=200,`${id} ${lang}: продвинутый уровень добавляет немного`);
+      assert.ok(x.sample.note.trim()&&x.sample.text.trim(),id);
+      assert.doesNotMatch(x.sample.text,/\([^()\n]+\)/,id+': образец заполнен до конца');
+      for(const tpl of [x.template,x.whyTemplate]){
+        assert.match(tpl,/\([^()\n]+\)/,id+': в шаблоне есть места для ответа');
+        assert.equal(tpl.split('\n').length,(tpl===x.template?pair.ru.template:pair.ru.whyTemplate).split('\n').length,id+': шаблоны RU и KZ');
+      }
+      assert.equal(x.whyTemplate.split('\n').length,2,id+': два вопроса «почему»');
+      assert.ok(x.links.some(([,href])=>!href.startsWith('kb.html#')),id+': ссылка на сайт для задачи');
+      for(const [,href]of x.links)if(href.startsWith('kb.html#'))assert.ok(ids.has(href.split('#')[1]),id+' '+href);
+    }
   }
 });
 test('only the unified course is on the site; old course 1 and 2 routes lead to it',()=>{

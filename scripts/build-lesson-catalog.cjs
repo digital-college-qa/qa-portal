@@ -12,7 +12,7 @@ function buildCatalog(root=path.join(__dirname,'..'),readSource=file=>fs.readFil
     for(let n=1;n<=26;n++){
       const lesson=lessons[`${course}-${n}`];
       if(!lesson)throw Error(`Missing lesson ${course}-${n}`);
-      const guided=lesson.format==='guided-first-lesson';
+      const guided=["guided-first-lesson","two-level"].includes(lesson.format);
       const entry={title:Array.from(metadata[course].titles[n]),guided,practiceKind:lesson.ru.practiceKind||'written'};
       for(const [i,lang]of ['ru','kz'].entries())entry[lang]={intro:plain(lesson[lang].intro),result:plain(lesson.summary?.[i]),tasks:guided?[]:Array.from(lesson[lang].tasks||[],plain)};
       courses[course][n]=entry;

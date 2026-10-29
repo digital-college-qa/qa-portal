@@ -60,3 +60,20 @@ test('worksheet rendering escapes student-facing content and labels optional fie
   const h=harness();const html=h.api.render({worksheet:{sections:[{title:'<script>',fields:[{key:'field',label:'<unsafe>',value:'"<value>',help:'<help>'}]}]}},'ru');
   assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;script&gt;/);assert.match(html,/&lt;unsafe&gt;/);assert.doesNotMatch(html,/aria-required/);
 });
+test('two levels of a pair share the main answer; the hidden "why" answer survives and is copied only on the full level',async()=>{
+  const saved=new Map();let copied='';
+  const open=withExtra=>{
+    const handlers={},status={textContent:''},plain={value:'Ответ: (твой ответ)'},extra=withExtra?{value:'Почему: (твой ответ)'}:null;
+    const editor={querySelector:s=>s==='.ln-work-status'?status:s==='.ln-work-copy'?{addEventListener:(e,cb)=>handlers.copy=cb}:s==='[data-work-text]'?plain:s==='[data-work-extra]'?extra:null,querySelectorAll:()=>[],addEventListener:(e,cb)=>handlers[e]=cb};
+    const context={window:{},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},navigator:{clipboard:{writeText:async t=>{copied=t;}}},prompt:()=>assert.fail('unexpected prompt')};
+    vm.runInNewContext(code,context);
+    context.window.LEARN_PRACTICE.bind({querySelector:()=>editor},{template:'',templateHints:['(твой ответ)'],workHeader:withExtra?'Уровень: продвинутый':'Уровень: простой',draftVersion:'2'},'ru','qa-1');
+    return {handlers,plain,extra};
+  };
+  const full=open(true);full.plain.value='Ответ: 6 напитков';full.extra.value='Почему: чтобы не подгонять';full.handlers.input();
+  const simple=open(false);assert.equal(simple.plain.value,'Ответ: 6 напитков');
+  simple.plain.value='Ответ: 6 напитков, Passed';simple.handlers.input();await simple.handlers.copy();
+  assert.equal(copied,'Уровень: простой\n\nОтвет: 6 напитков, Passed');
+  const again=open(true);assert.equal(again.extra.value,'Почему: чтобы не подгонять');await again.handlers.copy();
+  assert.equal(copied,'Уровень: продвинутый\n\nОтвет: 6 напитков, Passed\n\nПочему: чтобы не подгонять');
+});
