@@ -64,7 +64,8 @@
     editor.addEventListener('change', save);
     if (restored) status.textContent = tr(lang,'Восстановлен твой черновик.','Жұмыс жобаңыз қалпына келтірілді.');
     editor.querySelector('.ln-work-copy').addEventListener('click', async () => {
-      const text = serialize();
+      // workHeader says which level of the pair the student did: simple or full
+      const text = (x.workHeader ? x.workHeader + '\n\n' : '') + serialize();
       const current = values();
       // Check only explicit template hints: real content such as «(₸)» is a valid answer.
       const unfinished = value => /<[^>]+>/.test(value) || (x.templateHints || []).some(hint => value.includes(hint));
