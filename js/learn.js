@@ -244,6 +244,7 @@
       <section class="ln-sec ln-first-learn" aria-labelledby="level-learn-title">
         <h2 id="level-learn-title">${kz ? "Бүгін үйренеміз" : "Сегодня изучаем"}: ${esc(x.topic)}</h2>
         ${x.learn.map(p => openLinks(md(p, "s"))).join("")}
+        ${x.image ? `<figure class="ln-figure"><img src="${esc(x.image.src)}" alt="${esc(x.image.alt)}" loading="lazy"><figcaption>${esc(x.image.caption)}</figcaption></figure>` : ""}
         ${more}
         <h3>${kz ? "Былай жасалады" : "Делается вот так"}</h3>
         <p class="ln-sample-note">${esc(x.sample.note)}</p>
