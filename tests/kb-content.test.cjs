@@ -29,9 +29,9 @@ test('practical tools explain actions instead of requiring an external registrat
 test('templates make preparation and data optional and keep expected/actual results separate',()=>{
   for(const id of ['test-case','bug-report']){
     const t=topics.find(t=>t.id===id);
-    assert.match(t.ru.template,/Предусловия: <необязательно/);assert.match(t.ru.template,/Тестовые данные: <необязательно/);
+    assert.match(t.ru.template,/Предусловия: \(необязательно/);assert.match(t.ru.template,/Тестовые данные: \(необязательно/);
     assert.match(t.ru.template,/Ожидаемый результат/);assert.match(t.ru.template,/Фактический результат/);
-    assert.match(t.kz.template,/Алғышарт: <міндетті емес/);assert.match(t.kz.template,/Тест дерегі: <міндетті емес/);
+    assert.match(t.kz.template,/Алғышарт: \(міндетті емес/);assert.match(t.kz.template,/Тест дерегі: \(міндетті емес/);
     assert.doesNotMatch(t.ru.template,/RU.*KZ/);
   }
 });

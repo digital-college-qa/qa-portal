@@ -2,21 +2,23 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const code=fs.readFileSync(path.join(__dirname,'../js/learn/practice-editor.js'),'utf8');
 
-function harness({saved=new Map(),lang='ru',route='k1-3',failStorage=false,requireRun=false}={}){
+function harness({saved=new Map(),lang='ru',route='k1-3',failStorage=false,requireRun=false,plainTemplate}={}){
   const fields=[{dataset:{workField:'id'},value:'TC-CRT-001'},{dataset:{workField:'expected'},value:''},{dataset:{workField:'actual'},value:''},{dataset:{workField:'optional'},value:''}];
   const handlers={},status={textContent:''},button={addEventListener:(event,callback)=>handlers['copy']=callback};
-  const editor={querySelector:s=>s==='.ln-work-status'?status:s==='.ln-work-copy'?button:null,querySelectorAll:()=>fields,addEventListener:(event,callback)=>handlers[event]=callback};
+  const plain=plainTemplate===undefined?null:{value:plainTemplate};
+  const editor={querySelector:s=>s==='.ln-work-status'?status:s==='.ln-work-copy'?button:s==='[data-work-text]'?plain:null,querySelectorAll:()=>plain?[]:fields,addEventListener:(event,callback)=>handlers[event]=callback};
   let copied='';
   const context={window:{},localStorage:{getItem:key=>saved.get(key)||null,setItem:(key,value)=>{if(failStorage)throw Error('quota');saved.set(key,value);}},navigator:{clipboard:{writeText:async text=>{copied=text;}}},prompt:()=>assert.fail('unexpected manual copy')};
   vm.runInNewContext(code,context);
   const x={template:'unused',worksheet:{sections:[{title:'Cart check',fields:[{key:'id',label:'ID',value:'TC-CRT-001',readOnly:true,required:true},{key:'expected',label:'Expected',required:true},{key:'actual',label:'Actual'},{key:'optional',label:'Optional data'}]}]}};
+  if(plain){x.template=plainTemplate;x.templateHints=['(твой ответ)','(өз жауабың)'];delete x.worksheet;}
   if(requireRun){
     x.worksheet.sections[0].fields[2].required=true;
     x.worksheet.sections[0].fields.push({key:'status',label:'Status',mustRun:true});
     fields.push({dataset:{workField:'status'},value:'Not run'});
   }
   context.window.LEARN_PRACTICE.bind({querySelector:()=>editor},x,lang,route);
-  return {fields,handlers,status,button,saved,get copied(){return copied;},api:context.window.LEARN_PRACTICE,x};
+  return {fields,plain,handlers,status,button,saved,get copied(){return copied;},api:context.window.LEARN_PRACTICE,x};
 }
 
 test('a draft survives reopening the same lesson, with readonly ID kept intact',()=>{
@@ -30,8 +32,18 @@ test('drafts do not leak between lessons or languages',()=>{
   assert.equal(harness({saved:first.saved,lang:'kz'}).fields[1].value,'');
 });
 test('copying an unfinished worksheet marks missing answers and omits unused optional data',async()=>{
-  const h=harness();await h.handlers.copy();assert.match(h.copied,/Expected: <не заполнено>/);assert.doesNotMatch(h.copied,/Optional data:/);assert.doesNotMatch(h.copied,/Actual:/);assert.match(h.status.textContent,/Черновик скопирован/);
+  const h=harness();await h.handlers.copy();assert.match(h.copied,/Expected: \(не заполнено\)/);assert.doesNotMatch(h.copied,/Optional data:/);assert.doesNotMatch(h.copied,/Actual:/);assert.match(h.status.textContent,/Черновик скопирован/);
   h.fields[1].value='<write expectation>';await h.handlers.copy();assert.match(h.status.textContent,/Черновик/);
+});
+
+test('round answer hints mark a plain-text draft without treating real parentheses as unfinished',async()=>{
+  for(const lang of ['ru','kz']){
+    const h=harness({lang,plainTemplate:lang==='ru'?'Ответ: (твой ответ)':'Жауап: (өз жауабың)'});
+    await h.handlers.copy();assert.match(h.status.textContent,lang==='ru'?/Черновик скопирован/:/Жоба көшірілді/);
+    h.plain.value='Цена указана в тенге (₸).';await h.handlers.copy();assert.equal(h.copied,h.plain.value);
+    assert.match(h.status.textContent,lang==='ru'?/Работа скопирована/:/Жұмыс көшірілді/);
+    h.plain.value='<старый незаполненный шаблон>';await h.handlers.copy();assert.match(h.status.textContent,lang==='ru'?/Черновик/:/Жоба/);
+  }
 });
 test('copy contains student input without inventing an actual result',async()=>{
   const h=harness();h.fields[1].value='One item';await h.handlers.copy();assert.match(h.copied,/Expected: One item/);assert.doesNotMatch(h.copied,/Actual:/);assert.match(h.status.textContent,/Работа скопирована/);

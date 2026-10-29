@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "d96d5880c6e0bae350e7f4ffa60b57a40ec02db0869d7f03c8e37c4ade171520",
+  "revision": "36c85549bc8d41636210be52498b7f1bb08fe1c05b601bd6c09cd9ffc01ec0c8",
   "lessonUrl": "https://digital-college-qa.github.io/qa-portal/learn.html",
   "courses": {
     "qa": {
@@ -66,12 +66,12 @@
         "guided": true,
         "practiceKind": "written",
         "ru": {
-          "intro": "Вместе оформим один баг-репорт по шаблону: заголовок по 3W, шаги, ФР и ОР, окружение, Severity и Priority.",
+          "intro": "Вместе оформим один баг-репорт по шаблону: заголовок по 3W, шаги, фактический результат и ожидаемый результат, окружение, Severity и Priority.",
           "result": "Баг-репорт по шаблону: 3W, окружение, Severity",
           "tasks": []
         },
         "kz": {
-          "intro": "Шаблон бойынша бір баг-репортты бірге толтырамыз: 3W бойынша тақырып, қадамдар, ФР мен ОР, орта, Severity және Priority.",
+          "intro": "Шаблон бойынша бір баг-репортты бірге толтырамыз: 3W бойынша тақырып, қадамдар, нақты нәтиже мен күтілетін нәтиже, орта, Severity және Priority.",
           "result": "Шаблон бойынша баг-репорт: 3W, орта, Severity",
           "tasks": []
         }
