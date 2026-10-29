@@ -1,4 +1,4 @@
-/* Уроки: список пар по этапам (#k1, #k2) и краткая страница пары (#k1-5).
+/* Уроки: список пар по этапам (#qa, #k1, #k2) и краткая страница пары (#k1-5).
    Данные: js/learn/course.js и общий источник js/study-content.js. */
 (function () {
   "use strict";
@@ -382,7 +382,7 @@
   /* ---------- маршрут ---------- */
   function route() {
     const h = location.hash.slice(1);
-    const m = h.match(/^(k[12])-(\d+)$/);
+    const m = h.match(/^(k[12]|qa)-(\d+)$/);
     if (m && C[m[1]].titles[m[2]]) return renderPair(m[1], Number(m[2]));
     const k = C[h] ? h : (C[load("qc_learn_course", "k1")] ? load("qc_learn_course", "k1") : "k1");
     renderCourse(k);

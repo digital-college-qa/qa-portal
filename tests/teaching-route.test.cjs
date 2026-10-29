@@ -7,8 +7,29 @@ for(const [,src] of html.matchAll(/<script src="([^"?]+)/g)) {
 }
 const data=context.window.STUDY_CONTENT,pairs=context.window.LEARN_PAIRS,ids=new Set(data.topics.map(t=>t.id));
 const GUIDED=Array.from({length:26},(_,i)=>'k1-'+(i+1));
+test('unified course pairs are guided, bilingual and carry a filled sample under the template',()=>{
+  const course=context.window.LEARN_COURSES.qa,ready=Object.keys(pairs).filter(id=>id.startsWith('qa-'));
+  assert.equal(Object.keys(course.titles).length,26);
+  assert.equal(JSON.stringify(course.stages.map(s=>s.pairs)),'[[1,8],[9,13],[14,17],[18,26]]');
+  assert.ok(ready.length>=8);
+  for(const id of ready){
+    const pair=pairs[id];
+    assert.ok(course.titles[id.slice(3)],id);assert.equal(pair.format,'guided-first-lesson',id);
+    for(const lang of ['ru','kz']){
+      const x=pair[lang];
+      assert.equal(x.examples.length,4,id);assert.equal(x.templateAfter,0,id);assert.ok(x.template.trim(),id);
+      assert.ok(x.sample.title&&x.sample.note&&x.sample.text,id);
+      assert.doesNotMatch(x.sample.text,/<[^>]+>/,id+': образец заполнен до конца');
+      assert.equal(x.tasks.length,pair.ru.tasks.length,id);
+      assert.equal(x.template.split('\n').length,pair.ru.template.split('\n').length,id+': шаблоны RU и KZ');
+      const width=(x.exampleLabels||[1,2,3,4,5]).length+1;assert.ok(x.examples.every(e=>e.length===width&&e.every(v=>v.trim())),id);
+      for(const [,href]of x.links)if(href.startsWith('kb.html#'))assert.ok(ids.has(href.split('#')[1]),id+' '+href);
+      if(x.image)assert.ok(fs.existsSync(path.join(root,x.image.src)),id);
+    }
+  }
+});
 test('all 52 actual lesson routes are short, bilingual and tied to their source pair',()=>{
-  assert.equal(Object.keys(pairs).length,52);
+  assert.equal(Object.keys(pairs).filter(id=>/^k[12]-/.test(id)).length,52);
   for(const course of ['k1','k2'])for(let n=1;n<=26;n++){
     const id=`${course}-${n}`,pair=pairs[id],source=data.lessons[id];
     assert.equal(source.source.pair,n,id);
