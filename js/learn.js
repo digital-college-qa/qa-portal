@@ -44,6 +44,8 @@
   const C = window.LEARN_COURSES, P = window.LEARN_PAIRS || {};
   const app = document.getElementById("app");
   let mode = load("qc_learn_mode", "s") === "d" ? "d" : "s";
+  // уровень пары с простой версией: simple — коротко, до 70 баллов; full — полный урок, до 100
+  let level = load("qc_learn_level", "simple") === "full" ? "full" : "simple";
   const savedGlossLanguages = load("qc_learn_gloss_languages", "both");
   let glossLanguages = ["ru", "kz", "both"].includes(savedGlossLanguages) ? savedGlossLanguages : "both";
 
@@ -198,7 +200,54 @@
     app.querySelector(".ln-example-prev").addEventListener("click", () => moveExample(-1));
     app.querySelector(".ln-example-next").addEventListener("click", () => moveExample(1));
     wireBody(app);
-    if (x.practiceKind !== 'oral') window.LEARN_PRACTICE?.bind(app, x, L, location.hash.slice(1));
+    if (x.practiceKind !== 'oral') window.LEARN_PRACTICE?.bind(app, d.simple ? { ...x, workHeader: kz ? "Деңгей: кеңейтілген нұсқа" : "Уровень: продвинутая версия" } : x, L, location.hash.slice(1));
+  }
+
+  // Переключатель «Простая / Продвинутая» над парой, у которой есть простая версия.
+  function levelBar() {
+    const kz = L === "kz";
+    const hint = level === "simple"
+      ? (kz ? "Қысқаша: не үйренеміз, үлгі және тапсырма. 70 баллға дейін." : "Коротко: что изучаем, образец и задача. До 70 баллов.")
+      : (kz ? "Толық сабақ: түсіндіру, мысалдар және егжей-тегжейлі қадамдар. 100 баллға дейін." : "Полный урок: объяснение, примеры и подробные шаги. До 100 баллов.");
+    return `<div class="ln-level-bar"><div class="ln-mode ln-level" role="group" aria-label="${kz ? "Сабақ деңгейі" : "Уровень пары"}">
+      <button type="button" data-level="simple" class="${level === "simple" ? "on" : ""}" aria-pressed="${level === "simple"}">🙂 ${kz ? "Қарапайым" : "Простая"}</button>
+      <button type="button" data-level="full" class="${level === "full" ? "on" : ""}" aria-pressed="${level === "full"}">🎓 ${kz ? "Кеңейтілген" : "Продвинутая"}</button>
+    </div><p class="ln-level-hint">${hint}</p></div>`;
+  }
+
+  function renderSimplePair(d, head, nav) {
+    const x = d.simple[L], kz = L === "kz";
+    const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
+    const list = x.steps ? `<ol class="ln-simple-list">${x.steps.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ol>`
+      : x.options ? `<ul class="ln-simple-list">${x.options.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ul>` : "";
+    const ai = x.prompt ? `<div class="ln-ai"><p><strong>${kz ? "ЖИ-ге промпт" : "Промпт для ИИ"}</strong> — ${kz ? "кез келген тегін ЖИ-чатқа қой. ЖИ қателесуі мүмкін: жауапты іске қосып тексер." : "вставь в любой бесплатный ИИ-чат. ИИ может ошибиться: проверь ответ запуском."}</p><div class="ln-code"><pre>${esc(x.prompt)}</pre><button type="button" class="btn btn-ghost ln-copy">${kz ? "Промптты көшіру" : "Скопировать промпт"}</button></div></div>` : "";
+    const hints = [...x.template.matchAll(/\([^()\n]+\)/g)].map(m => m[0]);
+    const work = { template: x.template, templateHints: hints, workHeader: kz ? "Деңгей: қарапайым нұсқа" : "Уровень: простая версия" };
+    const submit = kz
+      ? `Дайын ба? **«Жұмысты көшіру»** бас → [Discord](https://discord.com/channels/1559176798489673840) → өз тобың → **work-chat** → **«Сдать работу»** → өз тармағыңа қойып, жібер. [Жіберу қадамдары](kb.html#start-here)`
+      : `Готово? Нажми **«Скопировать работу»** → [Discord](https://discord.com/channels/1559176798489673840) → своя группа → **work-chat** → **«Сдать работу»** → вставь в свою ветку и отправь. [Как отправить по шагам](kb.html#start-here)`;
+    app.innerHTML = `<div class="wrap section ln ln-first ln-simple-pair">
+      ${head}
+      <section class="ln-sec ln-first-learn" aria-labelledby="simple-learn-title">
+        <h2 id="simple-learn-title">${kz ? "Бүгін үйренеміз" : "Сегодня изучаем"}: ${esc(x.topic)}</h2>
+        ${x.learn.map(p => openLinks(md(p, "s"))).join("")}
+        <h3>${kz ? "Былай жасалады" : "Делается вот так"}</h3>
+        <p class="ln-sample-note">${esc(x.sample.note)}</p>
+        <div class="ln-code"><pre>${esc(x.sample.text)}</pre></div>
+      </section>
+      <section class="ln-sec ln-first-tasks" aria-labelledby="simple-task-title">
+        <h2 id="simple-task-title">${kz ? "Тапсырма" : "Задача"}</h2>
+        <p>${openLinks(inline(x.task, "s"))}</p>
+        ${list}
+        <div class="ln-first-links">${x.links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>
+        ${ai}
+        ${window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(work, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre></div>`}
+        <p class="ln-simple-submit">${openLinks(inline(submit, "s"))}</p>
+      </section>
+      ${nav}
+    </div>`;
+    wireBody(app);
+    window.LEARN_PRACTICE?.bind(app, work, L, location.hash.slice(1) + ".simple");
   }
 
   function renderPair(k, n) {
@@ -218,7 +267,16 @@
       return;
     }
     if (d.format === "guided-first-lesson") {
-      renderFirstLesson(d, head, nav);
+      if (d.simple) {
+        const withBar = head + levelBar();
+        if (level === "simple") renderSimplePair(d, withBar, nav); else renderFirstLesson(d, withBar, nav);
+        app.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
+          if (b.dataset.level === level) return;
+          level = b.dataset.level;
+          save("qc_learn_level", level);
+          renderPair(k, n);
+        }));
+      } else renderFirstLesson(d, head, nav);
       window.scrollTo(0, 0);
       return;
     }

@@ -28,6 +28,21 @@ test('unified course pairs are guided, bilingual and carry a filled sample under
     }
   }
 });
+test('a short version of a pair has a topic, a filled sample, a simple task and a blank template in RU and KZ',()=>{
+  const simple=Object.entries(pairs).filter(([,pair])=>pair.simple);
+  assert.ok(simple.length>=2);
+  for(const [id,pair] of simple)for(const lang of ['ru','kz']){
+    const x=pair.simple[lang],list=x.options||x.steps||[];
+    assert.ok(x.topic.trim()&&x.task.trim()&&x.sample.note.trim()&&x.sample.text.trim(),id);
+    assert.ok(x.learn.length>=1&&x.learn.length<=4,id);assert.ok(list.length>=2,id);
+    const words=[...x.learn,x.task,...list].join(' ').split(/\s+/).length;
+    assert.ok(words<=200,`${id} ${lang}: простая версия короткая (${words} слов)`);
+    assert.doesNotMatch(x.sample.text,/\([^()\n]+\)/,id+': образец заполнен до конца');
+    assert.match(x.template,/\([^()\n]+\)/,id+': в шаблоне есть места для ответа');
+    assert.equal(x.template.split('\n').length,pair.simple.ru.template.split('\n').length,id+': шаблоны RU и KZ');
+    for(const [,href]of x.links)if(href.startsWith('kb.html#'))assert.ok(ids.has(href.split('#')[1]),id+' '+href);
+  }
+});
 test('only the unified course is on the site; old course 1 and 2 routes lead to it',()=>{
   assert.equal(JSON.stringify(Object.keys(context.window.LEARN_COURSES)),'["qa"]');
   assert.equal(Object.keys(pairs).filter(id=>!id.startsWith('qa-')).length,0);
