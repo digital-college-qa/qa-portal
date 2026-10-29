@@ -44,7 +44,9 @@ test('a two-level pair has one task and template for both levels; the full level
       assert.ok(x.why.length>=2&&x.why.length<=4,id);
       assert.ok(words([...x.terms.flat(),...x.why])<=200,`${id} ${lang}: продвинутый уровень добавляет немного`);
       assert.ok(x.sample.note.trim()&&x.sample.text.trim(),id);
-      assert.doesNotMatch(x.sample.text,/\([^()\n]+\)/,id+': образец заполнен до конца');
+      // the sample may hold real code with brackets, so look only for the template's own hints
+      const hints=[...(x.template+'\n'+x.whyTemplate).matchAll(/\([^()\n]+\)/g)].map(m=>m[0]);
+      assert.ok(hints.every(h=>!x.sample.text.includes(h)),id+': образец заполнен до конца');
       for(const tpl of [x.template,x.whyTemplate]){
         assert.match(tpl,/\([^()\n]+\)/,id+': в шаблоне есть места для ответа');
         assert.equal(tpl.split('\n').length,(tpl===x.template?pair.ru.template:pair.ru.whyTemplate).split('\n').length,id+': шаблоны RU и KZ');
