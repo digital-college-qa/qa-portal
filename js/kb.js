@@ -18,26 +18,26 @@
   const UI = {
     ru: {
       title: "База знаний", search: "Поиск: чек-лист, bug, қате…", found: "Найдено", ctrlf: "<b>Ctrl+F</b> — найти слово на открытой странице. Поиск выше — найти тему по всей базе.",
-      topics: "☰ Все темы", blocks: { toolkit: "Инструменты QA", tools: "Шпаргалки", k1: "Основы · 1 курс", k2: "2 курс", practice: "API и автотесты", extra: "Дополнительно" },
+      topics: "☰ Все темы", blocks: { toolkit: "Инструменты QA", tools: "Шпаргалки", k1: "Основы тестирования", k2: "Дополнительные темы", practice: "API и автотесты", extra: "Дополнительно" },
       steps: "Сделай пошагово", sources: "Официальные инструкции", visuals: "На схемах",
       short: "Объяснение", when: "Когда и зачем", analogy: "Пример из жизни", body: "Подробнее", template: "Шаблон",
       example: "Примеры", mistakes: "Частые ошибки", remember: "Запомни", check: "Проверь себя",
       check_hint: "Сначала ответь сам, потом нажми на вопрос.", terms: "Слова для поиска", open_shop: "Открыть в магазине →",
       copy: "Скопировать", copied: "Скопировано", read: "Я прочитал(а)", unread: "Прочитано ✓ (нажми, чтобы снять)",
-      prev: "← Назад", next: "Дальше →", pairs: { k1: "1 курс, пара", k2: "2 курс, пара" }, nothing: "Ничего не найдено. Попробуй другое слово или английский термин.",
+      prev: "← Назад", next: "Дальше →", pairs: { qa: "Курс QA, пары", one: "Пара" }, nothing: "Ничего не найдено. Попробуй другое слово или английский термин.",
       gl_title: "Глоссарий", gl_note: "Термины по порядку пар: сверху то, что проходим раньше. Английский — русский — казахский. Нажми на тему, чтобы прочитать подробно.",
       gl_head: ["English", "Русский", "Қазақша", "Тема"], gl_other: "Другие темы курса", soon: "Тема появится позже.",
       welcome_title: "База знаний по тестированию", welcome: "Слева — все темы курса по порядку пар: сверху то, что проходим раньше, снизу — позже. Нажми на тему, чтобы открыть. Не помнишь, где тема? Напиши слово в поиске — на русском, казахском или английском."
     },
     kz: {
       title: "Білім қоры", search: "Іздеу: чек-лист, bug, қате…", found: "Табылды", ctrlf: "<b>Ctrl+F</b> — ашық беттен сөз табу. Жоғарыдағы іздеу — бүкіл қордан тақырып табу.",
-      topics: "☰ Барлық тақырып", blocks: { toolkit: "QA құралдары", tools: "Анықтамалар", k1: "Негіздер · 1 курс", k2: "2 курс", practice: "API және автотесттер", extra: "Қосымша" },
+      topics: "☰ Барлық тақырып", blocks: { toolkit: "QA құралдары", tools: "Анықтамалар", k1: "Тестілеу негіздері", k2: "Қосымша тақырыптар", practice: "API және автотесттер", extra: "Қосымша" },
       steps: "Қадаммен орында", sources: "Ресми нұсқаулықтар", visuals: "Сызбалармен түсіндіру",
       short: "Түсіндіру", when: "Қашан және не үшін", analogy: "Өмірден мысал", body: "Толығырақ", template: "Үлгі",
       example: "Мысалдар", mistakes: "Жиі кездесетін қателер", remember: "Есте сақта", check: "Өзіңді тексер",
       check_hint: "Алдымен өзің жауап бер, содан кейін сұрақты бас.", terms: "Іздеуге арналған сөздер", open_shop: "Дүкеннен ашу →",
       copy: "Көшіру", copied: "Көшірілді", read: "Оқыдым", unread: "Оқылды ✓ (алып тастау үшін бас)",
-      prev: "← Артқа", next: "Әрі қарай →", pairs: { k1: "1 курс, сабақ", k2: "2 курс, сабақ" }, nothing: "Ештеңе табылмады. Басқа сөзді немесе ағылшын терминін жазып көр.",
+      prev: "← Артқа", next: "Әрі қарай →", pairs: { qa: "QA курсы, сабақтар", one: "сабақ" }, nothing: "Ештеңе табылмады. Басқа сөзді немесе ағылшын терминін жазып көр.",
       gl_title: "Глоссарий", gl_note: "Терминдер сабақтар ретімен: жоғарыда ертерек өтетініміз. Ағылшынша — орысша — қазақша. Толық оқу үшін тақырыпты бас.",
       gl_head: ["English", "Орысша", "Қазақша", "Тақырып"], gl_other: "Курстың басқа тақырыптары", soon: "Тақырып кейін қосылады.",
       welcome_title: "Тестілеу бойынша білім қоры", welcome: "Сол жақта — курстың барлық тақырыбы сабақтар ретімен: жоғарыда ертерек өтетініміз, төменде — кейінірек. Ашу үшін тақырыпты бас. Тақырып қайда екенін ұмыттың ба? Іздеуге сөз жаз — орысша, қазақша немесе ағылшынша."
@@ -131,8 +131,7 @@
   }
   function pairsText(tp) {
     if (!tp.pairs) return "";
-    return ["k1", "k2"].filter(k => tp.pairs[k] && tp.pairs[k].length)
-      .map(k => `${u("pairs")[k]} ${tp.pairs[k].join(", ")}`).join(" · ");
+    return tp.pairs.qa && tp.pairs.qa.length ? `${u("pairs").qa} ${tp.pairs.qa.join(", ")}` : "";
   }
   function haystack(tp) {
     const parts = [JSON.stringify(tp.ru), JSON.stringify(tp.kz)];
@@ -301,17 +300,12 @@
     });
   }
 
-  // Глоссарий по порядку пар: сначала термины первой пары, потом второй и т. д.
-  const course = () => (load("qc_kb_course", "k1") === "k2" ? "k2" : "k1");
-
+  // Глоссарий по порядку пар единого курса: сначала термины первой пары, потом второй и т. д.
   function glossaryGroup(tp) {
     if (tp.block === "tools") return { order: 1e6, title: tp[lang()].title };
-    const main = course(), other = main === "k1" ? "k2" : "k1";
-    const p = tp.pairs && tp.pairs[main] && tp.pairs[main][0];
-    const q = tp.pairs && tp.pairs[other] && tp.pairs[other][0];
-    if (p) return { order: p, title: `${u("pairs")[main]} ${p}` };
-    if (q) return { order: 1000, title: u("gl_other") };
-    return { order: 5e5, title: u("blocks").extra };
+    const p = tp.pairs && tp.pairs.qa && tp.pairs.qa[0];
+    if (p) return { order: p, title: lang() === "kz" ? `${p}-${u("pairs").one}` : `${u("pairs").one} ${p}` };
+    return { order: 5e5, title: u("gl_other") };
   }
 
   function drawGlossary() {
@@ -333,14 +327,9 @@
     document.getElementById("kb-main").innerHTML = `
       <h1>📖 ${u("gl_title")}</h1>
       <p class="muted">${u("gl_note")}</p>
-      <div class="kb-course">${["k1", "k2"].map(k => `<button type="button" class="btn btn-small ${course() === k ? "" : "btn-ghost"}" data-course="${k}">${u("blocks")[k]}</button>`).join("")}</div>
       <div class="kb-tablewrap"><table class="kb-table kb-gl"><thead><tr>${u("gl_head").map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>
       ${html}
       </tbody></table></div>`;
-    document.querySelectorAll(".kb-course button").forEach(b => b.addEventListener("click", () => {
-      save("qc_kb_course", b.dataset.course);
-      drawGlossary();
-    }));
   }
 
   function route() {

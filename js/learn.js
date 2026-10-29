@@ -1,4 +1,4 @@
-/* Уроки: список пар по этапам (#qa, #k1, #k2) и краткая страница пары (#k1-5).
+/* Уроки: список пар по этапам (#qa) и страница пары (#qa-5).
    Данные: js/learn/course.js и общий источник js/study-content.js. */
 (function () {
   "use strict";
@@ -104,7 +104,7 @@
         <h1>${UI.title}</h1>
         <p class="p-lead">${UI.lead}</p>
         <p class="ln-empty"><a href="kb.html#start-here">${L === 'kz' ? 'Алғаш рет пе? Қойынды, көшіру және жұмысты сақтау →' : 'Впервые за компьютером? Вкладки, копирование и сохранение работы →'}</a></p>
-        <div class="ln-tabs">${Object.keys(C).map(c => `<a href="#${c}" class="${c === k ? "on" : ""}">${C[c].name[LI]}</a>`).join("")}</div>
+        ${Object.keys(C).length > 1 ? `<div class="ln-tabs">${Object.keys(C).map(c => `<a href="#${c}" class="${c === k ? "on" : ""}">${C[c].name[LI]}</a>`).join("")}</div>` : ""}
         ${C[k].stages.map(s => `
           <div class="ln-stage">
             <div class="ln-stage-head"><span class="ln-stage-n">${UI.stage} ${s.n}</span><h2>${s.name[LI]}</h2><span class="muted">${s.sub[LI]}</span></div>
@@ -380,12 +380,22 @@
   }
 
   /* ---------- маршрут ---------- */
+  // Старые адреса 1 и 2 курса (ссылки в Discord) ведут на ту же тему в едином курсе.
+  const OLD_ROUTES = {
+    k1: [1, 2, 3, 4, 1, 5, 7, 6, 19, 14, 8, 18, 8, 9, 8, 18, 19, 20, 20, 21, 23, 23, 24, 24, 25, 26],
+    k2: [1, 4, 6, 6, 9, 10, 11, 12, 12, 13, 14, 14, 15, 16, 17, 17, 18, 19, 20, 22, 22, 24, 24, 25, 25, 26]
+  };
   function route() {
     const h = location.hash.slice(1);
-    const m = h.match(/^(k[12]|qa)-(\d+)$/);
+    const old = h.match(/^(k[12])(?:-(\d+))?$/);
+    if (old) {
+      const n = OLD_ROUTES[old[1]][Number(old[2]) - 1];
+      location.replace(n ? `#qa-${n}` : "#qa");
+      return;
+    }
+    const m = h.match(/^(qa)-(\d+)$/);
     if (m && C[m[1]].titles[m[2]]) return renderPair(m[1], Number(m[2]));
-    const k = C[h] ? h : (C[load("qc_learn_course", "k1")] ? load("qc_learn_course", "k1") : "k1");
-    renderCourse(k);
+    renderCourse("qa");
   }
   window.addEventListener("hashchange", route);
   route();

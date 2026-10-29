@@ -7,7 +7,7 @@ function buildCatalog(root=path.join(__dirname,'..'),readSource=file=>fs.readFil
   }
   const {LEARN_COURSES:metadata,LEARN_PAIRS:lessons}=context.window,courses={};
   const plain=text=>String(text||'').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'$1').trim();
-  for(const course of ['k1','k2']){
+  for(const course of ['qa']){
     courses[course]={};
     for(let n=1;n<=26;n++){
       const lesson=lessons[`${course}-${n}`];
@@ -25,6 +25,6 @@ if(require.main===module){
   const root=path.join(__dirname,'..'),file=path.join(root,'data/lesson-catalog.json'),text=JSON.stringify(buildCatalog(root),null,2)+'\n';
   if(process.argv.includes('--check')){
     if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==text){console.error('Lesson catalog is stale. Run node scripts/build-lesson-catalog.cjs');process.exitCode=1;}
-    else console.log('Lesson catalog matches all 52 website lessons.');
-  }else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,text);console.log('Generated data/lesson-catalog.json: 52 lessons.');}
+    else console.log('Lesson catalog matches all 26 website lessons.');
+  }else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,text);console.log('Generated data/lesson-catalog.json: 26 lessons.');}
 }
