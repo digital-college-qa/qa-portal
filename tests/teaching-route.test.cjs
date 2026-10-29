@@ -11,7 +11,7 @@ test('unified course pairs are guided, bilingual and carry a filled sample under
   const course=context.window.LEARN_COURSES.qa,ready=Object.keys(pairs).filter(id=>id.startsWith('qa-'));
   assert.equal(Object.keys(course.titles).length,26);
   assert.equal(JSON.stringify(course.stages.map(s=>s.pairs)),'[[1,8],[9,13],[14,17],[18,26]]');
-  assert.ok(ready.length>=13);
+  assert.ok(ready.length>=17);
   for(const id of ready){
     const pair=pairs[id];
     assert.ok(course.titles[id.slice(3)],id);assert.equal(pair.format,'guided-first-lesson',id);
