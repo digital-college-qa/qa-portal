@@ -100,6 +100,7 @@
 
   /* ---------- список пар ---------- */
   function renderCourse(k) {
+    window.LEARN_REFERENCE?.dispose();
     save("qc_learn_course", k);
     app.innerHTML = `
       <section class="wrap section ln">
@@ -269,6 +270,7 @@
   }
 
   function renderPair(k, n) {
+    window.LEARN_REFERENCE?.dispose();
     const d = P[`${k}-${n}`];
     const st = stageOf(k, n);
     const last = C[k].stages[C[k].stages.length - 1].pairs[1];
@@ -292,16 +294,19 @@
         save("qc_learn_level", level);
         renderPair(k, n);
       }));
+      window.LEARN_REFERENCE?.mount(app, d, `${k}-${n}`, L);
       window.scrollTo(0, 0);
       return;
     }
     if (d.format === "guided-first-lesson") {
       renderFirstLesson(d, head, nav);
+      window.LEARN_REFERENCE?.mount(app, d, `${k}-${n}`, L);
       window.scrollTo(0, 0);
       return;
     }
     if (d.format === "simple-course") {
       renderSimpleLesson(d, head, nav);
+      window.LEARN_REFERENCE?.mount(app, d, `${k}-${n}`, L);
       window.scrollTo(0, 0);
       return;
     }

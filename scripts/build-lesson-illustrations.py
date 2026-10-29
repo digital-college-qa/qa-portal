@@ -5,6 +5,8 @@ Pillow measures real font widths; exported images are standalone SVG, without sc
 from pathlib import Path
 from html import escape
 import json
+import re
+import xml.etree.ElementTree as ET
 from PIL import ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -306,7 +308,10 @@ for n,specs in SPECS.items():
             images=[]
             for mobile in [False,True]:
                 c=Canvas(mobile,lang,titles[i]);draw(c);images.append(c.save(name))
-            manifest[f'qa-{n}'][lang].append({'src':images[0]+'?v=2','mobile':images[1]+'?v=2','title':titles[i],'alt':titles[i]+'. '+captions[i],'caption':captions[i]})
+            xml=ET.parse(ROOT/images[0])
+            words=' '.join(node.text or '' for node in xml.iter() if node.tag.endswith('}text'))
+            refs=sorted(set(re.findall(r'(?<![A-Za-z0-9_])[A-Z][A-Z0-9]{1,5}(?![A-Za-z0-9_])',words)))
+            manifest[f'qa-{n}'][lang].append({'src':images[0]+'?v=2','mobile':images[1]+'?v=2','title':titles[i],'alt':titles[i]+'. '+captions[i],'caption':captions[i],'referenceCodes':refs})
 
 # Preserve the independent exercise mockup and the existing lifecycle reference.
 for n,stem,title,caption in [
