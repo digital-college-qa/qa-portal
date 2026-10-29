@@ -28,7 +28,8 @@
     const plain = editor.querySelector('[data-work-text]');
     const fields = [...editor.querySelectorAll('[data-work-field]')];
     const definitions = x.worksheet?.sections?.flatMap(s => s.fields) || [];
-    const key = `qaPortal.lessonDraft.k1-20261027.${route}.${lang}`;
+    // A lesson may set draftVersion after a template change, so old drafts do not hide the new template.
+    const key = `qaPortal.lessonDraft.k1-20261027.${route}.${lang}${x.draftVersion ? "." + x.draftVersion : ""}`;
     let restored = false;
     try {
       const draft = JSON.parse(localStorage.getItem(key) || 'null');

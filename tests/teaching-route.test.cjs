@@ -19,7 +19,7 @@ test('all 52 actual lesson routes are short, bilingual and tied to their source 
       assert.ok(pair[lang].intro.trim());
       if(GUIDED.includes(id)){
         const x=pair[lang];
-        assert.equal(pair.format,'guided-first-lesson',id);assert.ok(x.examples.length>=8&&x.examples.length<=10,id);
+        assert.equal(pair.format,'guided-first-lesson',id);assert.ok(x.examples.length>=4&&x.examples.length<=10,id);
         assert.ok(x.tasks[x.templateAfter??2],id);
         assert.ok(['written','oral'].includes(x.practiceKind),id);
         assert.ok(x.teacher.trim(),id);

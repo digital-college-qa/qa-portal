@@ -161,6 +161,8 @@
     };
     const templateAfter = x.templateAfter ?? 2;
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
+    // необязательный заполненный образец сразу под полем работы
+    const sample = x.sample ? `<div class="ln-sample"><p class="ln-sample-title"><strong>${esc(x.sample.title)}</strong></p>${x.sample.note ? `<p class="ln-sample-note">${esc(x.sample.note)}</p>` : ""}<div class="ln-code"><pre>${esc(x.sample.text)}</pre></div></div>` : "";
     app.innerHTML = `<div class="wrap section ln ln-first">
       ${head}
       <section class="ln-sec ln-first-learn" aria-labelledby="first-learn-title">
@@ -178,7 +180,7 @@
       <section class="ln-sec ln-first-tasks" aria-labelledby="first-tasks-title">
         <h2 id="first-tasks-title">${text.tasks}</h2>
         ${x.teacher ? `<p class="ln-teacher"><strong>${kz ? 'Оқытушыға' : 'Преподавателю'}:</strong> ${openLinks(inline(x.teacher, 's'))}</p>` : ''}
-        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter && x.practiceKind !== 'oral' ? (window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(x, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>`) : ""}</li>`).join("")}</ol>
+        <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter && x.practiceKind !== 'oral' ? (window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(x, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>`) + sample : ""}</li>`).join("")}</ol>
       </section>
       ${nav}
     </div>`;
