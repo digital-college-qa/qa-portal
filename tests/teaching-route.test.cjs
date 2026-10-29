@@ -52,6 +52,7 @@ test('a two-level pair has one task and template for both levels; the full level
       assert.equal(x.whyTemplate.split('\n').length,2,id+': два вопроса «почему»');
       assert.ok(x.links.some(([,href])=>!href.startsWith('kb.html#')),id+': ссылка на сайт для задачи');
       for(const [,href]of x.links)if(href.startsWith('kb.html#'))assert.ok(ids.has(href.split('#')[1]),id+' '+href);
+      if(x.image)assert.ok(x.image.alt.trim()&&x.image.caption.trim()&&fs.existsSync(path.join(root,x.image.src)),id);
     }
   }
 });
