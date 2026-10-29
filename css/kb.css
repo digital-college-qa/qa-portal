@@ -28,6 +28,19 @@
   font-family: Consolas, "Courier New", monospace; font-size: var(--text-body); margin: 8px 0; }
 .kb-tpl .kb-pre { border-left: 4px solid #5865F2; }
 .kb-tablewrap { overflow-x: auto; margin: 8px 0; }
+.kb-examples-title { margin: 18px 0 8px; }
+.kb-examples { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.kb-example-card { border: 1px solid var(--theme-line, #e4d6f4); border-radius: 10px; padding: 10px 12px; background: var(--theme-surface, #fff); color: var(--theme-text, inherit); }
+.kb-example-card h4 { margin: 0 0 4px; font-size: 1em; color: inherit; }
+.kb-example-card p { margin: 4px 0; }
+.kb-example-meaning { font-size: .95em; opacity: .85; border-top: 1px solid var(--theme-line, #eee4f6); padding-top: 4px; }
+.kb-more { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e4d6f4; }
+@media (max-width: 560px) {
+  .kb-more .kb-table thead { display: none; }
+  .kb-more .kb-table tr { display: block; border: 1px solid #eae2f0; border-radius: 8px; margin-bottom: 8px; padding: 6px 10px; }
+  .kb-more .kb-table td { display: block; border: 0; padding: 2px 0; }
+  .kb-more .kb-table td:first-child { font-weight: 700; }
+}
 .kb-table { border-collapse: collapse; width: 100%; font-size: var(--text-body); }
 .kb-table th, .kb-table td { border: 1px solid #D8DEE4; padding: 6px 9px; text-align: left; vertical-align: top; }
 .kb-table th { background: #F6F8FA; }
