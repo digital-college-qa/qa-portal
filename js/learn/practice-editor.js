@@ -9,7 +9,7 @@
     const text = tr(lang, 'Работа прямо в уроке', 'Сабақтағы жұмыс');
     const controls = `<div class="ln-work-actions"><button type="button" class="btn ln-work-copy">${tr(lang,'Скопировать работу','Жұмысты көшіру')}</button><span class="ln-work-status" role="status" aria-live="polite"></span></div>`;
     if (!sheet?.sections) {
-      return `<div class="ln-work" data-work-editor><label for="lesson-work-text">${text}</label><p class="ln-work-help">${tr(lang,'Замени подсказки в угловых скобках своими словами. Неизвестное не придумывай: напиши, что нужно уточнить.','Бұрышты жақшадағы нұсқауларды өз сөзіңмен ауыстыр. Белгісізді ойдан қоспа: нені нақтылау керегін жаз.')}</p><textarea id="lesson-work-text" class="ln-work-text" data-work-text rows="10" spellcheck="false">${esc(x.template)}</textarea>${controls}</div>`;
+      return `<div class="ln-work" data-work-editor><label for="lesson-work-text">${text}</label><p class="ln-work-help">${tr(lang,'Замени подсказки в круглых скобках своим ответом и убери сами скобки. Неизвестное не придумывай: напиши, что нужно уточнить.','Дөңгелек жақшадағы нұсқауларды өз жауабыңмен ауыстырып, жақшалардың өзін өшір. Белгісізді ойдан қоспа: нені нақтылау керегін жаз.')}</p><textarea id="lesson-work-text" class="ln-work-text" data-work-text rows="10" spellcheck="false">${esc(x.template)}</textarea>${controls}</div>`;
     }
     return `<div class="ln-work" data-work-editor><p class="ln-work-title">${text}</p><p class="ln-work-help">${tr(lang,'Поля со звёздочкой нужны для этой работы. Предусловия и тестовые данные заполняй только при необходимости. Пустые поля не считаются ответом.','Жұлдызшалы өрістер осы жұмысқа қажет. Алғышарттар мен тест деректерін тек қажет болса толтыр. Бос өріс жауап болып саналмайды.')}</p>${sheet.sections.map((section, i) => `<details class="ln-work-record"${i === 0 ? ' open' : ''}><summary>${esc(section.title)}</summary><div class="ln-work-fields">${section.fields.map(field => {
       const id = `work-${field.key}`;
@@ -49,7 +49,7 @@
       return x.worksheet.sections.map(section => section.title + '\n' + section.fields.flatMap(field => {
         const value = (current[field.key] || '').trim();
         if (!value && !field.required) return [];
-        return [field.label + ': ' + (value || tr(lang,'<не заполнено>','<толтырылмаған>'))];
+        return [field.label + ': ' + (value || tr(lang,'(не заполнено)','(толтырылмаған)'))];
       }).join('\n')).join('\n\n');
     };
     const save = () => {
@@ -66,7 +66,9 @@
     editor.querySelector('.ln-work-copy').addEventListener('click', async () => {
       const text = serialize();
       const current = values();
-      const missing = plain ? /<[^>]+>/.test(text) : definitions.some(field => (field.required && (!(current[field.key] || '').trim() || /<[^>]+>/.test(current[field.key]))) || (field.mustRun && current[field.key] === 'Not run'));
+      // Check only explicit template hints: real content such as «(₸)» is a valid answer.
+      const unfinished = value => /<[^>]+>/.test(value) || (x.templateHints || []).some(hint => value.includes(hint));
+      const missing = plain ? unfinished(text) : definitions.some(field => (field.required && (!(current[field.key] || '').trim() || unfinished(current[field.key]))) || (field.mustRun && current[field.key] === 'Not run'));
       try {
         if (!navigator.clipboard) throw new Error('clipboard unavailable');
         await navigator.clipboard.writeText(text);
