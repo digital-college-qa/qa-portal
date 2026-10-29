@@ -216,8 +216,9 @@
   }
 
   // Пара в двух уровнях: задача и шаблон одни и те же; продвинутый уровень добавляет термины, «почему так» и два вопроса.
-  function renderTwoLevel(d, head, nav) {
+  function renderTwoLevel(d, head, nav, route) {
     const x = d[L], kz = L === "kz", full = level === "full";
+    const gallery = window.LEARN_GALLERY?.render(route, L) || '';
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
     const linkRow = links => `<div class="ln-first-links">${links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>`;
     const kbLinks = x.links.filter(([, href]) => href.startsWith("kb.html#")), siteLinks = x.links.filter(([, href]) => !href.startsWith("kb.html#"));
@@ -244,7 +245,7 @@
       <section class="ln-sec ln-first-learn" aria-labelledby="level-learn-title">
         <h2 id="level-learn-title">${kz ? "Бүгін үйренеміз" : "Сегодня изучаем"}: ${esc(x.topic)}</h2>
         ${x.learn.map(p => openLinks(md(p, "s"))).join("")}
-        ${x.image ? `<figure class="ln-figure"><img src="${esc(x.image.src)}" alt="${esc(x.image.alt)}" loading="lazy"><figcaption>${esc(x.image.caption)}</figcaption></figure>` : ""}
+        ${gallery || (x.image ? `<figure class="ln-figure"><img src="${esc(x.image.src)}" alt="${esc(x.image.alt)}" loading="lazy"><figcaption>${esc(x.image.caption)}</figcaption></figure>` : "")}
         ${more}
         <h3>${kz ? "Былай жасалады" : "Делается вот так"}</h3>
         <p class="ln-sample-note">${esc(x.sample.note)}</p>
@@ -263,6 +264,7 @@
       ${nav}
     </div>`;
     wireBody(app);
+    window.LEARN_GALLERY?.bind(app, route, L);
     window.LEARN_PRACTICE?.bind(app, work, L, location.hash.slice(1));
   }
 
@@ -283,7 +285,7 @@
       return;
     }
     if (d.format === "two-level") {
-      renderTwoLevel(d, head + levelBar(), nav);
+      renderTwoLevel(d, head + levelBar(), nav, `${k}-${n}`);
       app.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
         if (b.dataset.level === level) return;
         level = b.dataset.level;
