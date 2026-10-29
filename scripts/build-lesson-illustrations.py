@@ -17,7 +17,7 @@ PURPLE, GREEN, RED = '#6241a5', '#196747', '#a42f38'
 class Canvas:
     def __init__(self, mobile, lang, title):
         self.mobile, self.lang = mobile, lang
-        self.w = 480 if mobile else 960
+        self.w = 400 if mobile else 960
         self.parts = []
         self.box(0, 0, self.w, 1000, '#f5f3fb', stroke='none', r=0)
         self.text(24, 30, self.tr('УЧЕБНЫЙ ПРИМЕР', 'ОҚУ МЫСАЛЫ'), 17, MUTED)
@@ -199,7 +199,7 @@ def context(c):
 
 def form(c):
     def draw(x,y,w,empty):
-        q=screen(c,x,y,w,c.tr('Заказ · негативная проверка','Тапсырыс · негативтік тексеру') if empty else c.tr('Заказ · позитивная проверка','Тапсырыс · позитивтік тексеру'),height=390)
+        q=screen(c,x,y,w,c.tr('Негативная проверка','Негативтік тексеру') if empty else c.tr('Позитивная проверка','Позитивтік тексеру'),height=390)
         c.field(x+18,q,w-36,c.tr('Имя *','Аты *'),'' if empty else c.tr('Ая','Ая'),empty)
         c.field(x+18,q+91,w-36,c.tr('Телефон *','Телефон *'),'+7 700 000 00 01')
         c.field(x+18,q+182,w-36,c.tr('Адрес *','Мекенжай *'),c.tr('Учебная улица, 1','Оқу көшесі, 1'))
@@ -226,7 +226,7 @@ def boundary(c,height=False):
     c.parts.append(f'<path d="M24 {y+49}H{c.w-24}" stroke="{PURPLE}" stroke-width="4"/>')
     for i,(value,valid) in enumerate(labels):
         x=24+i*(w+gap);c.box(x,y,w,96,'#e5f1e9' if valid else '#fbe9eb',GREEN if valid else RED,r=14)
-        c.text(x+12,y+56,value,36,GREEN if valid else RED,w-24,bold=True)
+        c.text(x+12,y+56,value,32 if c.mobile else 36,GREEN if valid else RED,w-24,bold=True)
     c.y=y+134
     for i,t in enumerate(c.tr([f'Меньше {start}: не разрешено',f'{start}–{end}: разрешено',f'Больше {end}: не разрешено'],[f'{start}-ден аз: рұқсат жоқ',f'{start}–{end}: рұқсат бар',f'{end}-дан көп: рұқсат жоқ'])):
         c.y=c.text(24,c.y,t,25,INK,c.w-48)+44
@@ -306,7 +306,7 @@ for n,specs in SPECS.items():
             images=[]
             for mobile in [False,True]:
                 c=Canvas(mobile,lang,titles[i]);draw(c);images.append(c.save(name))
-            manifest[f'qa-{n}'][lang].append({'src':images[0],'mobile':images[1],'title':titles[i],'alt':titles[i]+'. '+captions[i],'caption':captions[i]})
+            manifest[f'qa-{n}'][lang].append({'src':images[0]+'?v=2','mobile':images[1]+'?v=2','title':titles[i],'alt':titles[i]+'. '+captions[i],'caption':captions[i]})
 
 # Preserve the independent exercise mockup and the existing lifecycle reference.
 for n,stem,title,caption in [

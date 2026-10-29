@@ -3,15 +3,15 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-1": {
     "ru": [
       {
-        "src": "img/lessons/cart-menu-ru.svg",
-        "mobile": "img/lessons/cart-menu-ru-mobile.svg",
+        "src": "img/lessons/cart-menu-ru.svg?v=2",
+        "mobile": "img/lessons/cart-menu-ru-mobile.svg?v=2",
         "title": "Проверка ссылки из пустой корзины",
         "alt": "Проверка ссылки из пустой корзины. К образцу CRT-05: нажали «В меню» и записали, что открылось.",
         "caption": "К образцу CRT-05: нажали «В меню» и записали, что открылось."
       },
       {
-        "src": "img/lessons/results-ru.svg",
-        "mobile": "img/lessons/results-ru-mobile.svg",
+        "src": "img/lessons/results-ru.svg?v=2",
+        "mobile": "img/lessons/results-ru-mobile.svg?v=2",
         "title": "Сравниваем ожидание и факт",
         "alt": "Сравниваем ожидание и факт. Две учебные ситуации со ссылкой «В меню»: выполнено правило — Passed, открылась другая страница — Failed.",
         "caption": "Две учебные ситуации со ссылкой «В меню»: выполнено правило — Passed, открылась другая страница — Failed."
@@ -19,15 +19,15 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/cart-menu-kz.svg",
-        "mobile": "img/lessons/cart-menu-kz-mobile.svg",
+        "src": "img/lessons/cart-menu-kz.svg?v=2",
+        "mobile": "img/lessons/cart-menu-kz-mobile.svg?v=2",
         "title": "Бос себеттегі сілтемені тексеру",
         "alt": "Бос себеттегі сілтемені тексеру. CRT-05 мысалы: «Мәзірге» басып, не ашылғанын жаздық.",
         "caption": "CRT-05 мысалы: «Мәзірге» басып, не ашылғанын жаздық."
       },
       {
-        "src": "img/lessons/results-kz.svg",
-        "mobile": "img/lessons/results-kz-mobile.svg",
+        "src": "img/lessons/results-kz.svg?v=2",
+        "mobile": "img/lessons/results-kz-mobile.svg?v=2",
         "title": "Күту мен нақты нәтижені салыстырамыз",
         "alt": "Күту мен нақты нәтижені салыстырамыз. «Мәзірге» сілтемесі бар екі оқу жағдайы: ереже орындалды — Passed, басқа бет ашылды — Failed.",
         "caption": "«Мәзірге» сілтемесі бар екі оқу жағдайы: ереже орындалды — Passed, басқа бет ашылды — Failed."
@@ -37,15 +37,15 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-2": {
     "ru": [
       {
-        "src": "img/lessons/checklist-ru.svg",
-        "mobile": "img/lessons/checklist-ru-mobile.svg",
+        "src": "img/lessons/checklist-ru.svg?v=2",
+        "mobile": "img/lessons/checklist-ru-mobile.svg?v=2",
         "title": "Четыре пункта на одном экране",
         "alt": "Четыре пункта на одном экране. Числа на странице латте соответствуют четырём пунктам заполненного чек-листа.",
         "caption": "Числа на странице латте соответствуют четырём пунктам заполненного чек-листа."
       },
       {
-        "src": "img/lessons/check-vs-case-ru.svg",
-        "mobile": "img/lessons/check-vs-case-ru-mobile.svg",
+        "src": "img/lessons/check-vs-case-ru.svg?v=2",
+        "mobile": "img/lessons/check-vs-case-ru-mobile.svg?v=2",
         "title": "Чек-лист и тест-кейс: одна проверка",
         "alt": "Чек-лист и тест-кейс: одна проверка. Слева — что проверить и итог; справа — ещё и действия для повторения.",
         "caption": "Слева — что проверить и итог; справа — ещё и действия для повторения."
@@ -53,15 +53,15 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/checklist-kz.svg",
-        "mobile": "img/lessons/checklist-kz-mobile.svg",
+        "src": "img/lessons/checklist-kz.svg?v=2",
+        "mobile": "img/lessons/checklist-kz-mobile.svg?v=2",
         "title": "Бір экрандағы төрт тармақ",
         "alt": "Бір экрандағы төрт тармақ. Латте бетіндегі сандар толтырылған чек-листтің төрт тармағына сәйкес.",
         "caption": "Латте бетіндегі сандар толтырылған чек-листтің төрт тармағына сәйкес."
       },
       {
-        "src": "img/lessons/check-vs-case-kz.svg",
-        "mobile": "img/lessons/check-vs-case-kz-mobile.svg",
+        "src": "img/lessons/check-vs-case-kz.svg?v=2",
+        "mobile": "img/lessons/check-vs-case-kz-mobile.svg?v=2",
         "title": "Чек-лист пен тест-кейс: бір тексеру",
         "alt": "Чек-лист пен тест-кейс: бір тексеру. Сол жақта — не тексеру және нәтиже; оң жақта — қайталау әрекеттері де бар.",
         "caption": "Сол жақта — не тексеру және нәтиже; оң жақта — қайталау әрекеттері де бар."
@@ -71,15 +71,15 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-3": {
     "ru": [
       {
-        "src": "img/lessons/steps-data-ru.svg",
-        "mobile": "img/lessons/steps-data-ru-mobile.svg",
+        "src": "img/lessons/steps-data-ru.svg?v=2",
+        "mobile": "img/lessons/steps-data-ru-mobile.svg?v=2",
         "title": "Предусловие, действие, данные",
         "alt": "Предусловие, действие, данные. Корзина пуста до начала. Латте и 2 — данные; нажатие кнопки — шаг.",
         "caption": "Корзина пуста до начала. Латте и 2 — данные; нажатие кнопки — шаг."
       },
       {
-        "src": "img/lessons/repeatable-ru.svg",
-        "mobile": "img/lessons/repeatable-ru-mobile.svg",
+        "src": "img/lessons/repeatable-ru.svg?v=2",
+        "mobile": "img/lessons/repeatable-ru-mobile.svg?v=2",
         "title": "Коллега сможет повторить?",
         "alt": "Коллега сможет повторить?. Уточнение напитка, количества и кнопки делает действие воспроизводимым.",
         "caption": "Уточнение напитка, количества и кнопки делает действие воспроизводимым."
@@ -87,15 +87,15 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/steps-data-kz.svg",
-        "mobile": "img/lessons/steps-data-kz-mobile.svg",
+        "src": "img/lessons/steps-data-kz.svg?v=2",
+        "mobile": "img/lessons/steps-data-kz-mobile.svg?v=2",
         "title": "Алғышарт, әрекет, деректер",
         "alt": "Алғышарт, әрекет, деректер. Басталар алдында себет бос. Латте мен 2 — деректер; батырманы басу — қадам.",
         "caption": "Басталар алдында себет бос. Латте мен 2 — деректер; батырманы басу — қадам."
       },
       {
-        "src": "img/lessons/repeatable-kz.svg",
-        "mobile": "img/lessons/repeatable-kz-mobile.svg",
+        "src": "img/lessons/repeatable-kz.svg?v=2",
+        "mobile": "img/lessons/repeatable-kz-mobile.svg?v=2",
         "title": "Әріптес қайталай ала ма?",
         "alt": "Әріптес қайталай ала ма?. Сусын, саны және батырманы нақтылау әрекетті қайталауға көмектеседі.",
         "caption": "Сусын, саны және батырманы нақтылау әрекетті қайталауға көмектеседі."
@@ -105,22 +105,22 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-4": {
     "ru": [
       {
-        "src": "img/lessons/cinema-ru.svg",
-        "mobile": "img/lessons/cinema-ru-mobile.svg",
+        "src": "img/lessons/cinema-ru.svg?v=2",
+        "mobile": "img/lessons/cinema-ru-mobile.svg?v=2",
         "title": "Баг из образца: поиск «Дюна»",
         "alt": "Баг из образца: поиск «Дюна». Вымышленный кинотеатр из баг-репорта: одинаковый поиск даёт разные результаты из-за регистра.",
         "caption": "Вымышленный кинотеатр из баг-репорта: одинаковый поиск даёт разные результаты из-за регистра."
       },
       {
-        "src": "img/lessons/severity-ru.svg",
-        "mobile": "img/lessons/severity-ru-mobile.svg",
+        "src": "img/lessons/severity-ru.svg?v=2",
+        "mobile": "img/lessons/severity-ru-mobile.svg?v=2",
         "title": "Влияние и срочность — разные вещи",
         "alt": "Влияние и срочность — разные вещи. Опечатка перед рекламой: небольшое влияние может сочетаться с высокой срочностью. Оценки примерные.",
         "caption": "Опечатка перед рекламой: небольшое влияние может сочетаться с высокой срочностью. Оценки примерные."
       },
       {
-        "src": "img/lessons/context-ru.svg",
-        "mobile": "img/lessons/context-ru-mobile.svg",
+        "src": "img/lessons/context-ru.svg?v=2",
+        "mobile": "img/lessons/context-ru-mobile.svg?v=2",
         "title": "Одинаковая ошибка — разное влияние",
         "alt": "Одинаковая ошибка — разное влияние. Продукт, обходной путь, число затронутых людей и сроки меняют оценку. Шкалу и ответственных уточняем в команде.",
         "caption": "Продукт, обходной путь, число затронутых людей и сроки меняют оценку. Шкалу и ответственных уточняем в команде."
@@ -128,22 +128,22 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/cinema-kz.svg",
-        "mobile": "img/lessons/cinema-kz-mobile.svg",
+        "src": "img/lessons/cinema-kz.svg?v=2",
+        "mobile": "img/lessons/cinema-kz-mobile.svg?v=2",
         "title": "Мысалдағы баг: «Дюна» іздеуі",
         "alt": "Мысалдағы баг: «Дюна» іздеуі. Баг-репорттағы ойдан шығарылған кинотеатр: бір іздеу регистрге байланысты әртүрлі нәтиже береді.",
         "caption": "Баг-репорттағы ойдан шығарылған кинотеатр: бір іздеу регистрге байланысты әртүрлі нәтиже береді."
       },
       {
-        "src": "img/lessons/severity-kz.svg",
-        "mobile": "img/lessons/severity-kz-mobile.svg",
+        "src": "img/lessons/severity-kz.svg?v=2",
+        "mobile": "img/lessons/severity-kz-mobile.svg?v=2",
         "title": "Әсері мен шұғылдығы — бөлек ұғымдар",
         "alt": "Әсері мен шұғылдығы — бөлек ұғымдар. Жарнама алдындағы әріп қатесі: аз әсер мен жоғары шұғылдық бірге болуы мүмкін. Бағалар шартты.",
         "caption": "Жарнама алдындағы әріп қатесі: аз әсер мен жоғары шұғылдық бірге болуы мүмкін. Бағалар шартты."
       },
       {
-        "src": "img/lessons/context-kz.svg",
-        "mobile": "img/lessons/context-kz-mobile.svg",
+        "src": "img/lessons/context-kz.svg?v=2",
+        "mobile": "img/lessons/context-kz-mobile.svg?v=2",
         "title": "Бір қате — әртүрлі әсер",
         "alt": "Бір қате — әртүрлі әсер. Өнім, айналып өту жолы, зардап шеккендер саны мен мерзім бағаға әсер етеді. Шкала мен жауаптыларды командадан нақтылаймыз.",
         "caption": "Өнім, айналып өту жолы, зардап шеккендер саны мен мерзім бағаға әсер етеді. Шкала мен жауаптыларды командадан нақтылаймыз."
@@ -153,15 +153,15 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-5": {
     "ru": [
       {
-        "src": "img/lessons/form-ru.svg",
-        "mobile": "img/lessons/form-ru-mobile.svg",
+        "src": "img/lessons/form-ru.svg?v=2",
+        "mobile": "img/lessons/form-ru-mobile.svg?v=2",
         "title": "Пустое обязательное поле",
         "alt": "Пустое обязательное поле. Учебные формы: в негативной проверке пустое только имя, остальные обязательные поля заполнены.",
         "caption": "Учебные формы: в негативной проверке пустое только имя, остальные обязательные поля заполнены."
       },
       {
-        "src": "img/lessons/negative-ru.svg",
-        "mobile": "img/lessons/negative-ru-mobile.svg",
+        "src": "img/lessons/negative-ru.svg?v=2",
+        "mobile": "img/lessons/negative-ru-mobile.svg?v=2",
         "title": "Почему правильный отказ — Passed",
         "alt": "Почему правильный отказ — Passed. Это ожидаемое поведение по ORD-01, а не найденный баг кофейни. Сравниваем оба результата.",
         "caption": "Это ожидаемое поведение по ORD-01, а не найденный баг кофейни. Сравниваем оба результата."
@@ -169,15 +169,15 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/form-kz.svg",
-        "mobile": "img/lessons/form-kz-mobile.svg",
+        "src": "img/lessons/form-kz.svg?v=2",
+        "mobile": "img/lessons/form-kz-mobile.svg?v=2",
         "title": "Бос міндетті өріс",
         "alt": "Бос міндетті өріс. Оқу формалары: негативтік тексеруде тек аты бос, қалған міндетті өрістер толтырылған.",
         "caption": "Оқу формалары: негативтік тексеруде тек аты бос, қалған міндетті өрістер толтырылған."
       },
       {
-        "src": "img/lessons/negative-kz.svg",
-        "mobile": "img/lessons/negative-kz-mobile.svg",
+        "src": "img/lessons/negative-kz.svg?v=2",
+        "mobile": "img/lessons/negative-kz-mobile.svg?v=2",
         "title": "Дұрыс бас тарту неге Passed",
         "alt": "Дұрыс бас тарту неге Passed. Бұл — кофеханада табылған баг емес, ORD-01 бойынша күтілетін әрекет. Екі нәтижені салыстырамыз.",
         "caption": "Бұл — кофеханада табылған баг емес, ORD-01 бойынша күтілетін әрекет. Екі нәтижені салыстырамыз."
@@ -187,15 +187,15 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-6": {
     "ru": [
       {
-        "src": "img/lessons/quantity-ru.svg",
-        "mobile": "img/lessons/quantity-ru-mobile.svg",
+        "src": "img/lessons/quantity-ru.svg?v=2",
+        "mobile": "img/lessons/quantity-ru-mobile.svg?v=2",
         "title": "Количество: 0, 1, 10, 11",
         "alt": "Количество: 0, 1, 10, 11. Для PRD-02 оба края 1 и 10 разрешены. Проверяем также соседние значения снаружи.",
         "caption": "Для PRD-02 оба края 1 и 10 разрешены. Проверяем также соседние значения снаружи."
       },
       {
-        "src": "img/lessons/height-ru.svg",
-        "mobile": "img/lessons/height-ru-mobile.svg",
+        "src": "img/lessons/height-ru.svg?v=2",
+        "mobile": "img/lessons/height-ru-mobile.svg?v=2",
         "title": "Тот же принцип на аттракционе",
         "alt": "Тот же принцип на аттракционе. К заполненному образцу: рост 120–190 см включительно, поэтому берём 119, 120, 190 и 191.",
         "caption": "К заполненному образцу: рост 120–190 см включительно, поэтому берём 119, 120, 190 и 191."
@@ -203,15 +203,15 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/quantity-kz.svg",
-        "mobile": "img/lessons/quantity-kz-mobile.svg",
+        "src": "img/lessons/quantity-kz.svg?v=2",
+        "mobile": "img/lessons/quantity-kz-mobile.svg?v=2",
         "title": "Саны: 0, 1, 10, 11",
         "alt": "Саны: 0, 1, 10, 11. PRD-02 бойынша 1 мен 10 шеттеріне рұқсат бар. Сыртындағы көрші мәндерді де тексереміз.",
         "caption": "PRD-02 бойынша 1 мен 10 шеттеріне рұқсат бар. Сыртындағы көрші мәндерді де тексереміз."
       },
       {
-        "src": "img/lessons/height-kz.svg",
-        "mobile": "img/lessons/height-kz-mobile.svg",
+        "src": "img/lessons/height-kz.svg?v=2",
+        "mobile": "img/lessons/height-kz-mobile.svg?v=2",
         "title": "Аттракциондағы сол қағида",
         "alt": "Аттракциондағы сол қағида. Толтырылған мысалға: бойы 120–190 см, шеттері кіреді, сондықтан 119, 120, 190 және 191 аламыз.",
         "caption": "Толтырылған мысалға: бойы 120–190 см, шеттері кіреді, сондықтан 119, 120, 190 және 191 аламыз."
@@ -227,15 +227,15 @@ window.LEARN_ILLUSTRATIONS = {
         "caption": "Сравни с CRT-05. Расхождение здесь специально не отмечено: это твоя задача."
       },
       {
-        "src": "img/lessons/ambiguous-ru.svg",
-        "mobile": "img/lessons/ambiguous-ru-mobile.svg",
+        "src": "img/lessons/ambiguous-ru.svg?v=2",
+        "mobile": "img/lessons/ambiguous-ru-mobile.svg?v=2",
         "title": "Как уточнить слово «быстро»",
         "alt": "Как уточнить слово «быстро». Берём REV-2 из заполненного образца. Вместо догадки задаём автору проверяемый вопрос.",
         "caption": "Берём REV-2 из заполненного образца. Вместо догадки задаём автору проверяемый вопрос."
       },
       {
-        "src": "img/lessons/uiux-ru.svg",
-        "mobile": "img/lessons/uiux-ru-mobile.svg",
+        "src": "img/lessons/uiux-ru.svg?v=2",
+        "mobile": "img/lessons/uiux-ru-mobile.svg?v=2",
         "title": "UI и UX на одной корзине",
         "alt": "UI и UX на одной корзине. UI описывает видимые элементы. UX — насколько понятен следующий шаг гостю.",
         "caption": "UI описывает видимые элементы. UX — насколько понятен следующий шаг гостю."
@@ -249,15 +249,15 @@ window.LEARN_ILLUSTRATIONS = {
         "caption": "CRT-05-пен салыстыр. Айырмашылық белгіленбеген: оны табу — сенің тапсырмаң."
       },
       {
-        "src": "img/lessons/ambiguous-kz.svg",
-        "mobile": "img/lessons/ambiguous-kz-mobile.svg",
+        "src": "img/lessons/ambiguous-kz.svg?v=2",
+        "mobile": "img/lessons/ambiguous-kz-mobile.svg?v=2",
         "title": "«Жылдам» сөзін қалай нақтылау керек",
         "alt": "«Жылдам» сөзін қалай нақтылау керек. Толтырылған мысалдағы REV-2 аламыз. Жорамалдаудың орнына авторға тексерілетін сұрақ қоямыз.",
         "caption": "Толтырылған мысалдағы REV-2 аламыз. Жорамалдаудың орнына авторға тексерілетін сұрақ қоямыз."
       },
       {
-        "src": "img/lessons/uiux-kz.svg",
-        "mobile": "img/lessons/uiux-kz-mobile.svg",
+        "src": "img/lessons/uiux-kz.svg?v=2",
+        "mobile": "img/lessons/uiux-kz-mobile.svg?v=2",
         "title": "Бір себеттегі UI және UX",
         "alt": "Бір себеттегі UI және UX. UI көрінетін элементтерді сипаттайды. UX — қонаққа келесі қадамның түсініктілігі.",
         "caption": "UI көрінетін элементтерді сипаттайды. UX — қонаққа келесі қадамның түсініктілігі."
@@ -267,8 +267,8 @@ window.LEARN_ILLUSTRATIONS = {
   "qa-8": {
     "ru": [
       {
-        "src": "img/lessons/board-ru.svg",
-        "mobile": "img/lessons/board-ru-mobile.svg",
+        "src": "img/lessons/board-ru.svg?v=2",
+        "mobile": "img/lessons/board-ru-mobile.svg?v=2",
         "title": "Как выглядит доска трекера",
         "alt": "Как выглядит доска трекера. Карточка учебного бага из пары 4. Названия колонок и распределение статусов команда выбирает сама.",
         "caption": "Карточка учебного бага из пары 4. Названия колонок и распределение статусов команда выбирает сама."
@@ -282,8 +282,8 @@ window.LEARN_ILLUSTRATIONS = {
     ],
     "kz": [
       {
-        "src": "img/lessons/board-kz.svg",
-        "mobile": "img/lessons/board-kz-mobile.svg",
+        "src": "img/lessons/board-kz.svg?v=2",
+        "mobile": "img/lessons/board-kz-mobile.svg?v=2",
         "title": "Трекер тақтасы қалай көрінеді",
         "alt": "Трекер тақтасы қалай көрінеді. 4-сабақтағы оқу багының карточкасы. Баған атаулары мен мәртебелердің орналасуын команда өзі таңдайды.",
         "caption": "4-сабақтағы оқу багының карточкасы. Баған атаулары мен мәртебелердің орналасуын команда өзі таңдайды."

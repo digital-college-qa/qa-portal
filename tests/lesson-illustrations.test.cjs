@@ -11,7 +11,7 @@ test('all eight lessons have two or three complete bilingual slides with local s
     for(const lang of ['ru','kz'])for(const row of pair[lang]){
       assert.ok(row.title&&row.alt&&row.caption);
       for(const src of [row.src,row.mobile].filter(Boolean)){
-        assert.match(src,/^img\/[\w/-]+\.svg$/);const image=fs.readFileSync(path.join(root,src),'utf8');
+        assert.match(src,/^img\/[\w/-]+\.svg(?:\?v=\d+)?$/);const image=fs.readFileSync(path.join(root,src.split('?')[0]),'utf8');
         assert.match(image,/<svg\b/);assert.doesNotMatch(image,/<script|<foreignObject|https?:\/\/(?!www\.w3\.org)/i);
       }
     }
