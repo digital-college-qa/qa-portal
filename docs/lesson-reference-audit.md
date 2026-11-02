@@ -10,27 +10,27 @@
 | 3 | 11 / 11 | TC, CRT, MNU, PRD, ID |
 | 4 | 20 / 20 | BUG, CRT, MNU, PRD, ORD, LNG, SRC, ID, 3W |
 | 5 | 10 / 10 | TC, CRT, ORD, ID |
-| 6 | 7 / 7 | PRD |
-| 7 | 7 / 7 | CRT, REV, UI, UX |
+| 6 | 5 / 5 | PRD |
+| 7 | 7 / 7 | CRT, REV, UI, UX, QA |
 | 8 | 15 / 15 | BUG, SRC |
-| 9 | 7 / 7 | API, JSON |
+| 9 | 7 / 7 | API, HTTP, JSON |
 | 10 | 7 / 7 | API, HTTP, JSON |
-| 11 | 5 / 5 | API, JSON |
+| 11 | 5 / 5 | API, HTTP, JSON |
 | 12 | 6 / 6 | API |
-| 13 | 10 / 10 | TC, CRT, PRD, ID, API, JSON |
+| 13 | 10 / 10 | TC, CRT, PRD, ID, API, HTTP, JSON |
 | 14 | 9 / 9 | — |
 | 15 | 8 / 8 | — |
 | 16 | 8 / 8 | API |
 | 17 | 7 / 7 | — |
-| 18 | 9 / 9 | NAV, API, UI |
-| 19 | 12 / 12 | TC, CRT, NAV, ID, API, UI |
-| 20 | 14 / 14 | TC, NAV, UI |
-| 21 | 9 / 10 | TC, NAV, ID, UI, CSS |
-| 22 | 12 / 12 | NAV, API, UI |
-| 23 | 14 / 14 | BUG, NAV, SRC, ID, UI, 3W |
-| 24 | 23 / 23 | TC, BUG, CRT, NAV, CAT, ID, API, UI |
-| 25 | 17 / 18 | BUG, CRT, ORD, NAV, SRC, API, UI, QA |
-| 26 | 9 / 9 | CRT, NAV, API, UI |
+| 18 | 7 / 7 | NAV, UI |
+| 19 | 8 / 8 | TC, CRT, NAV, ID, UI |
+| 20 | 9 / 9 | TC, NAV, UI |
+| 21 | 9 / 9 | TC, NAV, ID, UI, CSS |
+| 22 | 9 / 9 | NAV, API, UI |
+| 23 | 8 / 8 | BUG, SRC, ID |
+| 24 | 11 / 11 | TC, NAV, CAT, UI |
+| 25 | 9 / 9 | NAV, API, UI, QA |
+| 26 | 8 / 8 | NAV, API, UI |
 
 REG и BTN показываются только при появлении в тексте. Коды разделов — локальная договорённость проекта.
 Словарь слева следует языку портала и всегда сохраняет английский перевод.

@@ -280,6 +280,149 @@ def board(c):
     c.note(c.tr('Исполнитель: тестировщик · Severity: Major · статус: New','Орындаушы: тестілеуші · Severity: Major · мәртебе: New'))
     c.note(c.tr('Колонки условные. Fixed → проверка → Closed или Reopened.','Бағандар шартты. Fixed → тексеру → Closed не Reopened.'))
 
+def api_panel(c,x,y,w,title,lines):
+    """A response card whose height follows its content in both languages."""
+    slot=len(c.parts);c.box(x,y,w,1)
+    yy=c.text(x+18,y+36,title,25,PURPLE,w-36,bold=True)+38
+    for value,color,bold in lines:
+        yy=c.text(x+18,yy,value,24,color,w-36,bold=bold)+38
+    h=yy-y-8
+    c.parts[slot]=re.sub(r'height="[^"]+"',f'height="{h}"',c.parts[slot],count=1)
+    return y+h
+
+
+def api_flow(c):
+    names=c.tr(['Браузер','API','Сервер'],['Браузер','API','Сервер'])
+    messages=c.tr(['Хочу увидеть меню','GET /products','Готовлю каталог'],['Мәзірді көргім келеді','GET /products','Каталогты дайындаймын'])
+    base=c.y
+    for i in range(3):
+        w=c.w-48 if c.mobile else (c.w-88)/3
+        x=24 if c.mobile else 24+i*(w+20)
+        y=base+i*176 if c.mobile else base
+        h=156 if c.mobile else 246
+        c.box(x,y,w,h)
+        c.text(x+18,y+34,names[i],27,PURPLE,w-36,bold=True)
+        ix,iy=x+20,y+65
+        if i==0:
+            c.box(ix,iy,94,62,'#f1edf9',PURPLE,r=8)
+            c.parts.append(f'<path d="M{ix} {iy+15}h94 M{ix+26} {iy+72}h42 M{ix+47} {iy+62}v10" stroke="{PURPLE}" stroke-width="3" fill="none"/>')
+        elif i==1:
+            c.box(ix+14,iy-5,64,76,'#f1edf9',PURPLE,r=8)
+            c.text(ix+24,iy+32,'{ }',28,PURPLE,54,bold=True)
+            c.parts.append(f'<path d="M{ix+26} {iy+48}h38 M{ix+26} {iy+58}h28" stroke="{PURPLE}" stroke-width="3"/>')
+        else:
+            for row in range(3):
+                c.box(ix,iy+row*23,94,18,'#e5f1e9',GREEN,r=5)
+                c.parts.append(f'<circle cx="{ix+80}" cy="{iy+row*23+9}" r="3" fill="{GREEN}"/>')
+        if c.mobile:
+            c.text(x+134,y+90,messages[i],24,INK,w-152,bold=True)
+            if i<2:c.parts.append(f'<path d="M{c.w/2} {y+h+2}v14m-5-5 5 5 5-5" stroke="{PURPLE}" stroke-width="3" fill="none"/>')
+        else:
+            c.text(x+18,y+180,messages[i],25,INK,w-36,bold=True)
+            if i<2:c.parts.append(f'<path d="M{x+w+2} {y+118}h14m-5-5 5 5-5 5" stroke="{PURPLE}" stroke-width="3" fill="none"/>')
+    c.y=base+(3*176 if c.mobile else 270)
+    c.note(c.tr('Ответ обратно в браузер: 200 + данные каталога.','Браузерге қайтатын жауап: 200 + каталог деректері.'),GREEN)
+    c.note(c.tr('API задаёт правила общения: что можно запросить и какой ответ ждать.','API байланыс ережесін береді: нені сұрауға болады және қандай жауап күтеміз.'))
+
+
+def api_tester(c):
+    def draw(x,y,w,site):
+        q=screen(c,x,y,w,c.tr('Меню на сайте','Сайт мәзірі') if site else 'GET /products/4',height=300)
+        if site:
+            c.coffee(x+20,q-8)
+            c.text(x+134,q+22,c.tr('Латте','Латте'),27,INK,w-154,bold=True)
+            c.text(x+20,q+112,'1 300 ₸',30,INK,w-40,bold=True)
+            c.text(x+20,q+162,c.tr('Цена совпала','Баға сәйкес келді'),25,GREEN,w-40,bold=True)
+        else:
+            c.text(x+20,q,'HTTP 200',28,GREEN,w-40,bold=True)
+            c.text(x+20,q+47,'id: 4',24,INK,w-40)
+            c.text(x+20,q+91,'name: '+c.tr('Латте','Латте'),24,INK,w-40)
+            c.text(x+20,q+135,'price: 1300',24,INK,w-40)
+            c.text(x+20,q+185,'Network: products/4 → 200',21,PURPLE,w-40)
+        return y+300
+    c.panels([False,True],draw)
+    c.note(c.tr('Тестировщик сверяет ответ с документацией и сайтом.','Тестілеуші жауапты құжаттамамен және сайтпен салыстырады.'))
+    c.note(c.tr('В Network этот запрос можно найти фильтром products.','Network ішінде осы сұрауды products сүзгісімен табуға болады.'))
+
+
+def api_methods(c):
+    rows=[('GET','/products',c.tr('Прочитать','Оқу'),c.tr('Получить каталог','Каталогты алу')),
+          ('POST','/cart/items',c.tr('Добавить','Қосу'),c.tr('Добавить строку в корзину','Себетке жол қосу')),
+          ('PATCH','/products/4',c.tr('Изменить','Өзгерту'),c.tr('Изменить цену латте','Латте бағасын өзгерту')),
+          ('DELETE','/cart',c.tr('Удалить','Жою'),c.tr('Очистить корзину','Себетті тазалау'))]
+    for method,url,verb,effect in rows:
+        y=c.y;w=c.w-48;h=150 if c.mobile else 96
+        c.box(24,y,w,h)
+        c.box(38,y+14,118,38,'#eae4f6',stroke='none',r=8)
+        c.text(48,y+41,method,24,PURPLE,100,bold=True)
+        if c.mobile:
+            c.text(172,y+42,verb,23,INK,w-166,bold=True)
+            c.text(42,y+86,url,24,PURPLE,w-36)
+            c.text(42,y+122,effect,22,INK,w-36)
+        else:
+            c.text(180,y+38,url,25,PURPLE,340,bold=True)
+            c.text(180,y+76,effect,24,INK,640)
+            c.text(c.w-250,y+38,'→ '+verb,24,INK,220,bold=True)
+        c.y=y+h+14
+    c.note(c.tr('Метод — действие. Путь — с какими данными работаем.','Әдіс — әрекет. Жол — қай деректермен жұмыс істейміз.'))
+
+
+def api_body(c):
+    def draw(x,y,w,cart):
+        q=screen(c,x,y,w,c.tr('Корзина после Send','Send-тен кейінгі себет') if cart else 'POST /cart/items',height=340)
+        if cart:
+            c.coffee(x+18,q-10)
+            c.text(x+132,q+20,c.tr('Капучино','Капучино'),25,INK,w-150,bold=True)
+            c.text(x+18,q+112,c.tr('Размер M · 1 штука','M өлшемі · 1 дана'),25,INK,w-36)
+            c.text(x+18,q+165,'HTTP 201',28,GREEN,w-36,bold=True)
+        else:
+            c.text(x+18,q,'Body · JSON',22,MUTED,w-36)
+            for i,line in enumerate(['{','  "productId": 3,','  "quantity": 1,','  "size": "M"','}']):
+                c.text(x+18,q+42+i*36,line,25,INK,w-36)
+        return y+340
+    c.panels([False,True],draw)
+    c.note(c.tr('productId — номер напитка; quantity — сколько; size — размер.','productId — сусын нөмірі; quantity — саны; size — өлшемі.'))
+    c.note(c.tr('Как в образце пары: добавили 1 капучино M.','Сабақ үлгісіндегідей: 1 капучино M қосылды.'),GREEN)
+
+
+def api_responses(c):
+    def draw(x,y,w,missing):
+        lines=[('HTTP 404' if missing else 'HTTP 200',RED if missing else GREEN,True)]
+        lines+= [(c.tr('Такого напитка нет','Мұндай сусын жоқ'),INK,False),('error.code:',MUTED,False),('PRODUCT_NOT_FOUND',RED,True)] if missing else [('id: 4',INK,False),('name: '+c.tr('Латте','Латте'),INK,False),('price: 1300',INK,True)]
+        return api_panel(c,x,y,w,'GET /products/50' if missing else 'GET /products/4',lines)
+    c.panels([False,True],draw)
+    c.note(c.tr('Читаем и код, и данные. Для отсутствующего товара 404 ожидаем.','Кодты да, деректерді де оқимыз. Жоқ тауар үшін 404 күтеміз.'))
+
+
+def api_ids(c):
+    def draw(x,y,w,line):
+        lines=[(c.tr('Фрагмент ответа:','Жауап үзіндісі:'),MUTED,False)]
+        lines+= [('"items": [',INK,False),('  { "id": "4-S-0",',PURPLE,True),('    "productId": 4,',INK,False),('    "size": "S" }',INK,False),(']',INK,False)] if line else [('"id": 4',INK,True),(c.tr('Это номер напитка','Бұл — сусын нөмірі'),INK,False),(c.tr('4 → Латте','4 → Латте'),INK,False)]
+        return api_panel(c,x,y,w,c.tr('Строка корзины','Себет жолы') if line else c.tr('Товар в каталоге','Каталогтағы тауар'),lines)
+    c.panels([False,True],draw)
+    c.note('↓ '+c.tr('Копируем id строки целиком из items','items ішінен жол id-сін толығымен көшіреміз'))
+    c.note('DELETE /cart/items/4-S-0',GREEN)
+    c.note(c.tr('204 → строка удалена. В Postman: /cart/items/{{itemId}}','204 → жол жойылды. Postman ішінде: /cart/items/{{itemId}}'),GREEN)
+    c.note(c.tr('В нашем клиенте вставляем id вручную; не собираем его наугад.','Біздің клиентте id-ді қолмен қоямыз; ойдан құрастырмаймыз.'))
+
+
+def api_negative(c,price=False):
+    c.note(c.tr('До начала: POST /session/reset → 200.','Басталар алдында: POST /session/reset → 200.'))
+    def draw(x,y,w,state):
+        if state:
+            lines=[('HTTP 200',GREEN,True),('price: 1300',INK,True)] if price else [('HTTP 200',GREEN,True),('items: []',INK,True),('quantity: 0',INK,False),('subtotal: 0',INK,False)]
+            title='GET /products/4' if price else 'GET /cart'
+        else:
+            title='PATCH /products/4' if price else 'POST /cart/items'
+            lines=[('price: 100001' if price else 'quantity: 0',RED,True)]
+            if not price:lines.append(('productId: 4 · size: M',INK,False))
+            lines += [('HTTP 400',RED,True),('error.code:',MUTED,False),('INVALID_PRICE' if price else 'INVALID_QUANTITY',RED,True)]
+        return api_panel(c,x,y,w,title,lines)
+    c.panels([False,True],draw)
+    c.note(c.tr('Ожидали отказ. Цена осталась 1300 → Passed.','Бас тартуды күттік. Баға 1300 қалды → Passed.') if price else c.tr('Ожидали отказ. Корзина осталась пустой → Passed.','Бас тартуды күттік. Себет бос қалды → Passed.'),GREEN)
+    c.note(c.tr('400 относится к неверному запросу; проверка состояния вернула 200.','400 — қате сұраудың коды; күйді тексеру 200 қайтарды.'))
+
+
 # Each caption anchors a picture to the actual lesson sentence or filled sample.
 SPECS = {
 1:[('cart-menu',cart_menu,('Проверка ссылки из пустой корзины','Бос себеттегі сілтемені тексеру'),('К образцу CRT-05: нажали «В меню» и записали, что открылось.','CRT-05 мысалы: «Мәзірге» басып, не ашылғанын жаздық.')),
@@ -297,7 +440,15 @@ SPECS = {
    ('height',lambda c: boundary(c,True),('Тот же принцип на аттракционе','Аттракциондағы сол қағида'),('К заполненному образцу: рост 120–190 см включительно, поэтому берём 119, 120, 190 и 191.','Толтырылған мысалға: бойы 120–190 см, шеттері кіреді, сондықтан 119, 120, 190 және 191 аламыз.'))],
 7:[('ambiguous',ambiguous,('Как уточнить слово «быстро»','«Жылдам» сөзін қалай нақтылау керек'),('Берём REV-2 из заполненного образца. Вместо догадки задаём автору проверяемый вопрос.','Толтырылған мысалдағы REV-2 аламыз. Жорамалдаудың орнына авторға тексерілетін сұрақ қоямыз.')),
    ('uiux',uiux,('UI и UX на одной корзине','Бір себеттегі UI және UX'),('UI описывает видимые элементы. UX — насколько понятен следующий шаг гостю.','UI көрінетін элементтерді сипаттайды. UX — қонаққа келесі қадамның түсініктілігі.'))],
-8:[('board',board,('Как выглядит доска трекера','Трекер тақтасы қалай көрінеді'),('Карточка учебного бага из пары 4. Названия колонок и распределение статусов команда выбирает сама.','4-сабақтағы оқу багының карточкасы. Баған атаулары мен мәртебелердің орналасуын команда өзі таңдайды.'))]
+8:[('board',board,('Как выглядит доска трекера','Трекер тақтасы қалай көрінеді'),('Карточка учебного бага из пары 4. Названия колонок и распределение статусов команда выбирает сама.','4-сабақтағы оқу багының карточкасы. Баған атаулары мен мәртебелердің орналасуын команда өзі таңдайды.'))],
+9:[('api-flow',api_flow,('Как браузер получает меню через API','Браузер API арқылы мәзірді қалай алады'),('Браузер просит каталог, сервер возвращает ответ. API — интерфейс и правила такого обмена; схема упрощена.','Браузер каталогты сұрайды, сервер жауап береді. API — осы алмасудың интерфейсі мен ережелері; сызба жеңілдетілген.')),
+   ('api-tester',api_tester,('Что проверяет тестировщик через API','Тестілеуші API арқылы нені тексереді'),('К образцу GET /products/4: проверяем код 200, название и цену, затем сравниваем с меню. Тот же запрос виден в Network.','GET /products/4 үлгісіне: 200 кодын, атауы мен бағасын тексеріп, мәзірмен салыстырамыз. Сол сұрау Network ішінде көрінеді.'))],
+10:[('api-methods',api_methods,('Метод говорит, что сделать','Әдіс не істеу керегін айтады'),('GET читает, POST добавляет, PATCH изменяет часть, DELETE удаляет. На этой паре выполняем GET, POST и DELETE.','GET оқиды, POST қосады, PATCH бөлігін өзгертеді, DELETE жояды. Осы сабақта GET, POST және DELETE орындаймыз.')),
+    ('api-body',api_body,('Body: какой напиток и сколько','Body: қай сусын және қанша'),('Из заполненного образца: productId 3 — капучино, quantity 1, size M. После POST корзина меняется на сайте.','Толтырылған үлгіден: productId 3 — капучино, quantity 1, size M. POST-тен кейін сайттағы себет өзгереді.'))],
+11:[('api-responses',api_responses,('Ответ API: код и данные','API жауабы: код және деректер'),('Из образца: латте 4 найдено с кодом 200, товара 50 нет — код 404. Красный код сам по себе ещё не доказывает баг.','Үлгіден: 4-латте 200 кодымен табылды, 50-тауар жоқ — 404 коды. Қызыл кодтың өзі багты дәлелдемейді.'))],
+12:[('api-ids',api_ids,('Номер напитка и id строки — разные','Сусын нөмірі мен жол id-сі — бөлек'),('К образцу с латте S: productId 4 обозначает напиток, а id 4-S-0 — конкретную строку корзины. Для DELETE копируем id из ответа.','Латте S үлгісіне: productId 4 сусынды, ал id 4-S-0 себеттің нақты жолын білдіреді. DELETE үшін id-ді жауаптан көшіреміз.'))],
+13:[('api-negative-quantity',lambda c: api_negative(c),('Неверное количество: отказ и пустая корзина','Қате сан: бас тарту және бос себет'),('Проверяем два ответа: POST с quantity 0 → 400 INVALID_QUANTITY; затем GET /cart → 200 и пустой items. Это ожидаемое поведение.','Екі жауапты тексереміз: quantity 0 бар POST → 400 INVALID_QUANTITY; кейін GET /cart → 200 және бос items. Бұл — күтілетін әрекет.')),
+    ('api-negative-price',lambda c: api_negative(c,True),('Образец: неверная цена не сохранилась','Үлгі: қате баға сақталмады'),('PATCH с price 100001 → 400 INVALID_PRICE. Отдельный GET /products/4 → 200, цена осталась 1300, как в образце пары.','price 100001 бар PATCH → 400 INVALID_PRICE. Бөлек GET /products/4 → 200, баға сабақ үлгісіндегідей 1300 қалды.'))]
 }
 
 manifest={}
@@ -323,4 +474,4 @@ for n,stem,title,caption in [
         else:manifest[f'qa-{n}'][lang].append(slide)
 
 (ROOT/'js/learn/illustration-data.js').write_text('/* Original teaching images, CC0. Generated by scripts/build-lesson-illustrations.py. */\nwindow.LEARN_ILLUSTRATIONS = '+json.dumps(manifest,ensure_ascii=False,indent=2)+';\n',encoding='utf8')
-print(f'Built {sum(len(v["ru"]) for v in manifest.values())} bilingual slides for pairs 1–8; responsive originals are CC0.')
+print(f'Built {sum(len(v["ru"]) for v in manifest.values())} bilingual slides for pairs 1–13; responsive originals are CC0.')

@@ -347,5 +347,225 @@ window.LEARN_ILLUSTRATIONS = {
         "caption": "Fixed-тен кейін тестілеуші түзетуді тексереді: Closed не Reopened. Мәртебелер жиыны командаға байланысты."
       }
     ]
+  },
+  "qa-9": {
+    "ru": [
+      {
+        "src": "img/lessons/api-flow-ru.svg?v=2",
+        "mobile": "img/lessons/api-flow-ru-mobile.svg?v=2",
+        "title": "Как браузер получает меню через API",
+        "alt": "Как браузер получает меню через API. Браузер просит каталог, сервер возвращает ответ. API — интерфейс и правила такого обмена; схема упрощена.",
+        "caption": "Браузер просит каталог, сервер возвращает ответ. API — интерфейс и правила такого обмена; схема упрощена.",
+        "referenceCodes": [
+          "API",
+          "GET"
+        ]
+      },
+      {
+        "src": "img/lessons/api-tester-ru.svg?v=2",
+        "mobile": "img/lessons/api-tester-ru-mobile.svg?v=2",
+        "title": "Что проверяет тестировщик через API",
+        "alt": "Что проверяет тестировщик через API. К образцу GET /products/4: проверяем код 200, название и цену, затем сравниваем с меню. Тот же запрос виден в Network.",
+        "caption": "К образцу GET /products/4: проверяем код 200, название и цену, затем сравниваем с меню. Тот же запрос виден в Network.",
+        "referenceCodes": [
+          "API",
+          "GET",
+          "HTTP"
+        ]
+      }
+    ],
+    "kz": [
+      {
+        "src": "img/lessons/api-flow-kz.svg?v=2",
+        "mobile": "img/lessons/api-flow-kz-mobile.svg?v=2",
+        "title": "Браузер API арқылы мәзірді қалай алады",
+        "alt": "Браузер API арқылы мәзірді қалай алады. Браузер каталогты сұрайды, сервер жауап береді. API — осы алмасудың интерфейсі мен ережелері; сызба жеңілдетілген.",
+        "caption": "Браузер каталогты сұрайды, сервер жауап береді. API — осы алмасудың интерфейсі мен ережелері; сызба жеңілдетілген.",
+        "referenceCodes": [
+          "API",
+          "GET"
+        ]
+      },
+      {
+        "src": "img/lessons/api-tester-kz.svg?v=2",
+        "mobile": "img/lessons/api-tester-kz-mobile.svg?v=2",
+        "title": "Тестілеуші API арқылы нені тексереді",
+        "alt": "Тестілеуші API арқылы нені тексереді. GET /products/4 үлгісіне: 200 кодын, атауы мен бағасын тексеріп, мәзірмен салыстырамыз. Сол сұрау Network ішінде көрінеді.",
+        "caption": "GET /products/4 үлгісіне: 200 кодын, атауы мен бағасын тексеріп, мәзірмен салыстырамыз. Сол сұрау Network ішінде көрінеді.",
+        "referenceCodes": [
+          "API",
+          "GET",
+          "HTTP"
+        ]
+      }
+    ]
+  },
+  "qa-10": {
+    "ru": [
+      {
+        "src": "img/lessons/api-methods-ru.svg?v=2",
+        "mobile": "img/lessons/api-methods-ru-mobile.svg?v=2",
+        "title": "Метод говорит, что сделать",
+        "alt": "Метод говорит, что сделать. GET читает, POST добавляет, PATCH изменяет часть, DELETE удаляет. На этой паре выполняем GET, POST и DELETE.",
+        "caption": "GET читает, POST добавляет, PATCH изменяет часть, DELETE удаляет. На этой паре выполняем GET, POST и DELETE.",
+        "referenceCodes": [
+          "DELETE",
+          "GET",
+          "PATCH",
+          "POST"
+        ]
+      },
+      {
+        "src": "img/lessons/api-body-ru.svg?v=2",
+        "mobile": "img/lessons/api-body-ru-mobile.svg?v=2",
+        "title": "Body: какой напиток и сколько",
+        "alt": "Body: какой напиток и сколько. Из заполненного образца: productId 3 — капучино, quantity 1, size M. После POST корзина меняется на сайте.",
+        "caption": "Из заполненного образца: productId 3 — капучино, quantity 1, size M. После POST корзина меняется на сайте.",
+        "referenceCodes": [
+          "HTTP",
+          "JSON",
+          "POST"
+        ]
+      }
+    ],
+    "kz": [
+      {
+        "src": "img/lessons/api-methods-kz.svg?v=2",
+        "mobile": "img/lessons/api-methods-kz-mobile.svg?v=2",
+        "title": "Әдіс не істеу керегін айтады",
+        "alt": "Әдіс не істеу керегін айтады. GET оқиды, POST қосады, PATCH бөлігін өзгертеді, DELETE жояды. Осы сабақта GET, POST және DELETE орындаймыз.",
+        "caption": "GET оқиды, POST қосады, PATCH бөлігін өзгертеді, DELETE жояды. Осы сабақта GET, POST және DELETE орындаймыз.",
+        "referenceCodes": [
+          "DELETE",
+          "GET",
+          "PATCH",
+          "POST"
+        ]
+      },
+      {
+        "src": "img/lessons/api-body-kz.svg?v=2",
+        "mobile": "img/lessons/api-body-kz-mobile.svg?v=2",
+        "title": "Body: қай сусын және қанша",
+        "alt": "Body: қай сусын және қанша. Толтырылған үлгіден: productId 3 — капучино, quantity 1, size M. POST-тен кейін сайттағы себет өзгереді.",
+        "caption": "Толтырылған үлгіден: productId 3 — капучино, quantity 1, size M. POST-тен кейін сайттағы себет өзгереді.",
+        "referenceCodes": [
+          "HTTP",
+          "JSON",
+          "POST"
+        ]
+      }
+    ]
+  },
+  "qa-11": {
+    "ru": [
+      {
+        "src": "img/lessons/api-responses-ru.svg?v=2",
+        "mobile": "img/lessons/api-responses-ru-mobile.svg?v=2",
+        "title": "Ответ API: код и данные",
+        "alt": "Ответ API: код и данные. Из образца: латте 4 найдено с кодом 200, товара 50 нет — код 404. Красный код сам по себе ещё не доказывает баг.",
+        "caption": "Из образца: латте 4 найдено с кодом 200, товара 50 нет — код 404. Красный код сам по себе ещё не доказывает баг.",
+        "referenceCodes": [
+          "API",
+          "GET",
+          "HTTP"
+        ]
+      }
+    ],
+    "kz": [
+      {
+        "src": "img/lessons/api-responses-kz.svg?v=2",
+        "mobile": "img/lessons/api-responses-kz-mobile.svg?v=2",
+        "title": "API жауабы: код және деректер",
+        "alt": "API жауабы: код және деректер. Үлгіден: 4-латте 200 кодымен табылды, 50-тауар жоқ — 404 коды. Қызыл кодтың өзі багты дәлелдемейді.",
+        "caption": "Үлгіден: 4-латте 200 кодымен табылды, 50-тауар жоқ — 404 коды. Қызыл кодтың өзі багты дәлелдемейді.",
+        "referenceCodes": [
+          "API",
+          "GET",
+          "HTTP"
+        ]
+      }
+    ]
+  },
+  "qa-12": {
+    "ru": [
+      {
+        "src": "img/lessons/api-ids-ru.svg?v=2",
+        "mobile": "img/lessons/api-ids-ru-mobile.svg?v=2",
+        "title": "Номер напитка и id строки — разные",
+        "alt": "Номер напитка и id строки — разные. К образцу с латте S: productId 4 обозначает напиток, а id 4-S-0 — конкретную строку корзины. Для DELETE копируем id из ответа.",
+        "caption": "К образцу с латте S: productId 4 обозначает напиток, а id 4-S-0 — конкретную строку корзины. Для DELETE копируем id из ответа.",
+        "referenceCodes": [
+          "DELETE"
+        ]
+      }
+    ],
+    "kz": [
+      {
+        "src": "img/lessons/api-ids-kz.svg?v=2",
+        "mobile": "img/lessons/api-ids-kz-mobile.svg?v=2",
+        "title": "Сусын нөмірі мен жол id-сі — бөлек",
+        "alt": "Сусын нөмірі мен жол id-сі — бөлек. Латте S үлгісіне: productId 4 сусынды, ал id 4-S-0 себеттің нақты жолын білдіреді. DELETE үшін id-ді жауаптан көшіреміз.",
+        "caption": "Латте S үлгісіне: productId 4 сусынды, ал id 4-S-0 себеттің нақты жолын білдіреді. DELETE үшін id-ді жауаптан көшіреміз.",
+        "referenceCodes": [
+          "DELETE"
+        ]
+      }
+    ]
+  },
+  "qa-13": {
+    "ru": [
+      {
+        "src": "img/lessons/api-negative-quantity-ru.svg?v=2",
+        "mobile": "img/lessons/api-negative-quantity-ru-mobile.svg?v=2",
+        "title": "Неверное количество: отказ и пустая корзина",
+        "alt": "Неверное количество: отказ и пустая корзина. Проверяем два ответа: POST с quantity 0 → 400 INVALID_QUANTITY; затем GET /cart → 200 и пустой items. Это ожидаемое поведение.",
+        "caption": "Проверяем два ответа: POST с quantity 0 → 400 INVALID_QUANTITY; затем GET /cart → 200 и пустой items. Это ожидаемое поведение.",
+        "referenceCodes": [
+          "GET",
+          "HTTP",
+          "POST"
+        ]
+      },
+      {
+        "src": "img/lessons/api-negative-price-ru.svg?v=2",
+        "mobile": "img/lessons/api-negative-price-ru-mobile.svg?v=2",
+        "title": "Образец: неверная цена не сохранилась",
+        "alt": "Образец: неверная цена не сохранилась. PATCH с price 100001 → 400 INVALID_PRICE. Отдельный GET /products/4 → 200, цена осталась 1300, как в образце пары.",
+        "caption": "PATCH с price 100001 → 400 INVALID_PRICE. Отдельный GET /products/4 → 200, цена осталась 1300, как в образце пары.",
+        "referenceCodes": [
+          "GET",
+          "HTTP",
+          "PATCH",
+          "POST"
+        ]
+      }
+    ],
+    "kz": [
+      {
+        "src": "img/lessons/api-negative-quantity-kz.svg?v=2",
+        "mobile": "img/lessons/api-negative-quantity-kz-mobile.svg?v=2",
+        "title": "Қате сан: бас тарту және бос себет",
+        "alt": "Қате сан: бас тарту және бос себет. Екі жауапты тексереміз: quantity 0 бар POST → 400 INVALID_QUANTITY; кейін GET /cart → 200 және бос items. Бұл — күтілетін әрекет.",
+        "caption": "Екі жауапты тексереміз: quantity 0 бар POST → 400 INVALID_QUANTITY; кейін GET /cart → 200 және бос items. Бұл — күтілетін әрекет.",
+        "referenceCodes": [
+          "GET",
+          "HTTP",
+          "POST"
+        ]
+      },
+      {
+        "src": "img/lessons/api-negative-price-kz.svg?v=2",
+        "mobile": "img/lessons/api-negative-price-kz-mobile.svg?v=2",
+        "title": "Үлгі: қате баға сақталмады",
+        "alt": "Үлгі: қате баға сақталмады. price 100001 бар PATCH → 400 INVALID_PRICE. Бөлек GET /products/4 → 200, баға сабақ үлгісіндегідей 1300 қалды.",
+        "caption": "price 100001 бар PATCH → 400 INVALID_PRICE. Бөлек GET /products/4 → 200, баға сабақ үлгісіндегідей 1300 қалды.",
+        "referenceCodes": [
+          "GET",
+          "HTTP",
+          "PATCH",
+          "POST"
+        ]
+      }
+    ]
   }
 };
