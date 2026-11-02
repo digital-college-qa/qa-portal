@@ -4,10 +4,10 @@ const root=path.join(__dirname,'..'),context={window:{}};
 for(const name of ['illustration-data','illustration-gallery'])vm.runInNewContext(fs.readFileSync(path.join(root,`js/learn/${name}.js`),'utf8'),context);
 const data=context.window.LEARN_ILLUSTRATIONS,api=context.window.LEARN_GALLERY;
 
-test('all eight lessons have two or three complete bilingual slides with local safe images',()=>{
-  assert.equal(Object.keys(data).length,8);
-  for(let n=1;n<=8;n++){
-    const pair=data[`qa-${n}`];assert.ok(pair.ru.length>=2&&pair.ru.length<=3);assert.equal(pair.ru.length,pair.kz.length);
+test('all thirteen lessons have complete bilingual slides with local safe images',()=>{
+  assert.equal(Object.keys(data).length,13);
+  for(let n=1;n<=13;n++){
+    const pair=data[`qa-${n}`];assert.ok(pair.ru.length>=(n<=8?2:1)&&pair.ru.length<=(n<=8?3:2));assert.equal(pair.ru.length,pair.kz.length);
     for(const lang of ['ru','kz'])for(const row of pair[lang]){
       assert.ok(row.title&&row.alt&&row.caption);
       for(const src of [row.src,row.mobile].filter(Boolean)){
@@ -18,6 +18,14 @@ test('all eight lessons have two or three complete bilingual slides with local s
   }
   assert.match(data['qa-4'].ru[2].caption,/Продукт.*обходной путь/);
   assert.ok(data['qa-7'].ru[0].src.includes('mockup-cart'),'independent exercise stays unsolved');
+});
+
+test('API examples distinguish the rejected write from the successful state read',()=>{
+  const svg=name=>fs.readFileSync(path.join(root,'img/lessons/'+name+'-ru.svg'),'utf8');
+  const quantity=svg('api-negative-quantity');
+  for(const value of ['POST /cart/items','HTTP 400','INVALID_QUANTITY','GET /cart','HTTP 200','items: []','Passed'])assert.ok(quantity.includes(value),value);
+  const ids=svg('api-ids');assert.ok(ids.includes('4-S-0'));assert.ok(ids.includes('DELETE /cart/items/4-S-0'));assert.ok(ids.includes('{{itemId}}'));
+  assert.ok(svg('api-methods').includes('PATCH'));assert.ok(svg('api-tester').includes('Network'));
 });
 
 function harness(route='qa-4',lang='ru'){
