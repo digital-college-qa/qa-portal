@@ -71,8 +71,18 @@
     bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||innerWidth<700||w.classList.contains('maximized'))return;drag={x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop};bar.setPointerCapture(e.pointerId);studio.classList.add('studio-dragging');});
     bar.addEventListener('pointermove',e=>{if(!drag)return;w.style.left=Math.max(10,Math.min(studio.clientWidth-w.offsetWidth-10,drag.left+e.clientX-drag.x))+'px';w.style.top=Math.max(10,Math.min(Math.max(10,studio.clientHeight-w.offsetHeight-75),drag.top+e.clientY-drag.y))+'px';w.style.right='auto';});
     const end=()=>{if(drag){drag=null;studio.classList.remove('studio-dragging');saveGeometry(w);}};bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+    // On a computer a window can be resized from any edge or corner; the size is saved like the position.
+    ['n','e','s','w','ne','nw','se','sw'].forEach(dir=>{const h=document.createElement('span');h.className='ide-resize ide-resize-'+dir;h.dataset.resize=dir;h.setAttribute('aria-hidden','true');w.append(h);});
+    let size=null;
+    w.addEventListener('pointerdown',e=>{const h=e.target.closest('[data-resize]');if(!h||innerWidth<700||w.classList.contains('maximized'))return;e.preventDefault();size={dir:h.dataset.resize,x:e.clientX,y:e.clientY,left:w.offsetLeft,top:w.offsetTop,width:w.offsetWidth,height:w.offsetHeight};h.setPointerCapture(e.pointerId);studio.classList.add('studio-dragging');});
+    w.addEventListener('pointermove',e=>{if(!size)return;const d=size.dir,dx=e.clientX-size.x,dy=e.clientY-size.y;let {left,top,width,height}=size;
+      if(d.includes('e'))width+=dx;if(d.includes('s'))height+=dy;if(d.includes('w')){width-=dx;left+=dx;}if(d.includes('n')){height-=dy;top+=dy;}
+      if(width<340){if(d.includes('w'))left-=340-width;width=340;}if(height<260){if(d.includes('n'))top-=260-height;height=260;}
+      left=Math.max(10,left);top=Math.max(10,top);width=Math.min(width,studio.clientWidth-left-10);height=Math.min(height,studio.clientHeight-top-75);
+      Object.assign(w.style,{left:left+'px',top:top+'px',width:width+'px',height:height+'px',right:'auto'});});
+    const stopSize=()=>{if(size){size=null;studio.classList.remove('studio-dragging');saveGeometry(w);}};w.addEventListener('pointerup',stopSize);w.addEventListener('pointercancel',stopSize);
     w.addEventListener('keydown',e=>{if(e.key==='Escape'){closeWindow(w);studio.querySelector(`[data-open="${w.dataset.window}"]`).focus();}});
-    if('ResizeObserver'in window)new ResizeObserver(()=>{if(!w.hidden&&!drag)saveGeometry(w);}).observe(w);
+    if('ResizeObserver'in window)new ResizeObserver(()=>{if(!w.hidden&&!drag&&!size)saveGeometry(w);}).observe(w);
   });
   window.addEventListener('resize',()=>studio.querySelectorAll('.ide-window:not([hidden])').forEach(clampWindow));
   function tab(name){studio.querySelectorAll('[data-api-tab]').forEach(b=>{const selected=b.dataset.apiTab===name;b.setAttribute('aria-selected',selected);$('api-'+b.dataset.apiTab+'-panel').hidden=!selected;});}
