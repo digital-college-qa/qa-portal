@@ -71,3 +71,21 @@ body[data-page="labs"]{overflow:hidden}
   .api-response {padding:8px}
   .api-json {max-height:clamp(160px,38dvh,320px);padding:10px}
 }
+/* Computer: resize a window from any edge or corner (handles are added by workbench.js).
+   The native corner grip is replaced because it hid under the status bar. */
+.ide-window {resize:none}
+.ide-resize {position:absolute;z-index:5;touch-action:none}
+.ide-resize-n,.ide-resize-s {left:12px;right:12px;height:6px;cursor:ns-resize}
+.ide-resize-n {top:0}
+.ide-resize-s {bottom:0}
+.ide-resize-e,.ide-resize-w {top:12px;bottom:12px;width:6px;cursor:ew-resize}
+.ide-resize-e {right:0}
+.ide-resize-w {left:0}
+.ide-resize-ne,.ide-resize-nw,.ide-resize-se,.ide-resize-sw {width:14px;height:14px}
+.ide-resize-ne {top:0;right:0;cursor:nesw-resize}
+.ide-resize-sw {bottom:0;left:0;cursor:nesw-resize}
+.ide-resize-nw {top:0;left:0;cursor:nwse-resize}
+.ide-resize-se {bottom:0;right:0;width:20px;height:20px;cursor:nwse-resize;color:#fff}
+.ide-resize-se::after {content:"";position:absolute;right:5px;bottom:5px;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;opacity:.8}
+.ide-window.maximized .ide-resize {display:none}
+@media(max-width:700px) {.ide-resize {display:none}}
