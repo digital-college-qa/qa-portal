@@ -77,3 +77,23 @@ test('two levels of a pair share the main answer; the hidden "why" answer surviv
   const again=open(true);assert.equal(again.extra.value,'Почему: чтобы не подгонять');await again.handlers.copy();
   assert.equal(copied,'Уровень: продвинутый\n\nОтвет: 6 напитков, Passed\n\nПочему: чтобы не подгонять');
 });
+test('task variants keep separate main drafts while sharing the 4 advanced questions',()=>{
+  const saved=new Map();
+  const open=(variantIndex,tpl)=>{
+    const handlers={},status={textContent:''},plain={value:tpl},extra={value:'Вопрос 1: (твой ответ)'};
+    const editor={querySelector:s=>s==='.ln-work-status'?status:s==='.ln-work-copy'?{addEventListener:(e,cb)=>handlers.copy=cb}:s==='[data-work-text]'?plain:s==='[data-work-extra]'?extra:null,querySelectorAll:()=>[],addEventListener:(e,cb)=>handlers[e]=cb};
+    const context={window:{},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v)},navigator:{clipboard:{writeText:async()=>{}}},prompt:()=>{}};
+    vm.runInNewContext(code,context);
+    context.window.LEARN_PRACTICE.bind({querySelector:()=>editor},{template:tpl,templateHints:['(твой ответ)'],variantIndex,draftVersion:'5'},'ru','qa-2');
+    return {handlers,plain,extra};
+  };
+  const v0=open(0,'Вариант 1: (твой ответ)');
+  v0.plain.value='Вариант 1: выполнено';v0.extra.value='Вопрос 1: ответ на 100 баллов';v0.handlers.input();
+  const v1=open(1,'Вариант 2: (твой ответ)');
+  assert.equal(v1.plain.value,'Вариант 2: (твой ответ)');
+  assert.equal(v1.extra.value,'Вопрос 1: ответ на 100 баллов');
+  v1.plain.value='Вариант 2: тоже выполнено';v1.handlers.input();
+  const v0Again=open(0,'Вариант 1: (твой ответ)');
+  assert.equal(v0Again.plain.value,'Вариант 1: выполнено');
+  assert.equal(v0Again.extra.value,'Вопрос 1: ответ на 100 баллов');
+});
