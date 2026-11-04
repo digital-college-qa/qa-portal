@@ -208,35 +208,48 @@
   function levelBar() {
     const kz = L === "kz";
     const hint = level === "simple"
-      ? (kz ? "Қысқаша: не үйренеміз, үлгі және тапсырма. 70 баллға дейін." : "Коротко: что изучаем, образец и задача. До 70 баллов.")
-      : (kz ? "Сол тапсырма + терминдер және «неге солай». Тағы екі сұраққа жауап бер — 100 баллға дейін." : "Та же задача + термины и «почему так». Ответь ещё на два вопроса — до 100 баллов.");
+      ? (kz ? "Қысқаша: не үйренеміз, үлгі және таңдауға тапсырма. 70 баллға дейін." : "Коротко: что изучаем, образец и задача на выбор. До 70 баллов.")
+      : (kz ? "Таңдауға тапсырма + терминдер және «неге солай». Тағы 4 сұраққа жауап бер — 100 баллға дейін." : "Задача на выбор + термины и «почему так». Ответь ещё на 4 вопроса — до 100 баллов.");
     return `<div class="ln-level-bar"><div class="ln-mode ln-level" role="group" aria-label="${kz ? "Сабақ деңгейі" : "Уровень пары"}">
       <button type="button" data-level="simple" class="${level === "simple" ? "on" : ""}" aria-pressed="${level === "simple"}">🙂 ${kz ? "Қарапайым" : "Простая"}</button>
       <button type="button" data-level="full" class="${level === "full" ? "on" : ""}" aria-pressed="${level === "full"}">🎓 ${kz ? "Кеңейтілген" : "Продвинутая"}</button>
     </div><p class="ln-level-hint">${hint}</p></div>`;
   }
 
-  // Пара в двух уровнях: задача и шаблон одни и те же; продвинутый уровень добавляет термины, «почему так» и два вопроса.
+  // Пара в двух уровнях: несколько равноценных вариантов задачи на выбор; продвинутый уровень добавляет термины, «почему так» и 4 вопроса.
   function renderTwoLevel(d, head, nav, route) {
     const x = d[L], kz = L === "kz", full = level === "full";
+    const variants = Array.isArray(x.variants) && x.variants.length ? x.variants : null;
+    const savedVar = Number(load(`qc_learn_variant_${route}`, 0));
+    const vIdx = variants ? (Number.isInteger(savedVar) && savedVar >= 0 && savedVar < variants.length ? savedVar : 0) : 0;
+    const current = variants ? variants[vIdx] : x;
+    const taskText = current.task ?? x.task;
+    const stepsList = current.steps ?? (!variants ? x.steps : undefined);
+    const optionsList = current.options ?? (!variants ? x.options : undefined);
+    const promptText = current.prompt !== undefined ? current.prompt : x.prompt;
+    const tplText = current.template ?? x.template;
+    const variantBar = variants ? `<div class="ln-variant-bar"><span class="ln-variant-label">${kz ? "Бір нұсқаны таңда (деңгейлері бірдей):" : "Выбери один вариант задачи (все одного уровня):"}</span><div class="ln-mode ln-variants" role="group" aria-label="${kz ? "Тапсырма нұсқасы" : "Вариант задачи"}">${variants.map((v, i) => `<button type="button" data-variant="${i}" class="${i === vIdx ? "on" : ""}" aria-pressed="${i === vIdx}">${esc(v.title || ((kz ? "Нұсқа " : "Вариант ") + (i + 1)))}</button>`).join("")}</div></div>` : "";
     const gallery = window.LEARN_GALLERY?.render(route, L) || '';
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
     const linkRow = links => `<div class="ln-first-links">${links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>`;
     const kbLinks = x.links.filter(([, href]) => href.startsWith("kb.html#")), siteLinks = x.links.filter(([, href]) => !href.startsWith("kb.html#"));
-    const list = x.steps ? `<ol class="ln-simple-list">${x.steps.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ol>`
-      : x.options ? `<ul class="ln-simple-list">${x.options.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ul>` : "";
+    const list = stepsList ? `<ol class="ln-simple-list">${stepsList.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ol>`
+      : optionsList ? `<ul class="ln-simple-list">${optionsList.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ul>` : "";
     const more = full ? `<div class="ln-level-more"><p class="ln-level-more-title">🎓 ${kz ? "Кеңейтілген деңгейге" : "Для продвинутого уровня"}</p>
         <h3>${kz ? "Терминдер" : "Термины"}</h3><ul>${x.terms.map(([term, en, meaning]) => `<li><b>${esc(term)}</b> (${esc(en)}) — ${inline(meaning, "s")}</li>`).join("")}</ul>
         <h3>${kz ? "Неге солай" : "Почему так"}</h3><ul>${x.why.map(w => `<li>${inline(w, "s")}</li>`).join("")}</ul>
         ${kbLinks.length ? linkRow(kbLinks) : ""}</div>` : "";
-    const ai = x.prompt ? `<div class="ln-ai"><p><strong>${kz ? "ЖИ-ге промпт" : "Промпт для ИИ"}</strong> — ${kz ? "кез келген тегін ЖИ-чатқа қой. ЖИ қателесуі мүмкін: жауапты іске қосып тексер." : "вставь в любой бесплатный ИИ-чат. ИИ может ошибиться: проверь ответ запуском."}</p><div class="ln-code"><pre>${esc(x.prompt)}</pre><button type="button" class="btn btn-ghost ln-copy">${kz ? "Промптты көшіру" : "Скопировать промпт"}</button></div></div>` : "";
-    // основной ответ общий для обоих уровней (один черновик); вопросы «почему» — только на продвинутом
+    const ai = promptText ? `<div class="ln-ai"><p><strong>${kz ? "ЖИ-ге промпт" : "Промпт для ИИ"}</strong> — ${kz ? "кез келген тегін ЖИ-чатқа қой. ЖИ қателесуі мүмкін: жауапты іске қосып тексер." : "вставь в любой бесплатный ИИ-чат. ИИ может ошибиться: проверь ответ запуском."}</p><div class="ln-code"><pre>${esc(promptText)}</pre><button type="button" class="btn btn-ghost ln-copy">${kz ? "Промптты көшіру" : "Скопировать промпт"}</button></div></div>` : "";
+    const levelHeader = full ? (kz ? "Деңгей: кеңейтілген" : "Уровень: продвинутый") : (kz ? "Деңгей: қарапайым" : "Уровень: простой");
+    const variantHeader = variants ? ` · ${current.title || ((kz ? "Нұсқа " : "Вариант ") + (vIdx + 1))}` : "";
+    // черновик каждого варианта хранится отдельно; вопросы «почему» общие для всех вариантов пары
     const work = {
-      template: x.template, draftVersion: d.draftVersion,
-      templateHints: [...(x.template + "\n" + x.whyTemplate).matchAll(/\([^()\n]+\)/g)].map(m => m[0]),
+      template: tplText, draftVersion: d.draftVersion,
+      variantIndex: variants ? vIdx : undefined,
+      templateHints: [...(tplText + "\n" + x.whyTemplate).matchAll(/\([^()\n]+\)/g)].map(m => m[0]),
       extraTemplate: full ? x.whyTemplate : undefined,
-      extraLabel: kz ? "100 балл үшін: екі сұраққа өз сөзіңмен жауап бер" : "Для 100 баллов: ответь на два вопроса своими словами",
-      workHeader: full ? (kz ? "Деңгей: кеңейтілген" : "Уровень: продвинутый") : (kz ? "Деңгей: қарапайым" : "Уровень: простой")
+      extraLabel: kz ? "100 балл үшін: 4 сұраққа өз сөзіңмен жауап бер" : "Для 100 баллов: ответь на 4 вопроса своими словами",
+      workHeader: levelHeader + variantHeader
     };
     const submit = kz
       ? `Дайын ба? **«Жұмысты көшіру»** бас → [Discord](https://discord.com/channels/1559176798489673840) → өз тобың → **work-chat** → **«Сдать работу»** → өз тармағыңа қойып, жібер. [Жіберу қадамдары](kb.html#start-here)`
@@ -254,11 +267,12 @@
       </section>
       <section class="ln-sec ln-first-tasks" aria-labelledby="level-task-title">
         <h2 id="level-task-title">${kz ? "Тапсырма" : "Задача"}</h2>
-        <p>${openLinks(inline(x.task, "s"))}</p>
+        ${variantBar}
+        <p>${openLinks(inline(taskText, "s"))}</p>
         ${list}
         ${linkRow(siteLinks)}
         ${ai}
-        ${window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(work, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre></div>`}
+        ${window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(work, L) : `<div class="ln-code"><pre>${esc(tplText)}</pre></div>`}
         <p class="ln-simple-submit">${openLinks(inline(submit, "s"))}</p>
         <details class="ln-teacher-note"><summary>${kz ? "Оқытушыға" : "Преподавателю"}</summary><p>${openLinks(inline(x.teacher, "s"))}</p></details>
       </section>
@@ -269,7 +283,7 @@
     window.LEARN_PRACTICE?.bind(app, work, L, location.hash.slice(1));
   }
 
-  function renderPair(k, n) {
+  function renderPair(k, n, keepScroll) {
     window.LEARN_REFERENCE?.dispose();
     const d = P[`${k}-${n}`];
     const st = stageOf(k, n);
@@ -292,10 +306,15 @@
         if (b.dataset.level === level) return;
         level = b.dataset.level;
         save("qc_learn_level", level);
-        renderPair(k, n);
+        renderPair(k, n, true);
+      }));
+      app.querySelectorAll("[data-variant]").forEach(b => b.addEventListener("click", () => {
+        const nextIdx = Number(b.dataset.variant);
+        save(`qc_learn_variant_${k}-${n}`, nextIdx);
+        renderPair(k, n, true);
       }));
       window.LEARN_REFERENCE?.mount(app, d, `${k}-${n}`, L);
-      window.scrollTo(0, 0);
+      if (!keepScroll) window.scrollTo(0, 0);
       return;
     }
     if (d.format === "guided-first-lesson") {
