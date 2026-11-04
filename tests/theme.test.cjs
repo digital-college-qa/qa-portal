@@ -56,3 +56,14 @@ test('semantic roles retain contrast across presets and 256 extreme custom palet
   for(const fg of ['codekey','codenum','codestring'])check(fg,'code-bg');
  }
 });
+test('task variant buttons and interactive hover/selected states use theme contrast tokens',()=>{
+  const themesCss=fs.readFileSync(path.join(root,'css/themes.css'),'utf8');
+  const learnCss=fs.readFileSync(path.join(root,'css/learn.css'),'utf8');
+  const learnJs=fs.readFileSync(path.join(root,'js/learn.js'),'utf8');
+  assert.ok(!learnJs.includes('ln-mode ln-variants'),'variants container does not reuse pill switch .ln-mode');
+  assert.ok(learnJs.includes('ln-variant-btn'),'variant buttons have dedicated card-button class');
+  assert.ok(learnCss.includes('.ln-variants { display: grid;'),'variants layout uses responsive grid');
+  for(const sel of ['.ln-variants button.on','.ln-mode button.on','.ln-mode button:not(.on)','.p-project-link:first-child','.p-project-toggle[aria-expanded="true"]','.ln-first-links a:hover']){
+    assert.ok(themesCss.includes(sel),`themes.css covers ${sel}`);
+  }
+});

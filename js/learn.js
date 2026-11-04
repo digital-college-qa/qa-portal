@@ -228,7 +228,7 @@
     const optionsList = current.options ?? (!variants ? x.options : undefined);
     const promptText = current.prompt !== undefined ? current.prompt : x.prompt;
     const tplText = current.template ?? x.template;
-    const variantBar = variants ? `<div class="ln-variant-bar"><span class="ln-variant-label">${kz ? "Бір нұсқаны таңда (деңгейлері бірдей):" : "Выбери один вариант задачи (все одного уровня):"}</span><div class="ln-mode ln-variants" role="group" aria-label="${kz ? "Тапсырма нұсқасы" : "Вариант задачи"}">${variants.map((v, i) => `<button type="button" data-variant="${i}" class="${i === vIdx ? "on" : ""}" aria-pressed="${i === vIdx}">${esc(v.title || ((kz ? "Нұсқа " : "Вариант ") + (i + 1)))}</button>`).join("")}</div></div>` : "";
+    const variantBar = variants ? `<div class="ln-variant-bar"><span class="ln-variant-label">${kz ? "Бір нұсқаны таңда (деңгейлері бірдей):" : "Выбери один вариант задачи (все одного уровня):"}</span><div class="ln-variants" role="group" aria-label="${kz ? "Тапсырма нұсқасы" : "Вариант задачи"}">${variants.map((v, i) => `<button type="button" data-variant="${i}" class="ln-variant-btn${i === vIdx ? " on" : ""}" aria-pressed="${i === vIdx}">${esc(v.title || ((kz ? "Нұсқа " : "Вариант ") + (i + 1)))}</button>`).join("")}</div></div>` : "";
     const gallery = window.LEARN_GALLERY?.render(route, L) || '';
     const openLinks = html => html.replace(/<a href="/g, '<a target="_blank" rel="noopener" href="');
     const linkRow = links => `<div class="ln-first-links">${links.map(([label, href]) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`).join("")}</div>`;
