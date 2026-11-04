@@ -182,7 +182,7 @@
       </section>
       <section class="ln-sec ln-first-tasks" aria-labelledby="first-tasks-title">
         <h2 id="first-tasks-title">${text.tasks}</h2>
-        ${x.teacher ? `<p class="ln-teacher"><strong>${kz ? 'Оқытушыға' : 'Преподавателю'}:</strong> ${openLinks(inline(x.teacher, 's'))}</p>` : ''}
+
         <ol>${x.tasks.map((step, i) => `<li>${openLinks(inline(step, "s"))}${i === templateAfter && x.practiceKind !== 'oral' ? (window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(x, L) : `<div class="ln-code"><pre>${esc(x.template)}</pre><button type="button" class="btn btn-ghost ln-copy">${text.copy}</button></div>`) + sample : ""}</li>`).join("")}</ol>
       </section>
       ${nav}
@@ -274,7 +274,7 @@
         ${ai}
         ${window.LEARN_PRACTICE ? window.LEARN_PRACTICE.render(work, L) : `<div class="ln-code"><pre>${esc(tplText)}</pre></div>`}
         <p class="ln-simple-submit">${openLinks(inline(submit, "s"))}</p>
-        <details class="ln-teacher-note"><summary>${kz ? "Оқытушыға" : "Преподавателю"}</summary><p>${openLinks(inline(x.teacher, "s"))}</p></details>
+
       </section>
       ${nav}
     </div>`;

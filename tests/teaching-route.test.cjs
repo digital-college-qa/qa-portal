@@ -18,7 +18,7 @@ test('unified course pairs are guided, bilingual and carry a filled sample under
     for(const lang of ['ru','kz']){
       const x=pair[lang];
       assert.equal(x.examples.length,4,id);assert.equal(x.templateAfter,0,id);assert.ok(x.template.trim(),id);
-      assert.ok(x.teacher.trim(),id);assert.equal(x.practiceKind,'written',id);
+      assert.ok(!('teacher' in x),id);assert.equal(x.practiceKind,'written',id);
       assert.ok(x.sample.title&&x.sample.note&&x.sample.text,id);
       assert.doesNotMatch(x.sample.text,/<[^>]+>/,id+': образец заполнен до конца');
       assert.equal(x.tasks.length,pair.ru.tasks.length,id);
@@ -37,7 +37,7 @@ test('a two-level pair has 4 equal-level task variants and templates for both le
     assert.ok(pair.summary.length===2&&pair.sourcePairs.length,id);
     for(const lang of ['ru','kz']){
       const x=pair[lang],list=x.options||x.steps||[];
-      assert.ok(x.intro.trim()&&x.topic.trim()&&x.task.trim()&&x.teacher.trim(),id);assert.equal(x.practiceKind,'written',id);
+      assert.ok(x.intro.trim()&&x.topic.trim()&&x.task.trim(),id);assert.ok(!('teacher' in x),id);assert.equal(x.practiceKind,'written',id);
       assert.ok(x.learn.length>=1&&x.learn.length<=4&&list.length>=2,id);
       assert.ok(words([...x.learn,x.task,...list])<=200,`${id} ${lang}: простой уровень короткий`);
       assert.ok(x.terms.length>=3&&x.terms.every(t=>t.length===3&&t.every(v=>v.trim())),id);
