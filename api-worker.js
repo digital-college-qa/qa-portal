@@ -1,6 +1,8 @@
 /* Only teaching API calls are intercepted. Assets and normal navigation are
    never cached or rewritten. State stays with the requesting browser client. */
 importScripts('js/labs/scenario-model.js?v=22');
+// старый Safari (iOS до 17) не знает Response.json — без него ответы с ошибкой падали
+if(!Response.json)Response.json=(body,init={})=>new Response(JSON.stringify(body),{...init,headers:{'Content-Type':'application/json',...(init.headers||{})}});
 self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',event=>{

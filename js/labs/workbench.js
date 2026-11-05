@@ -21,7 +21,7 @@
   const names={api:tr('API-клиент','API клиент'),tests:tr('Автотесты','Автотесттер'),docs:tr('Документация','Құжаттама'),logs:tr('Журнал','Журнал')};
   const win=(id,content,caption)=>`<section class="ide-window" data-window="${id}" role="dialog" aria-modal="false" aria-label="${names[id]}" hidden tabindex="-1"><div class="ide-titlebar">${svg(id)}<strong>${names[id]}</strong><span class="ide-caption">${caption}</span><div class="ide-controls"><button data-minimize aria-label="${tr('Свернуть','Жию')}">−</button><button data-maximize aria-label="${tr('Развернуть','Үлкейту')}">□</button><button data-close aria-label="${tr('Закрыть','Жабу')}">×</button></div></div><div class="ide-body">${content}</div><div class="ide-status"><span>QA Portal · ${names[id]}</span><span data-win-status>UTF-8</span></div></section>`;
   const apiContent=`<div class="api-layout"><aside class="api-collection"><h3>${tr('Мои запросы','Сұраныстарым')}</h3>${presets.map((p,i)=>`<button data-preset="${i}" class="${i===0?'on':''}"><span class="method-tag ${p.method.toLowerCase()}">${p.method}</span>${p.title}</button>`).join('')}</aside><div class="api-main">
-    <div class="api-bar"><select id="api-method" aria-label="Method">${['GET','POST','PUT','PATCH','DELETE'].map(m=>`<option>${m}</option>`).join('')}</select><input id="api-url" aria-label="URL" value="/products" spellcheck="false"><button class="send" id="api-send" disabled>Send ↗</button></div>
+    <div class="api-bar"><select id="api-method" aria-label="Method">${['GET','POST','PUT','PATCH','DELETE'].map(m=>`<option>${m}</option>`).join('')}</select><input id="api-url" aria-label="URL" value="/products" spellcheck="false"><button type="button" class="send" id="api-send" disabled>Send</button></div>
     <div class="ide-tabs" role="tablist" aria-label="${tr('Поля запроса','Сұраныс өрістері')}">${['Params','Headers','Body'].map((t,i)=>`<button role="tab" aria-selected="${i===0}" aria-controls="api-${t.toLowerCase()}-panel" data-api-tab="${t.toLowerCase()}">${t}</button>`).join('')}</div>
     <div class="api-editor"><div id="api-params-panel" role="tabpanel"><label for="api-params">Query params · JSON</label><textarea id="api-params" spellcheck="false">{}</textarea></div><div id="api-headers-panel" role="tabpanel" hidden><label for="api-headers">Headers · JSON</label><textarea id="api-headers" spellcheck="false">{"Accept":"application/json"}</textarea></div><div id="api-body-panel" role="tabpanel" hidden><label for="api-body">Body · JSON</label><textarea id="api-body" spellcheck="false" placeholder='{"price":1800}'></textarea></div></div>
     <p id="api-message" class="api-message" role="status"></p><div class="api-response"><div class="api-response-head"><strong>Response</strong><span id="api-http"></span><span id="api-time"></span></div><pre id="api-response" class="api-json">${tr('Выбери запрос слева и нажми Send. Изменения появятся в кофейне на фоне.','Сол жақтан сұраныс таңдап, Send бас. Өзгерістер арттағы кофеханада көрінеді.')}</pre></div>
@@ -41,7 +41,7 @@
     ${win('api',apiContent,'REST · JSON')}${win('tests',testContent,'Playwright')}${win('docs',docContent,'README.md')}${win('logs',logsContent,'events.jsonl')}
     <nav class="studio-dock" aria-label="${tr('Инструменты лаборатории','Зертхана құралдары')}"><button id="studio-show-shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h12v8a6 6 0 0 1-12 0zm12 1h2a3 3 0 0 1 0 6h-2M3 22h15M7 2v2m5-2v2"/></svg>${tr('Кофейня','Кофехана')}</button>${Object.keys(names).map(id=>`<button data-open="${id}" aria-expanded="false">${svg(id)}<span class="dock-full">${names[id]}</span><span class="dock-short">${({api:"API",tests:tr("Тесты","Тесттер"),docs:tr("Справка","Көмек"),logs:tr("Журнал","Журнал")})[id]}</span></button>`).join('')}</nav><div id="studio-toast" class="studio-toast" role="status" hidden></div></section>`;
   const $=id=>document.getElementById(id),studio=$('studio'),frame=$('shop-frame');
-  let z=30,toastTimer,apiReady=false,token='',activeRun=null,runController=null,runnerURL=read('qa_runner_url',''),lastSnapshot='';
+  let z=30,toastTimer,apiReady=false,apiMode='local',token='',activeRun=null,runController=null,runnerURL=read('qa_runner_url',''),lastSnapshot='';
   const logs=[];
   function log(event,details={},level='INFO'){logs.push({timestamp:new Date().toISOString(),level,event,...details});if(logs.length>300)logs.shift();drawLogs();}
   function drawLogs(){const q=$('log-query').value.toLowerCase(),level=$('log-level').value;$('log-rows').innerHTML=logs.filter(l=>(!level||l.level===level)&&(!q||JSON.stringify(l).toLowerCase().includes(q))).slice().reverse().map(l=>`<div class="log-row ${l.level==='ERROR'?'error':''}"><span>${esc(l.timestamp.slice(11,19))}</span><span>${l.level}</span><span>${esc(l.event)}</span><span class="log-details">${esc(JSON.stringify(Object.fromEntries(Object.entries(l).filter(([k])=>!['timestamp','event','level'].includes(k)))))}</span></div>`).join('');}
@@ -89,6 +89,23 @@
   studio.querySelectorAll('[data-api-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.apiTab)));
   studio.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const p=presets[Number(b.dataset.preset)];$('api-method').value=p.method;$('api-url').value=p.path;$('api-body').value=p.body;$('api-params').value='{}';studio.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('on',x===b));tab(p.body?'body':'params');}));
   function highlighted(value){const text=esc(JSON.stringify(value,null,2));return text.replace(/(&quot;.*?&quot;)(\s*:)?|\b(true|false|null|\d+(?:\.\d+)?)\b/g,(all,str,key,num)=>str?`<span class="${key?'json-key':'json-string'}">${str}</span>${key||''}`:`<span class="json-num">${num}</span>`);}
+  const STATUS_TEXT={200:'OK',201:'Created',204:'No Content',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',409:'Conflict',422:'Unprocessable Entity',500:'Internal Server Error',503:'Service Unavailable',504:'Gateway Timeout'};
+  function localAPI(req){
+    const id=crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2);
+    const r=store.handle({method:req.method,path:req.path,body:req.body,requestId:id});
+    return new Response(r.status===204?null:JSON.stringify(r.body),{status:r.status,statusText:STATUS_TEXT[r.status]||'',headers:r.headers});
+  }
+  async function callAPI(req){
+    if(apiMode==='sw'){
+      try{
+        const res=await fetch(new URL('training-api'+req.path,location.href),{method:req.method,headers:req.headers,body:req.body});
+        const code=res.status>=503?(await res.clone().json().catch(()=>null))?.error?.code:'';
+        if(code!=='NO_CLIENT'&&code!=='TIMEOUT')return res;
+      }catch(_){}
+      apiMode='local';log('api.local',{reason:'service worker unavailable'});
+    }
+    return localAPI(req);
+  }
   $('api-send').addEventListener('click',async()=>{
     if(!apiReady)return;$('api-send').disabled=true;$('api-message').textContent='';
     $('api-http').textContent='…';$('api-http').className='api-http pending';$('api-time').textContent='';
@@ -97,9 +114,9 @@
       const req=QATraining.buildRequest({method:$('api-method').value,path:$('api-url').value,params:$('api-params').value,headers:$('api-headers').value,body:$('api-body').value});
       if(!QAVersions.profile.api)throw Error('API requires release 1.5');const before=store.products().find(p=>req.path.split('?')[0]==='/products/'+p.id);
       const started=performance.now();log('api.request',{method:req.method,path:req.path});
-      const response=await fetch(new URL('training-api'+req.path,location.href),{method:req.method,headers:req.headers,body:req.body});
+      const response=await callAPI(req);
       const result=response.status===204?null:await response.json();
-      $('api-http').textContent=response.status+' '+response.statusText;$('api-http').className='api-http'+(response.ok?'':' error');$('api-time').textContent=Math.round(performance.now()-started)+' ms';$('api-response').innerHTML=response.status===204?esc(tr('204 No Content — тело ответа пустое.','204 No Content — жауап денесі бос.')):highlighted(result);
+      $('api-http').textContent=response.status+' '+(response.statusText||STATUS_TEXT[response.status]||'');$('api-http').className='api-http'+(response.ok?'':' error');$('api-time').textContent=Math.round(performance.now()-started)+' ms';$('api-response').innerHTML=response.status===204?esc(tr('204 No Content — тело ответа пустое.','204 No Content — жауап денесі бос.')):highlighted(result);
       log('api.response',{requestId:response.headers.get('X-Request-Id'),status:response.status,path:req.path},response.ok?'INFO':'ERROR');
       if(response.ok&&req.method!=='GET'){const message=before&&result?.price!==undefined?`${before.name[kz?'kz':'ru']} · ${before.price} → ${result.price} ₸`:tr('Данные обновлены — посмотри на сайт','Деректер жаңарды — сайтты қара');$('api-message').textContent=message;}
     }catch(e){$('api-http').textContent=tr('Ошибка запроса','Сұраныс қатесі');$('api-http').className='api-http error';$('api-response').textContent=e.message;$('api-message').textContent=tr('Запрос не выполнен. Проверь поля запроса.','Сұраныс орындалмады. Өрістерді тексер.');log('api.client.error',{message:e.message},'ERROR');}finally{$('api-send').disabled=!apiReady;$('api-response').closest('.api-response').setAttribute('aria-busy','false');}
@@ -109,10 +126,14 @@
     const requestId=crypto.randomUUID();try{event.ports[0].postMessage(store.handle({...event.data.payload,requestId}));}catch(e){event.ports[0].postMessage({status:500,headers:{'Content-Type':'application/json'},body:{error:{code:'INTERNAL_ERROR',message:'Teaching API error'},requestId}});log('api.error',{requestId,message:e.message},'ERROR');}
   });
   async function prepareAPI(){
-    if(!('serviceWorker'in navigator))throw Error(tr('Браузер не поддерживает учебный API. Открой сайт в Chrome или Edge.','Браузер оқу API қолдамайды. Chrome не Edge қолдан.'));
+    apiReady=true;$('api-send').disabled=false;$('studio-api-state').textContent=tr('Учебный API работает','Оқу API жұмыс істейді');
+    if(!('serviceWorker'in navigator)){log('api.ready',{mode:'local'});return;}
+    try{navigator.serviceWorker.startMessages?.();}catch(_){}   // Safari: без этого ответы service worker могут не доходить до страницы
+    try{await connectWorker();apiMode='sw';log('api.ready',{mode:'service-worker'});}catch(e){log('api.ready',{mode:'local',reason:e.message});}
+  }
+  async function connectWorker(){
     await navigator.serviceWorker.register('api-worker.js');await navigator.serviceWorker.ready;
-    if(!navigator.serviceWorker.controller)await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error(tr('Обнови страницу для подключения API','API қосу үшін бетті жаңарт'))),10000);navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timer);resolve();},{once:true});});
-    apiReady=true;$('api-send').disabled=false;$('studio-api-state').textContent=tr('Учебный API работает','Оқу API жұмыс істейді');log('api.ready');
+    if(!navigator.serviceWorker.controller)await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('no controller')),10000);navigator.serviceWorker.addEventListener('controllerchange',()=>{clearTimeout(timer);resolve();},{once:true});});
   }
   $('log-query').addEventListener('input',drawLogs);$('log-level').addEventListener('change',drawLogs);
   $('log-export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([logs.map(l=>JSON.stringify(l)).join('\n')],{type:'application/x-ndjson'}));const a=document.createElement('a');a.href=url;a.download='qa-session.jsonl';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
