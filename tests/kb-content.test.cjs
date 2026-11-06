@@ -35,10 +35,20 @@ test('templates make preparation and data optional and keep expected/actual resu
     assert.doesNotMatch(t.ru.template,/RU.*KZ/);
   }
 });
-test('published automation snippets compile in the real supported classroom language',async()=>{
+test('published automation snippets and workbench presets compile in the real supported classroom language',async()=>{
   const {compile}=await import('../server/language.mjs');let checked=0;
   for(const t of topics)for(const lang of ['ru','kz'])if(t[lang].code){assert.ok(compile(t[lang].code).length,t.id);checked++;}
   assert.equal(checked,12);
+  const workbenchSource=fs.readFileSync(path.join(root,'js/labs/workbench.js'),'utf8');
+  const match=workbenchSource.match(/const examples=\[([\s\S]*?)\n  \];/);
+  assert.ok(match,'examples array found in workbench.js');
+  const examples=vm.runInNewContext(`[${match[1]}]`,{tr:(ru)=>ru});
+  assert.equal(examples.length,10);
+  for(const example of examples){
+    assert.ok(example.title.trim());
+    const compiled=compile(example.code);
+    assert.equal(compiled.length,1,example.title);
+  }
 });
 test('documented API bodies and cart IDs match the real teaching store',()=>{
   const {createStore}=require('../js/labs/store.js');const state={};
