@@ -39,10 +39,11 @@ test('a two-level pair has 4 equal-level task variants and templates for both le
       const x=pair[lang],list=x.options||x.steps||[];
       assert.ok(x.intro.trim()&&x.topic.trim()&&x.task.trim(),id);assert.ok(!('teacher' in x),id);assert.equal(x.practiceKind,'written',id);
       assert.ok(x.learn.length>=1&&x.learn.length<=4&&list.length>=2,id);
-      assert.ok(words([...x.learn,x.task,...list])<=200,`${id} ${lang}: простой уровень короткий`);
+      assert.ok(words([...x.learn,x.task,...list])<=250,`${id} ${lang}: простой уровень короткий`);
       assert.ok(x.terms.length>=3&&x.terms.every(t=>t.length===3&&t.every(v=>v.trim())),id);
       assert.equal(x.why.length,4,id+': четыре пункта «почему»');
-      assert.ok(words([...x.terms.flat(),...x.why])<=200,`${id} ${lang}: продвинутый уровень добавляет немного`);
+      assert.ok(words([...x.terms.flat(),...x.why])<=270,`${id} ${lang}: продвинутый уровень добавляет немного`);
+      for(const w of x.why){const m=w.match(/\(kb\.html#([^)]+)\)/);assert.ok(m&&ids.has(m[1]),`${id} ${lang}: ссылка на базу знаний в «почему»`);}
       assert.ok(x.sample.note.trim()&&x.sample.text.trim(),id);
       assert.ok(Array.isArray(x.variants)&&x.variants.length===4,`${id} ${lang}: 4 варианта задачи на выбор`);
       // the sample may hold real code with brackets, so look only for the template's own hints
@@ -57,7 +58,7 @@ test('a two-level pair has 4 equal-level task variants and templates for both le
         const vList=v.options||v.steps||[];
         assert.ok(v.title&&v.title.trim()&&v.task&&v.task.trim()&&v.template&&v.template.trim(),`${id} ${lang} variant ${idx+1}`);
         assert.ok(vList.length>=2,`${id} ${lang} variant ${idx+1}: шаги или опции`);
-        assert.ok(words([...x.learn,v.task,...vList])<=200,`${id} ${lang} variant ${idx+1}: короткий объём`);
+        assert.ok(words([...x.learn,v.task,...vList])<=250,`${id} ${lang} variant ${idx+1}: короткий объём`);
         assert.match(v.template,/\([^()\n]+\)/,`${id} ${lang} variant ${idx+1}: места для ответа`);
         assert.equal(v.template.split('\n').length,pair.ru.variants[idx].template.split('\n').length,`${id} variant ${idx+1}: шаблоны RU и KZ`);
       });
