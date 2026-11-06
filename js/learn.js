@@ -236,8 +236,8 @@
     const list = stepsList ? `<ol class="ln-simple-list">${stepsList.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ol>`
       : optionsList ? `<ul class="ln-simple-list">${optionsList.map(s => `<li>${openLinks(inline(s, "s"))}</li>`).join("")}</ul>` : "";
     const more = full ? `<div class="ln-level-more"><p class="ln-level-more-title">🎓 ${kz ? "Кеңейтілген деңгейге" : "Для продвинутого уровня"}</p>
-        <h3>${kz ? "Терминдер" : "Термины"}</h3><ul>${x.terms.map(([term, en, meaning]) => `<li><b>${esc(term)}</b> (${esc(en)}) — ${inline(meaning, "s")}</li>`).join("")}</ul>
-        <h3>${kz ? "Неге солай" : "Почему так"}</h3><ul>${x.why.map(w => `<li>${inline(w, "s")}</li>`).join("")}</ul>
+        <h3>${kz ? "Терминдер" : "Термины"}</h3><ul>${x.terms.map(([term, en, meaning]) => `<li><b>${esc(term)}</b> (${esc(en)}) — ${openLinks(inline(meaning, "s"))}</li>`).join("")}</ul>
+        <h3>${kz ? "Неге солай" : "Почему так"}</h3><ul>${x.why.map(w => `<li>${openLinks(inline(w, "s"))}</li>`).join("")}</ul>
         ${kbLinks.length ? linkRow(kbLinks) : ""}</div>` : "";
     const ai = promptText ? `<div class="ln-ai"><p><strong>${kz ? "ЖИ-ге промпт" : "Промпт для ИИ"}</strong> — ${kz ? "кез келген тегін ЖИ-чатқа қой. ЖИ қателесуі мүмкін: жауапты іске қосып тексер." : "вставь в любой бесплатный ИИ-чат. ИИ может ошибиться: проверь ответ запуском."}</p><div class="ln-code"><pre>${esc(promptText)}</pre><button type="button" class="btn btn-ghost ln-copy">${kz ? "Промптты көшіру" : "Скопировать промпт"}</button></div></div>` : "";
     const levelHeader = full ? (kz ? "Деңгей: кеңейтілген" : "Уровень: продвинутый") : (kz ? "Деңгей: қарапайым" : "Уровень: простой");

@@ -12,13 +12,13 @@
 | 5 | 10 / 10 | TC, CRT, ORD, ID |
 | 6 | 5 / 5 | PRD |
 | 7 | 7 / 7 | CRT, REV, UI, UX, QA |
-| 8 | 15 / 15 | BUG, SRC |
-| 9 | 7 / 7 | API, HTTP, JSON |
+| 8 | 15 / 15 | BUG, SRC, QA |
+| 9 | 5 / 5 | API, HTTP, JSON |
 | 10 | 7 / 7 | API, HTTP, JSON |
 | 11 | 5 / 5 | API, HTTP, JSON |
 | 12 | 6 / 6 | API |
 | 13 | 10 / 10 | TC, CRT, PRD, ID, API, HTTP, JSON |
-| 14 | 9 / 9 | UI |
+| 14 | 9 / 9 | API, UI, UX |
 | 15 | 8 / 8 | — |
 | 16 | 8 / 8 | API |
 | 17 | 7 / 7 | — |
@@ -27,10 +27,10 @@
 | 20 | 10 / 10 | TC, CRT, NAV, UI |
 | 21 | 10 / 10 | TC, CRT, NAV, UI, CSS |
 | 22 | 9 / 9 | NAV, API, UI |
-| 23 | 9 / 9 | BUG, CRT, SRC, ID |
-| 24 | 12 / 12 | TC, CRT, NAV, CAT, UI |
-| 25 | 12 / 12 | TC, CRT, NAV, UI, QA |
-| 26 | 9 / 9 | CRT, NAV, API, UI |
+| 23 | 11 / 11 | BUG, CRT, SRC, ID |
+| 24 | 13 / 13 | TC, CRT, NAV, CAT, UI |
+| 25 | 15 / 12 | TC, BUG, CRT, NAV, UI, QA |
+| 26 | 9 / 9 | CRT, NAV, API, UI, QA |
 
 REG и BTN показываются только при появлении в тексте. Коды разделов — локальная договорённость проекта.
 Словарь слева следует языку портала и всегда сохраняет английский перевод.
