@@ -153,9 +153,22 @@
   const runnerParameter=new URLSearchParams(location.search).get('runner');
   if(runnerParameter){try{const url=new URL(runnerParameter);if(url.protocol==='https:'&&/^[a-z0-9-]+\.trycloudflare\.com$/.test(url.hostname)&&!url.username&&!url.password){runnerURL=url.origin;$('runner-login').open=true;}}catch(_){}}
   $('runner-url').value=runnerURL;
+  const runnerFields=['runner-url','runner-user','runner-password'].map($);
+  function removeRunnerWhitespace(field){
+    const value=field.value;
+    if(!/\s/.test(value))return;
+    const start=field.selectionStart,end=field.selectionEnd,direction=field.selectionDirection;
+    field.value=value.replace(/\s/g,'');
+    if(start!==null&&end!==null)field.setSelectionRange(value.slice(0,start).replace(/\s/g,'').length,value.slice(0,end).replace(/\s/g,'').length,direction);
+  }
+  runnerFields.forEach(field=>{
+    field.addEventListener('input',()=>removeRunnerWhitespace(field));
+    field.addEventListener('change',()=>removeRunnerWhitespace(field));
+  });
   async function server(path,options={}){const response=await fetch(runnerURL+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...options.headers}});const data=await response.json();if(!response.ok){if(response.status===401){token='';$('test-run').disabled=true;$('runner-login').open=true;}throw Error(data.error||'Server error '+response.status);}return data;}
   $('runner-connect').addEventListener('click',async()=>{
     try{
+      runnerFields.forEach(removeRunnerWhitespace);
       const url=new URL($('runner-url').value.trim());if(url.protocol!=='https:'&&!['127.0.0.1','localhost'].includes(url.hostname))throw Error(tr('Сервер должен использовать HTTPS','Сервер HTTPS қолдануы керек'));if(url.username||url.password||url.search||url.hash)throw Error('Invalid server URL');runnerURL=url.origin;
       const result=await server('/auth/login',{method:'POST',body:JSON.stringify({username:$('runner-user').value,password:$('runner-password').value})});token=result.token;$('runner-password').value='';write('qa_runner_url',runnerURL);$('runner-message').textContent=tr('Подключено. Можно запускать тесты.','Қосылды. Тесттерді іске қосуға болады.');$('runner-login').open=false;$('runner-logout').hidden=false;$('test-run').disabled=false;$("test-results").innerHTML='<p class="studio-notice">'+tr('Выбери пример и нажми «Запустить». Изменения вернутся в кофейню.','Мысал таңдап, «Іске қосу» бас. Өзгерістер кофеханаға қайтады.')+'</p>';toast(tr('Playwright подключён','Playwright қосылды'));log('runner.connected');
     }catch(e){$('runner-message').textContent=e.message;}
