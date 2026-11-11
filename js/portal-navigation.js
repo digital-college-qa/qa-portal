@@ -1,7 +1,7 @@
 /* One navigation renderer shared by portal pages and standalone coffee pages. */
 (function () {
   "use strict";
-  const revision = "20261023-lightbg43";
+  const revision = "20261111-defense1";
   const lang = () => QAVersions.read("qc_lang", "ru") === "kz" ? "kz" : "ru";
   const version = () => QAVersions.current;
   const save = (key, value) => QAVersions.write(key, value);
@@ -9,7 +9,8 @@
     portal: ["QA Portal", "QA Portal"], learn: ["Уроки", "Сабақтар"],
     kb: ["База знаний", "Білім қоры"], docs: ["Требования", "Талаптар"],
     data: ["Тестовые данные", "Тест деректері"], releases: ["Релизы", "Релиздер"],
-    labs: ["Лаборатория", "Зертхана"]
+    labs: ["Лаборатория", "Зертхана"],
+    defense: ["Защита", "Қорғау"]
   };
   const t = key => labels[key][lang() === "kz" ? 1 : 0];
   function stampLinks(root) {
@@ -30,10 +31,11 @@
       docs: '<path d="M5 3h9l5 5v13H5zm9 0v6h5M8 13h8m-8 4h6"/>',
       data: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>',
       releases: '<path d="M8 3v12a4 4 0 1 0 4 4M8 8h8V3m0 5 4-4m-4 4-4-4"/>',
-      labs: '<path d="m7 6-5 6 5 6m10-12 5 6-5 6m-3-15-4 18"/>'
+      labs: '<path d="m7 6-5 6 5 6m10-12 5 6-5 6m-3-15-4 18"/>',
+      defense: '<path d="M3 4h18v11H3zm9 11v3m-4 3 4-3 4 3M7 11l3-3 2 2 4-4"/>'
     };
     const icon = id => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[id]}</svg>`;
-    const items = [["index.html", tr("Главная", "Басты бет"), "hub"], ["learn.html", t("learn"), "learn"], ["kb.html", t("kb"), "kb"]];
+    const items = [["index.html", tr("Главная", "Басты бет"), "hub"], ["learn.html", t("learn"), "learn"], ["kb.html", t("kb"), "kb"], ["defense.html", t("defense"), "defense"]];
     const project = [
       ["home.html", "shop", tr("Сайт, который тестируем", "Біз тестілейтін сайт")],
       ["docs.html", "docs", tr("Как должно работать", "Қалай жұмыс істеуі керек")],

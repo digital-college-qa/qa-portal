@@ -1,0 +1,9 @@
+/* Защита практики (defense.html): только то, чего нет в css/learn.css. */
+.df-lead { font-size: var(--text-lead, 1.1rem); margin: 0 0 18px; }
+.df .ln-level-bar { margin-top: 0; }
+.df .ln-sec h3 { margin: 22px 0 8px; }
+.df-ready { margin: 10px 0 4px; }
+.df-ready summary { cursor: pointer; font-weight: 600; color: var(--theme-link, #1A56C4); min-height: 44px; display: flex; align-items: center; }
+.df-qa > li { margin-bottom: 14px; }
+.df-qa p { margin: 0 0 4px; }
+.df .ln-code pre { overflow-x: auto; }

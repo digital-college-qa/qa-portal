@@ -37,7 +37,7 @@
   :is(body.portal, .portal-shell) .wrap{padding-inline:16px}:is(body.portal, .portal-shell) .p-head{display:grid;grid-template-columns:1fr auto;gap:10px;min-height:0;padding:12px 16px 8px}
   .hub-hero{grid-template-columns:minmax(0,1fr)}.hub-hero-copy{min-width:0}.hub h1{font-size:clamp(32px,10.5vw,42px)}.hub-playground{overflow:clip}.hub-details{flex-wrap:wrap}
   :is(body.portal, .portal-shell) .p-logo{font-size:var(--text-lead)!important;justify-self:start}:is(body.portal, .portal-shell) .lang{grid-column:2;grid-row:1;margin:0}:is(body.portal, .portal-shell) .lang button{min-height:36px;min-width:38px}
-  :is(body.portal, .portal-shell) .p-nav,body[data-page="labs"] .p-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-column:1 / -1;grid-row:2;width:100%;gap:4px;overflow:visible}
+  :is(body.portal, .portal-shell) .p-nav,body[data-page="labs"] .p-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-column:1 / -1;grid-row:2;width:100%;gap:4px;overflow:visible}
   :is(body.portal, .portal-shell) .p-nav .p-nav-link,:is(body.portal, .portal-shell) .p-project-toggle{width:100%;min-height:56px;flex-direction:column;gap:4px;padding:7px 2px;font-size:var(--text-control);line-height:1.3;border-radius:10px}
   .p-nav svg{width:20px;height:20px}.p-project-toggle .p-chevron{display:none}.p-project{min-width:0}
   .p-project-panel{left:10px;right:10px;top:calc(100% + 5px);width:auto;grid-template-columns:1fr;border-radius:16px;max-height:calc(100dvh - var(--portal-header-height,130px) - 20px)}
