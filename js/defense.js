@@ -59,9 +59,7 @@
         `<details class="df-ready"><summary>${esc(s.codeSummary)}</summary>${code(ready, tr("Скопировать код", "Кодты көшіру"))}</details>` +
         `<h3>${esc(s.runTitle)}</h3>` + items(s.run, "ol") +
         `<h3>${esc(s.readTitle)}</h3>` + items(s.read)),
-      section("slides", esc(s.slidesTitle), `<p class="ln-sample-note">${md(s.slidesNote)}</p>` + code(s.slides.map(x => fill(x, vars)).join("\n\n"), tr("Скопировать слайды", "Слайдтарды көшіру"))),
-      section("speech", esc(s.speechTitle), `<p class="ln-sample-note">${md(s.speechNote)}</p>` + code(s.speech.map(x => fill(x, vars)).join("\n\n"), tr("Скопировать текст", "Мәтінді көшіру")) +
-        `<h3>${esc(s.resultTitle)}</h3>` + code(fill(s.result, vars))),
+      section("result", esc(s.resultTitle), `<p class="ln-sample-note">${md(s.resultNote)}</p>` + code(fill(s.result, vars), tr("Скопировать шаблон", "Үлгіні көшіру"))),
       section("qa", esc(s.qaTitle), qa),
       section("accept", esc(s.acceptTitle), items(s.accept))
     ].join("");
