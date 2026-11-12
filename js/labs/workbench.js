@@ -48,8 +48,11 @@
   const requested=new URLSearchParams(location.search).get('shop')||'menu.html';
   const shopURL=new URL(requested,location.href);
   const initial=shopURL.origin===location.origin&&allowedPages.includes(shopURL.pathname.split('/').pop())?shopURL.pathname.split('/').pop()+shopURL.search:'menu.html';
-  document.getElementById('app').innerHTML=`<section class="studio" id="studio"><div class="studio-top"><h1>${tr('Твоя QA-лаборатория','Сенің QA зертханаң')}</h1><span class="studio-pill"><i class="studio-dot"></i><span id="studio-api-state">${tr('Подключаем API…','API қосылуда…')}</span></span><span class="studio-pill">qala coffe · <span id="studio-cart">0</span> ${tr('в корзине','себетте')}</span><span class="studio-pill">${tr('Учись. Пробуй. Находи.','Үйрен. Сына. Тап.')}</span></div>
-    <div class="studio-browser" id="studio-browser"><div class="studio-address"><span class="dots"><i></i><i></i><i></i></span><button id="shop-back" aria-label="${tr('Назад в магазине','Дүкенде артқа')}">‹</button><select id="shop-page" aria-label="${tr('Страница магазина','Дүкен беті')}"><option value="menu.html">qala coffe / ${tr('Меню','Мәзір')}</option><option value="product.html?id=3">qala coffe / ${tr('Капучино','Капучино')}</option><option value="cart.html">qala coffe / ${tr('Корзина','Себет')}</option><option value="home.html">qala coffe / ${tr('Главная','Басты бет')}</option></select><button id="shop-reload" aria-label="${tr('Обновить магазин','Дүкенді жаңарту')}">↻</button></div><img id="studio-live-preview" class="studio-live-preview" alt="Playwright · live" hidden><iframe id="shop-frame" title="${tr('Учебная кофейня qala coffe','qala coffe оқу кофеханасы')}"></iframe></div>
+  document.getElementById('app').innerHTML=`<section class="studio" id="studio" aria-label="${tr('QA-лаборатория','QA зертханасы')}">
+    <div class="studio-browser" id="studio-browser">
+      <img id="studio-live-preview" class="studio-live-preview" alt="Playwright · live" hidden>
+      <iframe id="shop-frame" title="${tr('Учебная кофейня qala coffe','qala coffe оқу кофеханасы')}"></iframe>
+    </div>
     ${win('api',apiContent,'REST · JSON')}${win('tests',testContent,'Playwright')}${win('docs',docContent,'README.md')}${win('logs',logsContent,'events.jsonl')}
     <nav class="studio-dock" aria-label="${tr('Инструменты лаборатории','Зертхана құралдары')}"><button id="studio-show-shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 7h12v8a6 6 0 0 1-12 0zm12 1h2a3 3 0 0 1 0 6h-2M3 22h15M7 2v2m5-2v2"/></svg>${tr('Кофейня','Кофехана')}</button>${Object.keys(names).map(id=>`<button data-open="${id}" aria-expanded="false">${svg(id)}<span class="dock-full">${names[id]}</span><span class="dock-short">${({api:"API",tests:tr("Тесты","Тесттер"),docs:tr("Справка","Көмек"),logs:tr("Журнал","Журнал")})[id]}</span></button>`).join('')}</nav><div id="studio-toast" class="studio-toast" role="status" hidden></div></section>`;
   const $=id=>document.getElementById(id),studio=$('studio'),frame=$('shop-frame');
@@ -58,14 +61,18 @@
   function log(event,details={},level='INFO'){logs.push({timestamp:new Date().toISOString(),level,event,...details});if(logs.length>300)logs.shift();drawLogs();}
   function drawLogs(){const q=$('log-query').value.toLowerCase(),level=$('log-level').value;$('log-rows').innerHTML=logs.filter(l=>(!level||l.level===level)&&(!q||JSON.stringify(l).toLowerCase().includes(q))).slice().reverse().map(l=>`<div class="log-row ${l.level==='ERROR'?'error':''}"><span>${esc(l.timestamp.slice(11,19))}</span><span>${l.level}</span><span>${esc(l.event)}</span><span class="log-details">${esc(JSON.stringify(Object.fromEntries(Object.entries(l).filter(([k])=>!['timestamp','event','level'].includes(k)))))}</span></div>`).join('');}
   function toast(message){clearTimeout(toastTimer);$('studio-toast').textContent=message;$('studio-toast').hidden=false;toastTimer=setTimeout(()=>$('studio-toast').hidden=true,3200);}
-  function refreshShop(detail={}){frame.contentWindow?.postMessage({type:'qa-refresh'},location.origin);$('studio-cart').textContent=read('qc_cart',[]).reduce((n,i)=>n+i.qty,0);if(detail.event){log(detail.event,{key:detail.key,entityId:detail.entityId,changes:detail.changes});$('studio-browser').classList.remove('changed');void $('studio-browser').offsetWidth;$('studio-browser').classList.add('changed');}}
+  function refreshShop(detail={}){frame.contentWindow?.postMessage({type:'qa-refresh'},location.origin);if(detail.event){log(detail.event,{key:detail.key,entityId:detail.entityId,changes:detail.changes});$('studio-browser').classList.remove('changed');void $('studio-browser').offsetWidth;$('studio-browser').classList.add('changed');}}
   const store=QAStore.createStore({read,write,seed:PRODUCTS,onChange:refreshShop});
   function goShop(path){const url=new URL(path,location.href);if(url.origin!==location.origin||!allowedPages.includes(url.pathname.split('/').pop()))return;url.searchParams.set('embedded','1');url.searchParams.set('version',QAVersions.current);url.searchParams.set('ui','20261023-lab40');frame.src=url.href;}
+  frame.addEventListener('load',()=>{
+    try{
+      const url=new URL(frame.contentWindow.location.href);
+      const page=url.pathname.split('/').pop();
+      log('page.loaded',{route:page==='product.html'?page+'?id='+url.searchParams.get('id'):page});
+    }catch(_){}
+    refreshShop();
+  });
   goShop(initial);
-  $('shop-page').addEventListener('change',()=>goShop($('shop-page').value));
-  $('shop-reload').addEventListener('click',()=>frame.contentWindow.location.reload());
-  $('shop-back').addEventListener('click',()=>{try{frame.contentWindow.history.back();}catch(_){goShop('menu.html');}});
-  frame.addEventListener('load',()=>{try{const url=new URL(frame.contentWindow.location.href),value=url.pathname.split('/').pop()+(url.pathname.endsWith('product.html')?'?id='+url.searchParams.get('id'):'');if([...$('shop-page').options].some(o=>value===o.value))$('shop-page').value=value;log('page.loaded',{route:value});}catch(_){}refreshShop();});
   window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data?.type==='qa-shop-change'){refreshShop();log('shop.state.changed',{key:e.data.key});}});
   window.addEventListener('storage',e=>{if(e.key?.startsWith('qc_'))refreshShop();});
   function saveGeometry(w){if(w.classList.contains('maximized')||innerWidth<700)return;write('qa_window_'+w.dataset.window,{left:w.offsetLeft,top:w.offsetTop,width:w.offsetWidth,height:w.offsetHeight});}
@@ -138,7 +145,7 @@
     const requestId=crypto.randomUUID();try{event.ports[0].postMessage(store.handle({...event.data.payload,requestId}));}catch(e){event.ports[0].postMessage({status:500,headers:{'Content-Type':'application/json'},body:{error:{code:'INTERNAL_ERROR',message:'Teaching API error'},requestId}});log('api.error',{requestId,message:e.message},'ERROR');}
   });
   async function prepareAPI(){
-    apiReady=true;$('api-send').disabled=false;$('studio-api-state').textContent=tr('Учебный API работает','Оқу API жұмыс істейді');
+    apiReady=true;$('api-send').disabled=false;
     if(!('serviceWorker'in navigator)){log('api.ready',{mode:'local'});return;}
     try{navigator.serviceWorker.startMessages?.();}catch(_){}   // Safari: без этого ответы service worker могут не доходить до страницы
     try{await connectWorker();apiMode='sw';log('api.ready',{mode:'service-worker'});}catch(e){log('api.ready',{mode:'local',reason:e.message});}
@@ -191,5 +198,5 @@
   });
   $('test-stop').addEventListener('click',async()=>{runController?.abort();if(activeRun)try{await server('/runs/'+activeRun,{method:'DELETE'});}catch(_){}$('test-results').insertAdjacentHTML('beforeend',`<p class="studio-notice">${tr('Запуск остановлен.','Іске қосу тоқтатылды.')}</p>`);});
   openWindow(QAVersions.profile.api?(new URLSearchParams(location.search).get('tool')==='tests'?'tests':'api'):'docs',false);refreshShop();
-  try{if(QAVersions.profile.api)await prepareAPI();else $('studio-api-state').textContent=tr('API с версии 1.5','API 1.5 нұсқасынан');}catch(e){$('studio-api-state').textContent=tr('API не подключён','API қосылмаған');$('api-message').textContent=e.message;}
+  try{if(QAVersions.profile.api)await prepareAPI();}catch(e){$('api-message').textContent=e.message;}
 })();

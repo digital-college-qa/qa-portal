@@ -62,7 +62,7 @@
           <button type="button" data-lang="kz" aria-pressed="${lang() === "kz"}" class="${lang() === "kz" ? "on" : ""}">KZ</button>
         </div>
       </div>
-      ${inProject ? `<div class="p-project-context"><div class="wrap"><span class="p-context-label">qala coffe <b data-project-version>v${version()}</b></span><nav aria-label="${tr("Разделы проекта qala coffe", "qala coffe жобасының бөлімдері")}">${project.map(([href, id]) => `<a href="${href}" ${active === id ? 'aria-current="page"' : ''}>${icon(id)}${id === "shop" ? tr("Кофейня", "Кофехана") : t(id === "data" ? "data" : id)}</a>`).join("")}</nav></div></div>` : ''}`;
+      ${inProject && active !== "labs" ? `<div class="p-project-context"><div class="wrap"><span class="p-context-label">qala coffe <b data-project-version>v${version()}</b></span><nav aria-label="${tr("Разделы проекта qala coffe", "qala coffe жобасының бөлімдері")}">${project.map(([href, id]) => `<a href="${href}" ${active === id ? 'aria-current="page"' : ''}>${icon(id)}${id === "shop" ? tr("Кофейня", "Кофехана") : t(id === "data" ? "data" : id)}</a>`).join("")}</nav></div></div>` : ''}`;
     stampLinks(root);
     const toggle = root.querySelector("#project-toggle"), panel = root.querySelector("#project-panel");
     const setOpen = open => { panel.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); };

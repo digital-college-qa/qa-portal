@@ -73,7 +73,6 @@ small { font-size: var(--text-small); }
   .kb-section-heading>a { max-width: none; }
   .kb-hero-actions { flex-wrap: wrap; }
   .studio-dock button { font-size: var(--text-small)!important; overflow-wrap: anywhere; }
-  .studio-top h1 { white-space: normal; }
   .ide-window:not(.maximized) { height: calc(100% - 142px)!important; }
   .api-collection { max-height: 106px; }
   .api-collection button { min-width: 155px; }
