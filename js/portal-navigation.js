@@ -1,7 +1,7 @@
 /* One navigation renderer shared by portal pages and standalone coffee pages. */
 (function () {
   "use strict";
-  const revision = "20261111-defense1";
+  const revision = "20261112-project-menu";
   const lang = () => QAVersions.read("qc_lang", "ru") === "kz" ? "kz" : "ru";
   const version = () => QAVersions.current;
   const save = (key, value) => QAVersions.write(key, value);
@@ -61,8 +61,7 @@
           <button type="button" data-lang="ru" aria-pressed="${lang() === "ru"}" class="${lang() === "ru" ? "on" : ""}">RU</button>
           <button type="button" data-lang="kz" aria-pressed="${lang() === "kz"}" class="${lang() === "kz" ? "on" : ""}">KZ</button>
         </div>
-      </div>
-      ${inProject && active !== "labs" ? `<div class="p-project-context"><div class="wrap"><span class="p-context-label">qala coffe <b data-project-version>v${version()}</b></span><nav aria-label="${tr("Разделы проекта qala coffe", "qala coffe жобасының бөлімдері")}">${project.map(([href, id]) => `<a href="${href}" ${active === id ? 'aria-current="page"' : ''}>${icon(id)}${id === "shop" ? tr("Кофейня", "Кофехана") : t(id === "data" ? "data" : id)}</a>`).join("")}</nav></div></div>` : ''}`;
+      </div>`;
     stampLinks(root);
     const toggle = root.querySelector("#project-toggle"), panel = root.querySelector("#project-panel");
     const setOpen = open => { panel.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); };
@@ -81,9 +80,6 @@
     }));
     const measure = () => {
       document.documentElement.style.setProperty("--portal-header-height", `${root.offsetHeight}px`);
-      const context = root.querySelector('.p-project-context nav');
-      const current = context?.querySelector('[aria-current="page"]');
-      if (current) context.scrollLeft = current.offsetLeft - context.offsetLeft - (context.clientWidth - current.offsetWidth) / 2;
     };
     measure();
     if (window.ResizeObserver) new ResizeObserver(measure).observe(root);

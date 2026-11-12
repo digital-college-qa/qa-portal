@@ -58,10 +58,6 @@ html[data-theme] body.portal :is(#header,#portal-header) {
   border-bottom-color:transparent!important;
   box-shadow:0 10px 34px color-mix(in srgb,var(--theme-bg) 35%,transparent);
 }
-html[data-theme] body.portal .p-project-context {
-  background:linear-gradient(180deg,color-mix(in srgb,var(--theme-bg) 94%,transparent),color-mix(in srgb,var(--theme-bg) 72%,transparent))!important;
-  border-bottom-color:transparent!important;
-}
 @media(max-width:700px) {
   body.portal::before {mask-size:720px 540px;-webkit-mask-size:720px 540px;opacity:var(--theme-pattern-opacity)}
   html[data-theme] body.portal #app :is(.hub-hero,.kb-hero)::before {inset:-35px 0}
