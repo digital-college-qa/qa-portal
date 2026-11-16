@@ -69,11 +69,12 @@
     const f = C.full;
     const blocks = f.blocks.map(b => `<h3>${esc(b.title)}</h3>${items(b.need)}${links(b.links)}`).join("");
     const templates = f.templates.map(([name, text]) => `<h3>${esc(name)}</h3>${code(text, tr("Скопировать шаблон", "Үлгіні көшіру"))}`).join("");
-    const example = `<details class="df-ready"><summary>${esc(f.exampleSummary)}</summary>${f.example.map(b => `<h3>${esc(b.title)}</h3>${items(b.lines)}`).join("")}</details>`;
+    const example = `<details class="df-ready"><summary>${esc(f.exampleSummary)}</summary>${f.example.map(b => `<h3>${esc(b.title)}</h3>${items(b.lines)}${b.code ? code(b.code, tr("Скопировать код", "Кодты көшіру")) : ""}`).join("")}</details>`;
     return [
       section("task", tr("Задание", "Тапсырма"), paras(f.about)),
       section("ask", esc(f.askTitle), `<p class="ln-sample-note">${md(f.askNote)}</p>` + items(f.ask)),
       section("priority", esc(f.priorityTitle), `<p class="ln-sample-note">${md(f.priorityNote)}</p>` + items(f.priority, "ol") + code(f.priorityTemplate, tr("Скопировать шаблон", "Үлгіні көшіру"))),
+      section("complex", esc(f.complexTitle), `<p class="ln-sample-note">${md(f.complexNote)}</p>` + items(f.complex) + `<h3>${tr("Пример сложного тест-кейса", "Күрделі тест-кейс мысалы")}</h3>` + code(f.complexExample, tr("Скопировать пример", "Мысалды көшіру"))),
       section("blocks", esc(f.blocksTitle), `<p class="ln-sample-note">${md(f.blocksNote)}</p>` + blocks),
       section("final", esc(f.finalTitle), items(f.final, "ol")),
       section("example", esc(f.exampleTitle), `<p class="ln-sample-note">${md(f.exampleNote)}</p>` + example),
